@@ -1,0 +1,20 @@
+services:
+  backend:
+    image: annapurna/backend
+    build: backend
+    volumes:
+      - ./backend/app:/app
+      - ollama_data:/root/.ollama
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+  db:
+    image: mongo
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - 27017:27017
+volumes:
+  mongo_data:
+  ollama_data:

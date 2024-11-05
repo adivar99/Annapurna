@@ -1,0 +1,5 @@
+services:
+  backendbuilder:
+    image: annapurna/backendbuilder
+    build: backend
+  
