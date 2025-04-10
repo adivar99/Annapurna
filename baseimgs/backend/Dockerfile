@@ -11,3 +11,5 @@ WORKDIR /app
 
 COPY requirements.txt .
 RUN pip install -r requirements.txt
+
+RUN ollama pull llama3.2
