@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import List, Optional, Dict
-from ..schemas.recipe import RecipeCreate, RecipeUpdate, RecipeResponse, RecipeSearch
-from ..crud.recipe import (
+from schemas.recipe import RecipeCreate, RecipeUpdate, RecipeResponse, RecipeSearch
+from crud.recipe import (
     create_recipe,
     get_recipe,
     get_recipes,
@@ -12,8 +12,8 @@ from ..crud.recipe import (
     get_popular_recipes,
     get_similar_recipes
 )
-from ..core.auth import get_current_user
-from ..models.user import User
+from core.auth import get_current_user
+from models.user import User
 
 router = APIRouter(
     prefix="/recipes",

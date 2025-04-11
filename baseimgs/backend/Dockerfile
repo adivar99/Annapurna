@@ -1,15 +1,21 @@
-FROM ollama/ollama:latest
+FROM python:3.12.10-bookworm as backend-builder
 
-# Install dependencies
-RUN apt-get update
-RUN apt-get install -y curl python3 python3-pip
+# update packages and install curl
+RUN apt update && apt install -y build-essential
 
-# Install Ollama
-RUN curl -fsSL https://ollama.com/install.sh | sh
+RUN pip install --upgrade pip
 
-WORKDIR /app
+RUN apt update && apt install -y \
+    build-essential \
+    # libmusl-dev \
+    libffi-dev \
+    libssl-dev \
+    cargo \
+    curl
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+# RUN /bin/bash source ~/.cargo/env
+ENV PATH="/root/.cargo/bin:${PATH}"
 
+RUN cargo --version
 COPY requirements.txt .
-RUN pip install -r requirements.txt
-
-RUN ollama pull llama3.2
+RUN pip install -r ./requirements.txt

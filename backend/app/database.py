@@ -3,8 +3,8 @@ from beanie import init_beanie
 from typing import List
 import os
 from dotenv import load_dotenv
-from .models.recipe import Recipe, Ingredient
-from .models.user import User
+from models.recipe import Recipe, Ingredient
+from models.user import User
 
 load_dotenv()
 

@@ -2,8 +2,8 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 from typing import List, Dict, Optional
-from .models.recipe import Recipe
-from .models.user import User
+from models.recipe import Recipe
+from models.user import User
 import numpy as np
 from scipy.spatial.distance import cosine
 import chromadb

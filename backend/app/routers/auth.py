@@ -1,21 +1,23 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.responses import JSONResponse
 from datetime import timedelta
 from typing import List
-from ..core.auth import (
+
+from core.auth import (
     create_access_token,
     get_current_active_user,
     ACCESS_TOKEN_EXPIRE_MINUTES,
     verify_password
 )
-from ..models.user import User
-from ..schemas.user import (
+from models.user import User
+from schemas.user import (
     UserCreate,
     UserResponse,
     UserUpdate,
     Token
 )
-from ..crud.user import (
+from crud.user import (
     create_user,
     get_user_by_username,
     get_user_by_email,
@@ -25,7 +27,7 @@ from ..crud.user import (
     unsave_recipe_for_user,
     get_user_saved_recipes
 )
-from ..models.recipe import Recipe
+from models.recipe import Recipe
 
 router = APIRouter()
 
@@ -67,7 +69,17 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    response = JSONResponse(content={
+            "access_token": access_token,
+            "token_type": "bearer",
+        },
+        status_code=200)
+    response.set_cookie(
+        key="Authorization",
+        value=f"Bearer {access_token}",
+        httponly=True,
+    )
+    return response
 
 @router.get("/me", response_model=UserResponse)
 async def read_users_me(current_user: User = Depends(get_current_active_user)):

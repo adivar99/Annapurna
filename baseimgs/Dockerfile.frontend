@@ -1,0 +1,12 @@
+FROM node:16-alpine
+
+RUN apk -U upgrade
+
+WORKDIR /src/annapurna-app
+
+ENV PATH=/src/annapurna-app/node_modules/.bin:$PATH
+
+# install and cache app dependencies
+COPY ./annapurna-app/package.json /src/annapurna-app/package.json
+RUN npm install
+RUN npm install -g @angular/cli

@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List
 from datetime import datetime
-from ..models.recipe import Recipe
+from models.recipe import Recipe
 
 class UserBase(BaseModel):
     """Base user schema with common attributes"""

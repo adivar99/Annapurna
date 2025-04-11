@@ -4,46 +4,30 @@ services:
     build: backend
     volumes:
       - ./backend/app:/app
-      # - ollama_data:/root/.ollama
     ports:
       - 8080:8080
-    depends_on:
-      - db
     env_file:
       - .env
-  db:
-    image: mongo:latest
-    # container_name: recipe_mongodb
+  frontend:
+    image: annapurna/frontend
+    env_file:
+      - .env
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
-      - "27017:27017"
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=admin123
+      - "4200:4200"
     volumes:
-      - mongodb_data:/data/db
-    networks:
-      - recipe_network
-    restart: unless-stopped
-
-  mongo-express:
-    image: mongo-express:latest
-    # container_name: recipe_mongo_express
-    ports:
-      - "8082:8081"
-    environment:
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=admin123
-      - ME_CONFIG_MONGODB_URL=mongodb://admin:admin123@mongodb:27017/
+      - ./frontend/annapurna-app:/src/annapurna-app
+      - /src/annapurna-app/node_modules
+  proxy:
+    image: annapurna/proxy:latest
     depends_on:
-      - db
-    networks:
-      - recipe_network
-    restart: unless-stopped
-
-volumes:
-  mongodb_data:
-    name: recipe_mongodb_data
+     - frontend
+     - backend
+    ports:
+      - "80:80"
 
 networks:
-  recipe_network:
-    name: recipe_network
+  annapurna_default:
+    external: true

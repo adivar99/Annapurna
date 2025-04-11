@@ -2,4 +2,14 @@ services:
   backendbuilder:
     image: annapurna/backendbuilder
     build: backend
+  frontendbuilder:
+    image: annapurna/frontendbuilder:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+  proxybuilder:
+    image: annapurna/proxy:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.proxy
   

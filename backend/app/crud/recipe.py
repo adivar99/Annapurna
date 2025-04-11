@@ -1,8 +1,8 @@
 from typing import List, Optional, Dict, Any
-from ..models.recipe import Recipe, Ingredient
-from ..schemas.recipe import RecipeCreate, RecipeUpdate, RecipeSearch
+from models.recipe import Recipe, Ingredient
+from schemas.recipe import RecipeCreate, RecipeUpdate, RecipeSearch
 from datetime import datetime
-from ..ai_service import RecipeAIService
+from ai_service import RecipeAIService
 
 ai_service = RecipeAIService()
 
@@ -28,7 +28,8 @@ async def get_recipe(recipe_id: str) -> Optional[Recipe]:
 async def get_recipes(
     skip: int = 0,
     limit: int = 100,
-    search_params: Optional[RecipeSearch] = None
+    search_params: Optional[RecipeSearch] = None,
+    filters: Optional[Dict] = None
 ) -> List[Recipe]:
     """Get recipes with optional filtering"""
     query: Dict[str, Any] = {}

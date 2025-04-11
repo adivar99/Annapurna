@@ -1,0 +1,41 @@
+<div class="home-container">
+  <mat-toolbar color="primary">
+    <span>Annapurna</span>
+    <span class="spacer"></span>
+    <button mat-button routerLink="/">Logout</button>
+  </mat-toolbar>
+
+  <div class="content">
+    <h1>Your Recipes</h1>
+
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="error" class="error-container">
+      <p>{{ error }}</p>
+      <button mat-raised-button color="primary" (click)="loadRecipes()">Try Again</button>
+    </div>
+
+    <div *ngIf="!isLoading && !error" class="recipes-grid">
+      <mat-card *ngFor="let recipe of recipes" class="recipe-card">
+        <mat-card-header>
+          <mat-card-title>{{ recipe.title }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>{{ recipe.description }}</p>
+          <mat-chip-set>
+            <mat-chip *ngFor="let tag of recipe.tags">{{ tag }}</mat-chip>
+          </mat-chip-set>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="recipes.length === 0" class="no-recipes">
+        <mat-card-content>
+          <mat-icon>restaurant</mat-icon>
+          <p>No recipes found. Start adding some!</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

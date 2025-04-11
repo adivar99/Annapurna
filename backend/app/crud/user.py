@@ -1,7 +1,7 @@
 from typing import Optional, List
-from ..models.user import User
-from ..schemas.user import UserCreate, UserUpdate
-from ..core.auth import get_password_hash
+from models.user import User
+from schemas.user import UserCreate, UserUpdate
+from core.auth import get_password_hash
 from datetime import datetime
 
 async def get_user_by_email(email: str) -> Optional[User]:

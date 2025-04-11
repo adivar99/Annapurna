@@ -3,8 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from dotenv import load_dotenv
 
-from .routers import recipes, auth
-from .database import init_db
+from routers import recipes, auth
+from database import init_db
 
 # Load environment variables
 load_dotenv()
