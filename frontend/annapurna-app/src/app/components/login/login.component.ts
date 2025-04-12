@@ -32,9 +32,6 @@ export class LoginComponent {
       formData.append("client_secret", '')
       formData.append("grant_type", 'password')
       formData.append("scope", '')
-      formData.forEach((val, key, par) => {
-        console.log("login form ["+key+"]: " + val)
-      })
       this.authService.login(formData)
     }
   }

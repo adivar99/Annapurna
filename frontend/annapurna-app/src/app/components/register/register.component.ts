@@ -22,7 +22,8 @@ export class RegisterComponent {
       name: ['', [Validators.required]],
       username: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      // lic_file: ['', [Validators.required]]
     });
   }
 
@@ -36,15 +37,25 @@ export class RegisterComponent {
   onSubmit() {
     if (this.registerForm.valid) {
       const formData = new FormData();
-      formData.append('name', this.registerForm.get('name')?.value);
+      formData.append('full_name', this.registerForm.get('name')?.value);
       formData.append('username', this.registerForm.get('username')?.value);
       formData.append('email', this.registerForm.get('email')?.value);
       formData.append('password', this.registerForm.get('password')?.value);
       if (this.licenseFile) {
         formData.append('license', this.licenseFile);
       }
-      this.authService.register(formData)
-      this.utils.redirect_page_to('/login')
+      formData.forEach((val, key, par) => {
+        console.log("login form ["+key+"]: " + val)
+      })
+      let formData1 = {
+        'full_name': formData.get('full_name'),
+        'email': formData.get('email'),
+        'username': formData.get('username'),
+        'password': formData.get('password'),
+      }
+      console.log(formData1)
+      this.authService.register(formData1)
+      // this.utils.redirect_page_to('/login')
     }
   }
 }

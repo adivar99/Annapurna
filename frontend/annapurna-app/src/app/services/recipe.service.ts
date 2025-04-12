@@ -2,13 +2,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpService } from './http.service';
 
-export interface Recipe {
-  id: string;
-  title: string;
-  description: string;
-  tags: string[];
-}
-
 @Injectable({
   providedIn: 'root'
 })

@@ -20,6 +20,8 @@ import { LandingPageComponent } from './components/landing-page/landing-page.com
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { HomeComponent } from './components/home/home.component';
+import { RecipeCardComponent } from './components/recipe-card/recipe-card.component';
+import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import { HomeComponent } from './components/home/home.component';
     LandingPageComponent,
     LoginComponent,
     RegisterComponent,
-    HomeComponent
+    HomeComponent,
+    RecipeCardComponent,
+    NavBarComponent
   ],
   imports: [
     BrowserModule,

@@ -10,6 +10,7 @@ import { UtilitiesService } from './utilities.service';
 export class AuthService {
 
   user: User | undefined
+  loggedIn: boolean = false
   currentUser = new EventEmitter<User| undefined>();
   isLoggedIn = new EventEmitter<boolean>();
 
@@ -21,6 +22,11 @@ export class AuthService {
   setUser(data: any) {
     this.user = data
     this.currentUser.emit(data)
+  }
+
+  setLoggedIn(val: boolean) {
+    this.loggedIn = val
+    this.isLoggedIn.emit(val)
   }
 
   refreshCurrentUser() {
@@ -46,13 +52,24 @@ export class AuthService {
     )
   }
 
-  register(formData: FormData) {
-    this.httpService.postData('/auth/register', formData).subscribe(
-      (data) => {
+  register(formData: any) {
+    this.httpService.postData('/auth/register', formData).subscribe({
+      next: (data) => {
         this.refreshCurrentUser()
         this.isLoggedIn.emit(true)
-        this.utils.redirect_page_to('/home')
+        this.utils.redirect_page_to('/login')
+      },
+      error: (err: any) => {
+
       }
-    )
+  })
+  }
+
+  logout() {
+    this.httpService.postData('/auth/logout', {}).subscribe(
+      (data) => {
+        this.refreshCurrentUser()
+        this.utils.redirect_page_to('landing')
+    })
   }
 }

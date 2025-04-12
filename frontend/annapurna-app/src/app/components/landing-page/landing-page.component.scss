@@ -1,45 +1,125 @@
-.landing-container {
+// .landing-container {
+//   height: 100vh;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+
+//   .content {
+//     text-align: center;
+//     padding: 2rem;
+//     background: rgba(255, 255, 255, 0.9);
+//     border-radius: 8px;
+//     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+//     .app-icon {
+//       font-size: 4rem;
+//       width: 4rem;
+//       height: 4rem;
+//       margin-bottom: 1rem;
+//       color: #3f51b5;
+//     }
+
+//     h1 {
+//       font-size: 2.5rem;
+//       margin-bottom: 1rem;
+//       color: #333;
+//     }
+
+//     h2 {
+//       font-size: 1.2rem;
+//       margin-bottom: 2rem;
+//       color: #666;
+//     }
+
+//     .button-container {
+//       display: flex;
+//       gap: 1rem;
+//       justify-content: center;
+
+//       button {
+//         min-width: 120px;
+//       }
+//     }
+//   }
+// }
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Layout */
+.landing-page {
+  background-image: url('../../../assets/background.png'); /* Replace with your hero image */
+  background-size: cover;
+  background-position: center;
   height: 100vh;
+  color: white;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Navigation */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.navbar .brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.navbar .nav-links a {
+  color: white;
+  text-decoration: none;
+  margin-left: 1.5rem;
+  font-size: 1rem;
+}
+
+/* Hero section */
+.hero {
+  flex: 1;
+  display: flex;
   align-items: center;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  justify-content: center;
+  text-align: center;
+  padding: 0 2rem;
+  background: rgba(0, 0, 0, 0.5);
+}
 
-  .content {
-    text-align: center;
-    padding: 2rem;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.hero-content h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
 
-    .app-icon {
-      font-size: 4rem;
-      width: 4rem;
-      height: 4rem;
-      margin-bottom: 1rem;
-      color: #3f51b5;
-    }
+.hero-content p {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+}
 
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      color: #333;
-    }
+.cta-button {
+  background-color: #f55b0f;
+  color: white;
+  padding: 0.75rem 2rem;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
 
-    h2 {
-      font-size: 1.2rem;
-      margin-bottom: 2rem;
-      color: #666;
-    }
-
-    .button-container {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-
-      button {
-        min-width: 120px;
-      }
-    }
-  }
+.cta-button:hover {
+  background-color: #d94f0a;
 }

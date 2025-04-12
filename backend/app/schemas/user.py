@@ -7,7 +7,7 @@ class UserBase(BaseModel):
     """Base user schema with common attributes"""
     email: EmailStr
     username: str = Field(..., min_length=3, max_length=50)
-    full_name: Optional[str] = None
+    full_name: str
 
 class UserCreate(UserBase):
     """Schema for user creation"""
@@ -42,3 +42,7 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     """Schema for token data"""
     username: Optional[str] = None 
+    
+class TokenPayload(BaseModel):
+    sub: Optional[str] = None
+    scopes: Optional[List[str]] = []

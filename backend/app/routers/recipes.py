@@ -12,7 +12,7 @@ from crud.recipe import (
     get_popular_recipes,
     get_similar_recipes
 )
-from core.auth import get_current_user
+from core.deps import get_current_user, get_current_active_user
 from models.user import User
 
 router = APIRouter(
@@ -49,7 +49,8 @@ async def read_recipes(
     max_prep_time: Optional[int] = None,
     min_cook_time: Optional[int] = None,
     max_cook_time: Optional[int] = None,
-    servings: Optional[int] = None
+    servings: Optional[int] = None,
+    current_user: User = Depends(get_current_active_user)
 ):
     """Get a list of recipes with optional filtering."""
     # Build ChromaDB filters

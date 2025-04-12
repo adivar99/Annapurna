@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import JSONResponse
 from datetime import timedelta
-from typing import List
+from typing import List, Any
 
+from core.deps import get_current_active_user
 from core.auth import (
     create_access_token,
-    get_current_active_user,
     ACCESS_TOKEN_EXPIRE_MINUTES,
     verify_password
 )
@@ -36,6 +36,7 @@ async def register(user: UserCreate):
     """
     Register a new user.
     """
+
     # Check if username or email already exists
     if await get_user_by_username(user.username):
         raise HTTPException(
@@ -79,6 +80,21 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         value=f"Bearer {access_token}",
         httponly=True,
     )
+    return response
+
+@router.get('/login')
+def auto_login(
+    current_user: User = Depends(get_current_active_user)
+):
+    return True
+
+@router.post("/logout", response_model=Token)
+def login_logout(current_user: User = Depends(get_current_active_user)) -> Any:
+    """
+    set access-token to expired date.
+    """
+    response = JSONResponse(content={},status_code=200)
+    response.delete_cookie("Authorization")
     return response
 
 @router.get("/me", response_model=UserResponse)
