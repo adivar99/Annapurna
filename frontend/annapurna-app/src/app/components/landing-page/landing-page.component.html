@@ -1,28 +1,78 @@
-<!-- <div class="landing-container">
-  <div class="content">
-    <mat-icon class="app-icon">restaurant</mat-icon>
-    <h1>Welcome to Annapurna</h1>
-    <h2>Your AI-powered cooking assistant</h2>
-    <div class="button-container">
-      <button mat-raised-button color="primary" routerLink="/login">Login</button>
-      <button mat-raised-button color="accent" routerLink="/register">Register</button>
+<div class="landing-wrapper">
+  <nav class="navbar">
+    <div class="brand italiana">Annapurna</div>
+    <div class="nav-links italiana">
+      <a class="cta" routerLink="/login">Login</a>
+      <a class="cta" routerLink="/register">Sign Up</a>
     </div>
-  </div>
-</div> -->
-  <div class="landing-page">
-    <nav class="navbar">
-      <div class="brand">Annapurna</div>
-      <div class="nav-links">
-        <a href="/register">Sign Up</a>
-        <a href="/login">Log In</a>
-      </div>
-    </nav>
+  </nav>
 
-    <div class="hero">
-      <div class="hero-content">
-        <h1>Discover Delicious Recipes</h1>
-        <p>Explore a wide variety of recipes and find inspiration for your next meal.</p>
-        <a href="/login" class="cta-button">Get Started</a>
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="playfair-display-title">Your Personal AI Chef at Your Fingertips</h1>
+      <p class="playfair-display-subtitle">
+        Discover, cook, and master recipes with the help of AI. Ask questions, get step-by-step guidance, and customize recipes to your taste.
+      </p>
+      <a class="cta" routerLink="/register">Get Started</a>
+    </div>
+    
+    <!-- <a class="scroll-icon" href="#features">⬇️</a> -->
+  </section>
+
+  <section class="features" id="features">
+    <h2 class="playfair-display-title">Choosing Annapurna</h2>
+    <p class="playfair-display-subtitle">Our AI-powered platform makes cooking easier, more fun, and personalized to your needs.</p>
+
+    <div class="feature-grid">
+      <div class="feature">
+        <div class="icon">📚</div>
+        <h3>Recipe Collection</h3>
+        <p>Access thousands of recipes from around the world with detailed instructions and nutritional info.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🤖</div>
+        <h3>AI Chat Assistant</h3>
+        <p>Ask questions, get modifications, and receive step-by-step guidance from your personal AI chef.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🛒</div>
+        <h3>Shopping Lists</h3>
+        <p>Automatically generate shopping lists from your favorite recipes and meal plans.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🧑‍🍳</div>
+        <h3>Step-by-step Guide</h3>
+        <p>Follow clear instructions with timers and technique tips to perfect every dish.</p>
       </div>
     </div>
-  </div>
+  </section>
+
+  <section class="steps">
+    <h2 class="playfair-display-title">Using Annapurna</h2>
+    <p class="playfair-display-subtitle">Get started in just a few simple steps</p>
+
+    <div class="step-grid">
+      <div class="step playfair-display-subtitle">
+        <div class="step-number">1</div>
+        <div class="step-text">
+          <h4>Browse Recipe</h4>
+          <p>Search our collection by cuisine, difficulty, or ingredients.</p>
+        </div>
+      </div>
+      <div class="step playfair-display-subtitle">
+        <div class="step-number">2</div>
+        <div class="step-text">
+          <h4>Select & Customize</h4>
+          <p>Choose a recipe and tailor it to your dietary needs or preferences.</p>
+        </div>
+      </div>
+      <div class="step playfair-display-subtitle">
+        <div class="step-number">3</div>
+        <div class="step-text">
+          <h4>Cook with AI Assistance</h4>
+          <p>Follow along with step-by-step guidance and improve with AI help.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

@@ -61,17 +61,33 @@ class RecipeAIService:
         return response.choices[0].message.content
 
     async def generate_recipe_suggestions(self, ingredients: list, preferences: dict = None):
-        prompt = f"""Based on these ingredients: {', '.join(ingredients)}"""
+        prompt = f"Based on these ingredients: {', '.join(ingredients)}"
         if preferences:
-            prompt += f""" and preferences: {preferences}"""
-        prompt += """, suggest a recipe. Include:
-        1. Recipe name
-        2. List of ingredients with quantities
-        3. Step-by-step instructions
-        4. Estimated cooking time
-        5. Difficulty level"""
+            prompt += f" and preferences: {preferences}"
+        prompt += ", suggest a recipe. Include:\n" \
+                  "1. Recipe name\n" \
+                  "2. List of ingredients with quantities\n" \
+                  "3. Step-by-step instructions\n" \
+                  "4. Estimated cooking time\n" \
+                  "5. Difficulty level"
 
-        return await self.chat(prompt)
+        response = await self.chat(prompt)
+        return { "response": response, "recipe_id": None }
+    
+    async def ask_recipe_question(self, recipe: Recipe, question: str) -> Dict[str, str]:
+        """Ask a question about a recipe and get an answer"""
+        prompt = f"""Answer this question about the recipe: {recipe.title}
+        Question: {question}
+        Recipe Details:
+        Title: {recipe.title}
+        Description: {recipe.description}
+        Ingredients: {[f"{i.name} ({i.quantity} {i.unit})" for i in recipe.ingredients]}
+        Instructions: {recipe.instructions}
+        
+        Please provide a concise answer to the question."""
+        
+        answer = await self.chat(prompt)
+        return { "response": answer, "recipe_id": str(recipe.id) }
 
     async def analyze_recipe(self, recipe: Recipe) -> Dict[str, str]:
         """Analyze a recipe and provide detailed insights"""
@@ -89,10 +105,7 @@ class RecipeAIService:
         5. Common mistakes to avoid"""
 
         analysis = await self.chat(prompt)
-        return {
-            "analysis": analysis,
-            "recipe_id": str(recipe.id)
-        }
+        return { "response": analysis, "recipe_id": str(recipe.id) }
 
     async def personalize_recipe(self, recipe: Recipe, user: User, dietary_restrictions: List[str] = None) -> Dict[str, str]:
         """Personalize a recipe for a specific user"""
@@ -112,11 +125,7 @@ class RecipeAIService:
         4. Portion adjustments if necessary"""
 
         personalized = await self.chat(prompt)
-        return {
-            "personalized_recipe": personalized,
-            "recipe_id": str(recipe.id),
-            "user_id": str(user.id)
-        }
+        return { "response": personalized, "recipe_id": str(recipe.id) }
 
     async def generate_shopping_list(self, recipe: Recipe, servings: Optional[int] = None) -> Dict[str, str]:
         """Generate a detailed shopping list for a recipe"""
@@ -134,11 +143,7 @@ class RecipeAIService:
         5. Estimated cost range"""
 
         shopping_list = await self.chat(prompt)
-        return {
-            "shopping_list": shopping_list,
-            "recipe_id": str(recipe.id),
-            "servings": servings if servings else recipe.servings
-        }
+        return { "response": shopping_list, "recipe_id": str(recipe.id) }
 
     async def suggest_recipe_modifications(self, recipe: Recipe, modification_type: str) -> Dict[str, str]:
         """Suggest modifications to a recipe based on specific criteria"""
@@ -156,11 +161,7 @@ class RecipeAIService:
         4. Tips for successful modification"""
 
         modifications = await self.chat(prompt)
-        return {
-            "modifications": modifications,
-            "recipe_id": str(recipe.id),
-            "modification_type": modification_type
-        }
+        return { "response": modifications, "recipe_id": str(recipe.id) }
 
     async def generate_recipe_timeline(self, recipe: Recipe) -> Dict[str, str]:
         """Generate a detailed cooking timeline for a recipe"""
@@ -178,10 +179,7 @@ class RecipeAIService:
         5. Last-minute tasks"""
 
         timeline = await self.chat(prompt)
-        return {
-            "timeline": timeline,
-            "recipe_id": str(recipe.id)
-        }
+        return { "response": timeline, "recipe_id": str(recipe.id) }
 
     async def analyze_user_preferences(self, user: User, saved_recipes: List[Recipe]) -> Dict[str, str]:
         """Analyze a user's recipe preferences based on their saved recipes"""
@@ -197,10 +195,7 @@ class RecipeAIService:
         5. Personalized cooking tips"""
 
         analysis = await self.chat(prompt)
-        return {
-            "preference_analysis": analysis,
-            "user_id": str(user.id)
-        }
+        return { "response": analysis, "recipe_id": None }
 
     async def generate_recipe_embedding(self, recipe: Recipe) -> List[float]:
         """Generate embedding for a recipe"""

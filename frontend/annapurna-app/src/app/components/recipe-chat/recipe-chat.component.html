@@ -1,0 +1,46 @@
+<div class="page-container">
+  <div class="recipe-container">
+    <h2>{{ recipe.title }}</h2>
+    <p><strong>Description:</strong> {{ recipe.description }}</p>
+    <p><strong>Tags:</strong> {{ recipe.tags.join(', ') }}</p>
+    <p><strong>Ingredients:</strong></p>
+    <ul>
+      <li *ngFor="let ingredient of recipe.ingredients">
+        {{ ingredient.quantity }} {{ ingredient.unit }} {{ ingredient.name }}
+      </li>
+    </ul>
+    <p><strong>Instructions:</strong></p>
+    <ol>
+      <li *ngFor="let step of recipe.instructions">
+        {{ step }}
+      </li>
+    </ol>
+    <p><strong>Prep Time:</strong> {{ recipe.prep_time }} mins</p>
+    <p><strong>Cook Time:</strong> {{ recipe.cook_time }} mins</p>
+    <p><strong>Servings:</strong> {{ recipe.servings }}</p>
+  </div>
+
+  <div class="chat-container">
+    <!-- <div class="chat-header">Chat with Anu</div> -->
+
+    <div class="chat-messages">
+      <div *ngFor="let message of messages" class="message" [ngClass]="message.sender">
+        <div [innerText]="message.text"></div>
+      </div>
+    </div>
+
+    <form (submit)="sendMessage()" class="chat-input-area">
+      <input
+        [(ngModel)]="userInput"
+        name="input"
+        placeholder="Ask me anything..."
+        required
+        autocomplete="off"
+      />
+      <button type="submit" [disabled]="isChatLoading">
+        <span *ngIf="!isChatLoading">Send</span>
+        <span *ngIf="isChatLoading"><i class="fa fa-spinner fa-spin"></i></span>
+      </button>
+    </form>
+  </div>
+</div>

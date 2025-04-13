@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from dotenv import load_dotenv
 
-from routers import recipes, auth
+from routers import recipes, auth, ai_router as ai
 from database import init_db
 
 # Load environment variables
@@ -57,6 +57,7 @@ app.add_middleware(
 # Include routers
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 app.include_router(recipes.router, prefix="/api/v1", tags=["recipes"])
+app.include_router(ai.router, prefix="/api/v1/ai", tags=["ai"])
 
 @app.on_event("startup")
 async def startup_event():
