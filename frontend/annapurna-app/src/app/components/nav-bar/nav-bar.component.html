@@ -1,6 +1,14 @@
-<mat-toolbar color="primary">
+<!-- <mat-toolbar color="primary">
     <span>Annapurna</span>
     <span class="spacer"></span>
     <span>Hello, {{currUser?.full_name}}</span>
     <button mat-button (click)="processLogout()">Logout</button>
-  </mat-toolbar>
+  </mat-toolbar> -->
+  <nav class="navbar">
+    <div class="brand italiana">Annapurna</div>
+    <div class="nav-links italiana">
+      <a *ngIf="!isLoggedIn" routerLink="/login">Login</a>
+      <a *ngIf="!isLoggedIn" routerLink="/register">Sign Up</a>
+      <a *ngIf="isLoggedIn" (click)="processLogout()">logout</a>
+    </div>
+  </nav>

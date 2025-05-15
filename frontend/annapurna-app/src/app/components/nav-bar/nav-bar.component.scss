@@ -1,3 +1,36 @@
-.spacer {
-    flex: 1 1 auto;
+// .spacer {
+//     flex: 1 1 auto;
+//   }
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  // margin-bottom: 4rem;
+  padding-left: 4rem;
+  position: sticky;
+  top: 5px;
+  background-color: rgb(255, 255, 255, 0);
+
+  .brand {
+    font-size: 1.8rem;
+    color: white;
   }
+
+  .nav-links a {
+    color: white;
+    margin-left: 1.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.3s ease;
+    padding: 0.75rem 2rem;
+    border-radius: 5px;
+
+    &:hover {
+      background-color: rgb(255, 255, 255, 0.2);
+    }
+  }
+}
+.italiana {
+  font-weight: 400;
+    font-family: "Italiana", sans-serif;
+}

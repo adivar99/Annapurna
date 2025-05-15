@@ -10,6 +10,7 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 })
 export class NavBarComponent implements OnInit{
   currUser: User | undefined
+  isLoggedIn: boolean = false
 
   constructor(
     private auth: AuthService,
@@ -22,7 +23,13 @@ export class NavBarComponent implements OnInit{
         this.currUser = user
       }
     })
-    // this.auth.refreshCurrentUser()
+    this.auth.isLoggedIn.subscribe({
+      next: (data: boolean) => {
+        console.log("NavBar: Setting loggedIn = ", data)
+        this.isLoggedIn = data
+      }
+    })
+    this.isLoggedIn = this.auth.loggedIn
   }
 
   processLogout() {

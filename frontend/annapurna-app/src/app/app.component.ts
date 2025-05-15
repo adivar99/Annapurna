@@ -35,7 +35,7 @@ export class AppComponent {
     },
     error: (error) => {
       console.log(error)
-      // this.app_start()
+      this.app_start()
     }
   })
   }
