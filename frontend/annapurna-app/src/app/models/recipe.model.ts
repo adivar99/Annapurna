@@ -20,5 +20,6 @@ export interface Recipe {
     created_at: Date;
     updated_at: Date;
     author_id?: string; // ID of the user who created the recipe
+    imageUrl: string;
     isFavorite: boolean
   }

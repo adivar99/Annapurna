@@ -13,6 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -47,6 +48,7 @@ import { RecipeChatComponent } from './components/recipe-chat/recipe-chat.compon
     MatCardModule,
     MatInputModule,
     MatFormFieldModule,
+    MatProgressBarModule,
     MatProgressSpinnerModule,
     MatChipsModule,
     MatIconModule

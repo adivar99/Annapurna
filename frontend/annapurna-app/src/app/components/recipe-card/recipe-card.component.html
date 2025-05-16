@@ -1,14 +1,23 @@
 <mat-card class="recipe-card" (click)="redirectChat()">
-    <mat-card-header>
-      <mat-card-title>{{ recipe.title }}</mat-card-title>
-      <button mat-icon-button class="favorite-button" (click)="toggleFavorite(recipe)">
-        <mat-icon [color]="recipe.isFavorite ? 'warn' : ''">{{recipe.isFavorite? 'favorite':'favorite_border'}}</mat-icon>
-      </button>
-    </mat-card-header>
-    <mat-card-content>
-      <p>{{ recipe.description }}</p>
-      <mat-chip-set>
-        <mat-chip *ngFor="let tag of recipe.tags">{{ tag }}</mat-chip>
-      </mat-chip-set>
-    </mat-card-content>
-  </mat-card>
+  <div class="image-container">
+    <img mat-card-image [src]="recipe.imageUrl" alt="{{ recipe.title }}" />
+    <div class="chip-container">
+      <mat-chip *ngFor="let tag of recipe.tags">{{ tag }}</mat-chip>
+    </div>
+    <button mat-icon-button class="favorite-button" (click)="toggleFavorite(recipe); $event.stopPropagation()">
+      <mat-icon [color]="recipe.isFavorite ? 'warn' : ''">{{recipe.isFavorite? 'favorite':'favorite_border'}}</mat-icon>
+    </button>
+  </div>
+  <mat-card-content>
+    <div class="recipe-header">
+      <span class="recipe-title">{{ recipe.title }}</span>
+      <div class="recipe-details">
+        <span><mat-icon>schedule</mat-icon> {{ recipe.cook_time + recipe.prep_time }}</span>
+        <span><mat-icon>restaurant</mat-icon> {{ recipe.servings }}</span>
+        <span>Difficulty: <mat-progress-bar mode="determinate" [value]="recipe.difficulty"></mat-progress-bar></span>
+      </div>
+    </div>
+    <p class="recipe-description">{{ recipe.description }}</p>
+    <button mat-raised-button color="primary" class="view-recipe-btn" (click)="redirectChat()">View Recipe</button>
+  </mat-card-content>
+</mat-card>

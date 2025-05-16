@@ -1,45 +1,51 @@
-<div class="page-container">
-  <div class="recipe-container">
-    <h2>{{ recipe.title }}</h2>
-    <p><strong>Description:</strong> {{ recipe.description }}</p>
-    <p><strong>Tags:</strong> {{ recipe.tags.join(', ') }}</p>
-    <p><strong>Ingredients:</strong></p>
-    <ul>
-      <li *ngFor="let ingredient of recipe.ingredients">
-        {{ ingredient.quantity }} {{ ingredient.unit }} {{ ingredient.name }}
-      </li>
-    </ul>
-    <p><strong>Instructions:</strong></p>
-    <ol>
-      <li *ngFor="let step of recipe.instructions">
-        {{ step }}
-      </li>
-    </ol>
-    <p><strong>Prep Time:</strong> {{ recipe.prep_time }} mins</p>
-    <p><strong>Cook Time:</strong> {{ recipe.cook_time }} mins</p>
-    <p><strong>Servings:</strong> {{ recipe.servings }}</p>
+<button class="back-btn" (click)="goBack()">
+  <mat-icon>arrow_back</mat-icon> Back
+</button>
+<div class="chat-page-wrapper">
+  <div class="recipe-panel">
+    <div class="recipe-card">
+      <h2 class="recipe-title">{{ recipe.title }}</h2>
+      <img class="recipe-image" [src]="recipe.imageUrl" alt="{{ recipe.title }}" />
+      <div class="section-label">Ingredients</div>
+      <ul class="ingredients-list">
+        <li *ngFor="let ingredient of recipe.ingredients">
+          <mat-icon>radio_button_checked</mat-icon>
+          <span>{{ ingredient.quantity }} {{ ingredient.unit }} {{ ingredient.name }}</span>
+        </li>
+      </ul>
+      <div class="section-label">Instructions</div>
+      <ol class="instructions-list">
+        <li *ngFor="let step of recipe.instructions; let i = index">
+          <span class="step-number">{{ i + 1 }}</span>
+          <span>{{ step }}</span>
+        </li>
+      </ol>
+    </div>
   </div>
-
-  <div class="chat-container">
-    <!-- <div class="chat-header">Chat with Anu</div> -->
-
+  <div class="chat-panel">
+    <div class="chat-header">
+      <!-- <span class="logo">logo</span> -->
+      <div class="assistant-info">
+        <div class="assistant-title">Recipe Assistant</div>
+        <div class="assistant-status">Online • Responds in seconds</div>
+      </div>
+    </div>
     <div class="chat-messages">
       <div *ngFor="let message of messages" class="message" [ngClass]="message.sender">
         <div [innerText]="message.text"></div>
       </div>
     </div>
-
     <form (submit)="sendMessage()" class="chat-input-area">
       <input
         [(ngModel)]="userInput"
         name="input"
-        placeholder="Ask me anything..."
+        placeholder="Type your message here..."
         required
         autocomplete="off"
       />
       <button type="submit" [disabled]="isChatLoading">
-        <span *ngIf="!isChatLoading">Send</span>
-        <span *ngIf="isChatLoading"><i class="fa fa-spinner fa-spin"></i></span>
+        <mat-icon *ngIf="!isChatLoading">send</mat-icon>
+        <mat-icon *ngIf="isChatLoading" class="loading">autorenew</mat-icon>
       </button>
     </form>
   </div>

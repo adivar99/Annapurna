@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Recipe } from 'src/app/models/recipe.model';
 import { RecipeService } from 'src/app/services/recipe.service';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 interface Message {
   sender: 'user' | 'ai';
@@ -20,7 +21,8 @@ export class RecipeChatComponent implements OnInit {
   chatError = ""
 
   constructor(
-    private recipeService: RecipeService
+    private recipeService: RecipeService,
+    private utils: UtilitiesService,
   ) {}
 
   ngOnInit(): void {
@@ -30,7 +32,7 @@ export class RecipeChatComponent implements OnInit {
 
   startConversation() {
     this.messages.push({ sender: 'ai', text: `Let's talk about how to cook ${this.recipe.title}.` });
-    this.analyzeRecipe()
+    // this.analyzeRecipe()
   }
 
   analyzeRecipe() {
@@ -73,5 +75,9 @@ export class RecipeChatComponent implements OnInit {
     setTimeout(() => {
       this.chatError = "";
     }, 5000);
+  }
+
+  goBack() {
+    this.utils.redirect_page_to("/home")
   }
 }
