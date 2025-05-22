@@ -1,39 +1,155 @@
-.home-container {
+.home-page-wrapper {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  background-color: inherit;
+  background: #232323;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+}
 
-  .content {
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
+.header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: #181818;
+  border-bottom: 1px solid #292929;
+  gap: 2rem;
 
-    h1 {
-      margin-bottom: 2rem;
-      color: #333;
+  .logo {
+    color: #ff7e3f;
+    font-family: "Italiana", sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+
+  .search-bar {
+    flex-grow: 1;
+    max-width: 600px;
+
+    .mat-form-field-wrapper {
+        padding-bottom: 0 !important; /* Adjust spacing */
+    }
+
+    .mat-form-field-flex {
+        background-color: #2d2d2d !important;
+        border-radius: 8px 8px 0 0;
+        padding: 0.5em 0.75em 0 0.75em !important;
+    }
+
+    .mat-form-field-outline {
+        color: #ff7e3f !important; /* Orange outline color */
+    }
+
+    /* Style for focused state outline */
+    &.mat-focused .mat-form-field-outline {
+        color: #ff7e3f !important; /* Orange outline color when focused */
+    }
+
+    input {
+        color: #fff;
+    }
+
+    .mat-form-field-label {
+        color: #bbb !important;
+    }
+
+    .mat-icon {
+        color: #bbb !important;
     }
   }
 
-  .loading-container {
+  .header-icons {
     display: flex;
-    justify-content: center;
-    padding: 2rem;
+    gap: 1.5rem;
+    mat-icon {
+        font-size: 1.8rem;
+        cursor: pointer;
+        color: #bbb;
+        transition: color 0.2s;
+        &:hover {
+            color: #fff;
+        }
+    }
+  }
+}
+
+.main-content {
+  display: flex;
+  flex: 1;
+  padding: 2rem;
+  gap: 2rem;
+}
+
+.filter-panel {
+  width: 250px;
+  flex-shrink: 0;
+  background: #181818;
+  border-radius: 12px;
+  padding: 1.5rem;
+  height: fit-content;
+
+  h2 {
+    font-size: 1.5rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: #fff;
   }
 
-  .error-container {
-    text-align: center;
-    padding: 2rem;
+  .filter-section {
+    margin-bottom: 1.5rem;
 
-    p {
-      color: #f44336;
-      margin-bottom: 1rem;
+    h3 {
+      font-size: 1.1rem;
+      margin-top: 0;
+      margin-bottom: 0.8rem;
+      color: #bbb;
     }
+
+    .filter-button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      color: #fff;
+      padding: 0.7rem 1rem;
+      margin-bottom: 0.4rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+
+      &:hover {
+        background: #2d2d2d;
+      }
+
+      &.active {
+        background: #ff7e3f;
+        color: #fff;
+        font-weight: 600;
+        &:hover {
+            background: #e06a33;
+        }
+      }
+    }
+  }
+}
+
+.recipes-panel {
+  flex: 1;
+
+  h2 {
+    font-size: 1.8rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: #fff;
   }
 
   .recipes-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
-    padding: 1rem 0;
+    padding: 0;
 
     .recipe-card {
       position: relative;
@@ -67,19 +183,37 @@
       grid-column: 1 / -1;
       text-align: center;
       padding: 3rem;
+      background: #2d2d2d;
+      border-radius: 12px;
 
       mat-icon {
         font-size: 3rem;
         width: 3rem;
         height: 3rem;
         margin-bottom: 1rem;
-        color: #666;
+        color: #ff7e3f;
       }
 
       p {
-        color: #666;
+        color: #bbb;
         font-size: 1.2rem;
       }
     }
   }
+}
+
+.loading-container, .error-container {
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.error-container p {
+    color: #f44336;
+    margin-bottom: 1rem;
+}
+
+.error-container button {
+    background-color: #ff7e3f;
+    color: white;
 }

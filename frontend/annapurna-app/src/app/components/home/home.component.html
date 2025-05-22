@@ -1,31 +1,73 @@
-<div class="home-container">
+<div class="home-page-wrapper">
+  <div class="header-bar">
+    <span class="logo">Annapurna</span>
+    <mat-form-field class="search-bar" appearance="outline">
+      <mat-label>Search for recipes...</mat-label>
+      <input matInput [(ngModel)]="searchQuery" (keyup)="filterRecipes()">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+    <div class="header-icons">
+      <mat-icon>bookmark_border</mat-icon>
+      <mat-icon>person_outline</mat-icon>
+    </div>
+  </div>
 
-  <div class="content">
-    <h1>Your Recipes</h1>
+  <div class="main-content">
+    <div class="filter-panel">
+      <h2>Filters</h2>
 
-    <div *ngIf="isLoading" class="loading-container">
-      <mat-spinner></mat-spinner>
+      <div class="filter-section">
+        <h3>Categories</h3>
+        <button *ngFor="let category of categories" class="filter-button" [class.active]="selectedCategory === category" (click)="selectCategory(category)">
+          {{ category }}
+        </button>
+      </div>
+
+      <div class="filter-section">
+        <h3>Cooking Time</h3>
+        <button *ngFor="let time of cookingTimes" class="filter-button" [class.active]="selectedCookingTime === time.value" (click)="selectCookingTime(time.value)">
+          {{ time.label }}
+        </button>
+      </div>
+
+      <div class="filter-section">
+        <h3>Difficulty Level</h3>
+        <button *ngFor="let difficulty of difficultyLevels" class="filter-button" [class.active]="selectedDifficulty === difficulty" (click)="selectDifficulty(difficulty)">
+          {{ difficulty }}
+        </button>
+      </div>
+
+      <!-- Add Sort By later if needed -->
+
     </div>
 
-    <div *ngIf="error" class="error-container">
-      <p>{{ error }}</p>
-      <button mat-raised-button color="primary" (click)="loadRecipes()">Try Again</button>
-    </div>
+    <div class="recipes-panel">
+      <h2>Popular Recipes</h2>
 
-    <div *ngIf="!isLoading && !error" class="recipes-grid">
-      <app-recipe-card
-        class="recipe-card"
-        *ngFor="let recipe of recipes"
-        [recipe]="recipe"
-        (click)="redirect_recipe(recipe)"
+      <div *ngIf="isLoading" class="loading-container">
+        <mat-spinner></mat-spinner>
+      </div>
+
+      <div *ngIf="error" class="error-container">
+        <p>{{ error }}</p>
+        <button mat-raised-button color="primary" (click)="loadRecipes()">Try Again</button>
+      </div>
+
+      <div *ngIf="!isLoading && !error" class="recipes-grid">
+        <app-recipe-card
+          class="recipe-card"
+          *ngFor="let recipe of filteredRecipes"
+          [recipe]="recipe"
+          (click)="redirect_recipe(recipe)"
         ></app-recipe-card>
 
-      <mat-card *ngIf="recipes.length === 0" class="no-recipes">
-        <mat-card-content>
-          <mat-icon>restaurant</mat-icon>
-          <p>No recipes found. Start adding some!</p>
-        </mat-card-content>
-      </mat-card>
+        <mat-card *ngIf="filteredRecipes.length === 0" class="no-recipes">
+          <mat-card-content>
+            <mat-icon>restaurant</mat-icon>
+            <p>No recipes found. Adjust your filters.</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
     </div>
   </div>
 </div>

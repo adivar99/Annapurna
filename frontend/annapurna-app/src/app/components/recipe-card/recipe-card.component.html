@@ -1,20 +1,20 @@
 <mat-card class="recipe-card" (click)="redirectChat()">
-  <div class="image-container">
-    <img mat-card-image [src]="recipe.imageUrl" alt="{{ recipe.title }}" />
-    <div class="chip-container">
-      <mat-chip *ngFor="let tag of recipe.tags">{{ tag }}</mat-chip>
-    </div>
+  <div class="favorite-button-container">
     <button mat-icon-button class="favorite-button" (click)="toggleFavorite(recipe); $event.stopPropagation()">
       <mat-icon [color]="recipe.isFavorite ? 'warn' : ''">{{recipe.isFavorite? 'favorite':'favorite_border'}}</mat-icon>
     </button>
   </div>
   <mat-card-content>
+    <img mat-card-image [src]="recipe.imageUrl" alt="{{ recipe.title }}" />
+    <div class="chip-container">
+      <mat-chip *ngFor="let tag of recipe.tags">{{ tag }}</mat-chip>
+    </div>
     <div class="recipe-header">
       <span class="recipe-title">{{ recipe.title }}</span>
       <div class="recipe-details">
         <span><mat-icon>schedule</mat-icon> {{ recipe.cook_time + recipe.prep_time }}</span>
         <span><mat-icon>restaurant</mat-icon> {{ recipe.servings }}</span>
-        <span>Difficulty: <mat-progress-bar mode="determinate" [value]="recipe.difficulty"></mat-progress-bar></span>
+        <span>Difficulty: {{ recipe.difficulty.charAt(0).toUpperCase() + recipe.difficulty.slice(1) }}</span>
       </div>
     </div>
     <p class="recipe-description">{{ recipe.description }}</p>
