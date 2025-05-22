@@ -175,4 +175,9 @@ export class HomeComponent implements OnInit {
   redirect_add_recipe() {
     this.utils.redirect_page_to('/add-recipe');
   }
+
+  logout() {
+    this.authService.logout();
+    this.utils.redirect_page_to('/login');
+  }
 }

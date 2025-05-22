@@ -2,6 +2,10 @@
 
 Annapurna is a modern web application that combines AI capabilities with a user-friendly interface. The project aims to provide intelligent services through a robust backend and an intuitive frontend.
 
+![Landing Page Screenshot](docs/screenshots/landing.png)
+![Home Page Screenshot](docs/screenshots/homePage.png)
+![Recipe Chat Page Screenshot](docs/screenshots/recipeChat.png)
+
 ## Tech Stack
 
 ### Backend
@@ -52,50 +56,26 @@ Annapurna is a modern web application that combines AI capabilities with a user-
 2. Update the `.env` file with your configuration values
 
 ### Running with Docker (Recommended)
-1. Build and start the containers:
+1. Build the baseimgs:
    ```bash
-   docker-compose up --build
+   ./annapurna.sh build baseimgs
    ```
-
-### Manual Setup
-
-#### Backend
-1. Navigate to the backend directory:
+2. Build the dev images
    ```bash
-   cd backend
+   ./annapurna.sh build dev
    ```
-2. Create a virtual environment:
+3. Run the Dev images
    ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ./annapurna.sh start dev
    ```
-3. Install dependencies:
+4. Finally, when you want to bring the images down and remove any orphan containers
    ```bash
-   pip install -r requirements.txt
-   ```
-4. Start the backend server:
-   ```bash
-   uvicorn main:app --reload
-   ```
-
-#### Frontend
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend/annapurna-app
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the development server:
-   ```bash
-   ng serve
+   ./annapurna.sh stop
    ```
 
 ## Development
-- Backend API will be available at: `http://localhost:8000`
-- Frontend application will be available at: `http://localhost:4200`
-- API documentation (Swagger UI) will be available at: `http://localhost:8000/docs`
+- The application will be loaded at: `http://localhost`
+- API documentation (Swagger UI) will be available at: `http://localhost:8080/docs`
 
 ## Contributing
 Please read our contributing guidelines before submitting pull requests.
