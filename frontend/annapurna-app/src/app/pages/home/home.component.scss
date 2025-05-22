@@ -26,6 +26,7 @@
   .search-bar {
     flex-grow: 1;
     max-width: 600px;
+    border-color: #ff7e3f;
 
     .mat-form-field-wrapper {
         padding-bottom: 0 !important; /* Adjust spacing */
@@ -216,4 +217,43 @@
 .error-container button {
     background-color: #ff7e3f;
     color: white;
+}
+
+.footer-bar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 60px; /* Adjust height as needed */
+    background: #181818; /* Same as header */
+    border-top: 1px solid #292929; /* Same as header */
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    z-index: 100;
+
+    .footer-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+        color: #bbb; /* Default icon/text color */
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: #fff; /* Hover color */
+        }
+
+        &.active {
+            color: #ff7e3f; /* Active item color */
+        }
+
+        mat-icon {
+            font-size: 1.5rem; /* Adjust icon size */
+            margin-bottom: 4px;
+        }
+
+        span {
+            font-size: 0.8rem; /* Adjust text size */
+        }
+    }
 }

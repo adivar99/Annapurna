@@ -3,6 +3,7 @@ import { RecipeService } from '../../services/recipe.service';
 import { Recipe } from '../../models/recipe.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { User } from 'src/app/models/user.model';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({
   selector: 'app-home',
@@ -34,7 +35,8 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private recipeService: RecipeService
+    private recipeService: RecipeService,
+    private utils: UtilitiesService
   ) {
     if (this.authService.isLoggedIn)
     this.authService.currentUser.subscribe({
@@ -169,4 +171,8 @@ export class HomeComponent implements OnInit {
   }
 
   redirect_recipe(recipe: Recipe) {}
+
+  redirect_add_recipe() {
+    this.utils.redirect_page_to('/add-recipe');
+  }
 }

@@ -1,0 +1,19 @@
+// frontend/annapurna-app/src/styles/_variables.scss
+
+// Color Variables
+:root {
+    --color-background-dark: #232323;
+    --color-background-darker: #181818;
+    --color-primary-orange: #ff7e3f;
+    --color-primary-orange-darker: #e06a33;
+    --color-border-dark: #292929;
+    --color-text-light: #bbb;
+    --color-text-white: #fff;
+    --color-grey-medium-dark: #444;
+    --color-background-light: #f5f5f5; // Used in recipe-card
+    --color-text-dark: #333; // Used in recipe-card
+    --color-text-grey: #666; // Used in recipe-card
+    --color-error-red: #f44336;
+    --color-favorite-red: #c0392b; // Used in favorite button and recipe-card
+    --color-white: white; // Explicitly white for some elements
+  }

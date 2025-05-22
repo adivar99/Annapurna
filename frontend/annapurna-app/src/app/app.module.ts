@@ -20,10 +20,11 @@ import { AppComponent } from './app.component';
 import { LandingPageComponent } from './components/landing-page/landing-page.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
-import { HomeComponent } from './components/home/home.component';
+import { HomeComponent } from './pages/home/home.component';
 import { RecipeCardComponent } from './components/recipe-card/recipe-card.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { RecipeChatComponent } from './components/recipe-chat/recipe-chat.component';
+import { AddRecipeComponent } from './pages/add-recipe/add-recipe.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { RecipeChatComponent } from './components/recipe-chat/recipe-chat.compon
     HomeComponent,
     RecipeCardComponent,
     NavBarComponent,
-    RecipeChatComponent
+    RecipeChatComponent,
+    AddRecipeComponent
   ],
   imports: [
     BrowserModule,

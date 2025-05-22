@@ -1,0 +1,111 @@
+<div class="add-recipe-page-wrapper">
+    <div class="header-bar">
+      <span class="logo">Annapurna</span>
+      <div class="header-icons">
+        <mat-icon>bookmark_border</mat-icon>
+        <mat-icon>person_outline</mat-icon>
+      </div>
+    </div>
+  
+    <div class="page-content">
+      <button class="back-btn" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon> Back
+      </button>
+      <h2>Add New Recipe</h2>
+  
+      <form class="recipe-form" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline">
+          <mat-label>Recipe Title</mat-label>
+          <input matInput [(ngModel)]="newRecipe.title" name="title" required>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline">
+          <mat-label>Short Description</mat-label>
+          <textarea matInput [(ngModel)]="newRecipe.description" name="description" rows="3" required></textarea>
+        </mat-form-field>
+  
+        <div class="form-section">
+          <h3>Tags</h3>
+          <!-- Using a simple input for now, can be replaced with mat-chip-list -->
+          <mat-form-field appearance="outline">
+            <mat-label>Tags (comma separated)</mat-label>
+            <input matInput [(ngModel)]="tagInput" (blur)="addTag()" (keydown.enter)="$event.preventDefault(); addTag()" placeholder="e.g. Italian, Spicy">
+          </mat-form-field>
+          <mat-chip-listbox>
+            <mat-chip *ngFor="let tag of newRecipe.tags" (removed)="removeTag(tag)">
+              {{tag}}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip>
+          </mat-chip-listbox>
+        </div>
+  
+        <div class="form-section">
+          <h3>Ingredients</h3>
+          <mat-form-field appearance="outline">
+            <mat-label>Enter ingredients, one per line</mat-label>
+            <textarea matInput [(ngModel)]="ingredientsInput" name="ingredients" rows="6" required></textarea>
+          </mat-form-field>
+        </div>
+  
+        <div class="form-section">
+          <h3>Instructions</h3>
+          <mat-form-field appearance="outline">
+            <mat-label>Enter steps, one per line</mat-label>
+            <textarea matInput [(ngModel)]="instructionsInput" name="instructions" rows="8" required></textarea>
+          </mat-form-field>
+        </div>
+  
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Prep Time (mins)</mat-label>
+            <input matInput type="number" [(ngModel)]="newRecipe.prep_time" name="prep_time" required min="0">
+          </mat-form-field>
+  
+          <mat-form-field appearance="outline">
+            <mat-label>Cook Time (mins)</mat-label>
+            <input matInput type="number" [(ngModel)]="newRecipe.cook_time" name="cook_time" required min="0">
+          </mat-form-field>
+  
+          <mat-form-field appearance="outline">
+            <mat-label>Servings</mat-label>
+            <input matInput type="number" [(ngModel)]="newRecipe.servings" name="servings" required min="1">
+          </mat-form-field>
+        </div>
+  
+        <div class="form-section">
+          <h3>Difficulty</h3>
+          <div class="difficulty-buttons">
+            <button mat-stroked-button
+                    [class.active]="newRecipe.difficulty === 'easy'"
+                    (click)="selectDifficulty('easy')">
+              Easy
+            </button>
+            <button mat-stroked-button
+                    [class.active]="newRecipe.difficulty === 'medium'"
+                    (click)="selectDifficulty('medium')">
+              Medium
+            </button>
+            <button mat-stroked-button
+                    [class.active]="newRecipe.difficulty === 'hard'"
+                    (click)="selectDifficulty('hard')">
+              Hard
+            </button>
+          </div>
+        </div>
+  
+        <!-- Optional: Image Upload -->
+        <div class="form-section">
+          <h3>Recipe Image (Optional)</h3>
+          <input type="file" (change)="onFileSelected($event)">
+        </div>
+  
+  
+        <button mat-raised-button color="primary" type="submit" [disabled]="isSaving">
+          <span *ngIf="!isSaving">Save Recipe</span>
+          <span *ngIf="isSaving">Saving...</span>
+        </button>
+      </form>
+    </div>
+  </div>
