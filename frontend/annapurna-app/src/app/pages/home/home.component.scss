@@ -2,8 +2,8 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: #232323;
-  color: #fff;
+  background: var(--color-background-dark);
+  color: var(--color-text-white);
   font-family: 'Inter', sans-serif;
 }
 
@@ -12,12 +12,12 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 2rem;
-  background: #181818;
-  border-bottom: 1px solid #292929;
+  background: var(--color-background-darker);
+  border-bottom: 1px solid var(--color-border-dark);
   gap: 2rem;
 
   .logo {
-    color: #ff7e3f;
+    color: var(--color-primary-orange);
     font-family: "Italiana", sans-serif;
     font-size: 1.8rem;
     font-weight: 700;
@@ -26,37 +26,37 @@
   .search-bar {
     flex-grow: 1;
     max-width: 600px;
-    border-color: #ff7e3f;
+    border-color: var(--color-primary-orange); /* This might be redundant depending on Material's implementation */
 
     .mat-form-field-wrapper {
         padding-bottom: 0 !important; /* Adjust spacing */
     }
 
     .mat-form-field-flex {
-        background-color: #2d2d2d !important;
+        background-color: var(--color-grey-medium-dark) !important;
         border-radius: 8px 8px 0 0;
         padding: 0.5em 0.75em 0 0.75em !important;
     }
 
     .mat-form-field-outline {
-        color: #ff7e3f !important; /* Orange outline color */
+        color: var(--color-primary-orange) !important; /* Orange outline color */
     }
 
     /* Style for focused state outline */
     &.mat-focused .mat-form-field-outline {
-        color: #ff7e3f !important; /* Orange outline color when focused */
+        color: var(--color-primary-orange) !important; /* Orange outline color when focused */
     }
 
     input {
-        color: #fff;
+        color: var(--color-text-white);
     }
 
     .mat-form-field-label {
-        color: #bbb !important;
+        color: var(--color-text-light) !important;
     }
 
     .mat-icon {
-        color: #bbb !important;
+        color: var(--color-text-light) !important;
     }
   }
 
@@ -66,10 +66,10 @@
     mat-icon {
         font-size: 1.8rem;
         cursor: pointer;
-        color: #bbb;
+        color: var(--color-text-light);
         transition: color 0.2s;
         &:hover {
-            color: #fff;
+            color: var(--color-text-white);
         }
     }
   }
@@ -85,7 +85,7 @@
 .filter-panel {
   width: 250px;
   flex-shrink: 0;
-  background: #181818;
+  background: var(--color-background-darker);
   border-radius: 12px;
   padding: 1.5rem;
   height: fit-content;
@@ -94,7 +94,7 @@
     font-size: 1.5rem;
     margin-top: 0;
     margin-bottom: 1.5rem;
-    color: #fff;
+    color: var(--color-text-white);
   }
 
   .filter-section {
@@ -104,7 +104,7 @@
       font-size: 1.1rem;
       margin-top: 0;
       margin-bottom: 0.8rem;
-      color: #bbb;
+      color: var(--color-text-light);
     }
 
     .filter-button {
@@ -113,7 +113,7 @@
       text-align: left;
       background: none;
       border: none;
-      color: #fff;
+      color: var(--color-text-white);
       padding: 0.7rem 1rem;
       margin-bottom: 0.4rem;
       border-radius: 6px;
@@ -121,15 +121,15 @@
       transition: background 0.2s;
 
       &:hover {
-        background: #2d2d2d;
+        background: var(--color-grey-medium-dark);
       }
 
       &.active {
-        background: #ff7e3f;
-        color: #fff;
+        background: var(--color-primary-orange);
+        color: var(--color-text-white);
         font-weight: 600;
         &:hover {
-            background: #e06a33;
+            background: var(--color-primary-orange-darker);
         }
       }
     }
@@ -143,7 +143,7 @@
     font-size: 1.8rem;
     margin-top: 0;
     margin-bottom: 1.5rem;
-    color: #fff;
+    color: var(--color-text-white);
   }
 
   .recipes-grid {
@@ -171,7 +171,7 @@
       mat-card-content {
         p {
           margin: 1rem 0;
-          color: #666;
+          color: var(--color-text-grey);
         }
 
         mat-chip-set {
@@ -184,7 +184,7 @@
       grid-column: 1 / -1;
       text-align: center;
       padding: 3rem;
-      background: #2d2d2d;
+      background: var(--color-grey-medium-dark);
       border-radius: 12px;
 
       mat-icon {
@@ -192,11 +192,11 @@
         width: 3rem;
         height: 3rem;
         margin-bottom: 1rem;
-        color: #ff7e3f;
+        color: var(--color-primary-orange);
       }
 
       p {
-        color: #bbb;
+        color: var(--color-text-light);
         font-size: 1.2rem;
       }
     }
@@ -210,13 +210,13 @@
 }
 
 .error-container p {
-    color: #f44336;
+    color: var(--color-error-red);
     margin-bottom: 1rem;
 }
 
 .error-container button {
-    background-color: #ff7e3f;
-    color: white;
+    background-color: var(--color-primary-orange);
+    color: var(--color-white);
 }
 
 .footer-bar {
@@ -224,8 +224,8 @@
     justify-content: space-around;
     align-items: center;
     height: 60px; /* Adjust height as needed */
-    background: #181818; /* Same as header */
-    border-top: 1px solid #292929; /* Same as header */
+    background: var(--color-background-darker); /* Same as header */
+    border-top: 1px solid var(--color-border-dark); /* Same as header */
     position: sticky;
     bottom: 0;
     width: 100%;
@@ -236,15 +236,15 @@
         flex-direction: column;
         align-items: center;
         cursor: pointer;
-        color: #bbb; /* Default icon/text color */
+        color: var(--color-text-light); /* Default icon/text color */
         transition: color 0.2s ease;
 
         &:hover {
-            color: #fff; /* Hover color */
+            color: var(--color-text-white); /* Hover color */
         }
 
         &.active {
-            color: #ff7e3f; /* Active item color */
+            color: var(--color-primary-orange); /* Active item color */
         }
 
         mat-icon {

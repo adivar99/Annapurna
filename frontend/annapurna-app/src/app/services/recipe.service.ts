@@ -39,4 +39,12 @@ export class RecipeService{
   analyzeRecipe(recipe: Recipe) {
     return this.httpService.postData('/ai/analyze-recipe', recipe)
   }
+
+  createRecipe(recipe: Recipe) {
+    return this.httpService.postData('/recipes/', recipe)
+  }
+
+  parseRecipe(recipeText: string) {
+    return this.httpService.postData('/recipes/parse', { recipe_text: recipeText })
+  }
 }

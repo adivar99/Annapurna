@@ -9,7 +9,7 @@ from scipy.spatial.distance import cosine
 import chromadb
 from chromadb.config import Settings
 from chromadb.utils import embedding_functions
-
+import json
 load_dotenv()
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -331,5 +331,18 @@ class RecipeAIService:
                 recipes.append(recipe)
         
         return recipes
+    
+    async def parse_new_recipe(self, recipe_text: str) -> Dict[str, str]:
+        """Parse a recipe from text and return a structured recipe object"""
+        prompt = f"""Parse the following recipe text into a structured recipe object:
+        {recipe_text}
+        
+        Please provide the recipe model as a JSON object as the recipe model is defined as follows:
+        {Recipe.__doc__}
+        """
+    
+        response = await self.chat(prompt)
+        return json.loads(response)
+    
     
     

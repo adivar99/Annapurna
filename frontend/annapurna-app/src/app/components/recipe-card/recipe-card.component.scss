@@ -13,9 +13,9 @@
     }
 
     .favorite-button {
-        background: white;
+        background: var(--color-white);
         box-shadow: 0 2px 6px rgba(0,0,0,0.12);
-        color: #c0392b;
+        color: var(--color-favorite-red);
     }
 
     .chip-container {
@@ -25,8 +25,8 @@
         padding: 0 16px;
   
         mat-chip {
-          background: #f5f5f5;
-          color: #333;
+          background: var(--color-background-light);
+          color: var(--color-text-dark);
           font-weight: 500;
           font-size: 13px;
           padding: 0 10px;
@@ -39,7 +39,7 @@
 
       .recipe-title {
         font-size: 1.2rem;
-        color: #333;
+        color: var(--color-text-dark);
         font-weight: 600;
         display: block;
         margin-bottom: 6px;
@@ -49,7 +49,7 @@
         align-items: center;
         gap: 16px;
         font-size: 0.95rem;
-        color: #666;
+        color: var(--color-text-grey);
   
         mat-icon {
           font-size: 18px;
@@ -68,15 +68,15 @@
 
     .recipe-description {
       margin: 12px 0 18px 0;
-      color: #444;
+      color: var(--color-grey-medium-dark);
       font-size: 0.98rem;
       min-height: 40px;
     }
   
     .view-recipe-btn {
       width: 100%;
-      background: #e74c3c;
-      color: white;
+      background: var(--color-primary-orange);
+      color: var(--color-white);
       font-weight: 600;
       border-radius: 8px;
       margin-top: 8px;
@@ -84,7 +84,7 @@
       padding: 10px 0;
       transition: background 0.2s;
       &:hover {
-        background: #c0392b;
+        background: var(--color-favorite-red);
       }
     }
   }

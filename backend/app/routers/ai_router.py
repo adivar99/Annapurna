@@ -3,7 +3,9 @@ from typing import List, Dict, Optional
 
 from models.user import User
 from models.recipe import Recipe
+from schemas.recipe import RecipeResponse
 from ai_service import RecipeAIService
+from crud.recipe import create_recipe
 from core.deps import get_current_active_user
 
 router = APIRouter()
@@ -122,4 +124,13 @@ async def find_recipes_by_filters(filters: Dict, limit: int = 5):
         recipes = await ai_service.find_recipes_by_filters(filters, limit)
         return recipes
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) 
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@router.post("/parse", response_model=RecipeResponse, summary="Parse a recipe from text")
+async def parse_recipe(
+    recipe_text: str,
+    current_user: User = Depends(get_current_active_user)
+):
+    """Parse a recipe from text and return a structured recipe object."""
+    parsed_recipe = await ai_service.parse_new_recipe(recipe_text)
+    return await create_recipe(parsed_recipe, author_id=str(current_user.id))
