@@ -1,0 +1,26 @@
+<div class="footer-bar" *ngIf="isLoggedIn">
+    <div class="footer-item active" (click)="redirect_to_page('/home')" [ngClass]="{'active': currentPage === '/home'}">
+      <mat-icon>home</mat-icon>
+      <span>Home</span>
+    </div>
+    <div class="footer-item" (click)="redirect_to_page('/advanced-search')" [ngClass]="{'active': currentPage === '/advanced-search'}">
+      <mat-icon>search</mat-icon>
+      <span>Advanced Search</span>
+    </div>
+    <div class="footer-item" (click)="redirect_to_page('/add-recipe')" [ngClass]="{'active': currentPage === '/add-recipe'}">
+      <mat-icon>add_circle_outline</mat-icon>
+      <span>Add Recipe</span>
+    </div>
+    <div class="footer-item" [ngClass]="{'active': currentPage === '/saved'}">
+      <mat-icon>bookmark_border</mat-icon>
+      <span>Saved</span>
+    </div>
+    <div class="footer-item" [ngClass]="{'active': currentPage === '/shopping'}">
+      <mat-icon>shopping_basket</mat-icon>
+      <span>Shopping</span>
+    </div>
+    <!-- <div class="footer-item">
+      <mat-icon>person_outline</mat-icon>
+      <span>Profile</span>
+    </div> -->
+  </div>

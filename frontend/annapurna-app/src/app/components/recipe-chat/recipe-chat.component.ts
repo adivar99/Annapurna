@@ -2,11 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Recipe } from 'src/app/models/recipe.model';
 import { RecipeService } from 'src/app/services/recipe.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
-
-interface Message {
-  sender: 'user' | 'ai';
-  text: string;
-}
+import { ChatMessage, ChatService } from 'src/app/services/chat.service';
+import { ChatSessionDetails } from 'src/app/services/chat.service';
 
 @Component({
   selector: 'app-recipe-chat',
@@ -14,7 +11,7 @@ interface Message {
   styleUrls: ['./recipe-chat.component.scss']
 })
 export class RecipeChatComponent implements OnInit {
-  messages: Message[] = [];
+  messages: ChatMessage[] = [];
   userInput: string = '';
   recipe!: Recipe;
   isChatLoading: boolean = false;
@@ -23,23 +20,39 @@ export class RecipeChatComponent implements OnInit {
   constructor(
     private recipeService: RecipeService,
     private utils: UtilitiesService,
+    private chatService: ChatService
   ) {}
 
   ngOnInit(): void {
     this.recipe = this.recipeService.currRecipe!
-    this.startConversation();
+    this.checkSession()
   }
-
+  
   startConversation() {
-    this.messages.push({ sender: 'ai', text: `Let's talk about how to cook ${this.recipe.title}.` });
+    this.messages.push({ sender: 'ai', text: `Let's talk about how to cook ${this.recipe.title}.`, timestamp: new Date().toString() });
     // this.analyzeRecipe()
+  }
+  
+  checkSession() {
+    this.chatService.getSessionByRecipe(this.recipe.id).subscribe({
+      next: (session: ChatSessionDetails | null) => {
+        if(session != null) {
+          this.messages = session.messages;
+        } else {
+          this.startConversation();
+        }
+      },
+      error: (err: any) => {
+        this.isChatLoading = false
+      }
+    })
   }
 
   analyzeRecipe() {
     this.isChatLoading = true;
     this.recipeService.analyzeRecipe(this.recipe).subscribe({
       next: (resp: any) => {
-        this.messages.push({ sender: 'ai', text: resp.response });
+        this.messages.push({ sender: 'ai', text: resp.response, timestamp: new Date().toString() });
         this.isChatLoading = false
       },
       error: (err: any) => {
@@ -50,7 +63,7 @@ export class RecipeChatComponent implements OnInit {
 
   sendMessage() {
     if (this.userInput.trim()) {
-      this.messages.push({ sender: 'user', text: this.userInput });
+      this.messages.push({ sender: 'user', text: this.userInput, timestamp: new Date().toString() });
       this.isChatLoading = true;
       this.getAIResponse(this.userInput);
       this.userInput = '';
@@ -60,7 +73,7 @@ export class RecipeChatComponent implements OnInit {
   getAIResponse(userMessage: string) {
     this.recipeService.askQuestion(this.recipe, userMessage).subscribe({
       next: (resp: any) => {
-        this.messages.push({ sender: 'ai', text: resp.response });
+        this.messages.push({ sender: 'ai', text: resp.response, timestamp: new Date().toString() });
         this.isChatLoading = false
       },
       error: (err: any) => {
@@ -75,6 +88,28 @@ export class RecipeChatComponent implements OnInit {
     setTimeout(() => {
       this.chatError = "";
     }, 5000);
+  }
+
+  closeSession() {
+    this.chatService.getSessionByRecipe(this.recipe.id).subscribe({
+      next: (session: ChatSessionDetails | null) => {
+        if (session) {
+          this.chatService.deleteSession(session.session_id).subscribe({
+            next: () => {
+              this.utils.redirect_page_to('/home');
+            },
+            error: (err: any) => {
+              this.setChatError('Failed to close session');
+            }
+          });
+        } else {
+          this.utils.redirect_page_to('/home');
+        }
+      },
+      error: (err: any) => {
+        this.setChatError('Failed to close session');
+      }
+    });
   }
 
   goBack() {

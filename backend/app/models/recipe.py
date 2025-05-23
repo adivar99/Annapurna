@@ -2,6 +2,7 @@ from beanie import Document, Indexed
 from pydantic import Field
 from typing import List, Optional
 from datetime import datetime
+from bson import ObjectId
 
 class Ingredient(Document):
     """Ingredient model for MongoDB"""
@@ -15,6 +16,7 @@ class Ingredient(Document):
 
 class Recipe(Document):
     """Recipe model for MongoDB"""
+    id
     title: Indexed(str)
     description: Optional[str] = None
     instructions: List[str]

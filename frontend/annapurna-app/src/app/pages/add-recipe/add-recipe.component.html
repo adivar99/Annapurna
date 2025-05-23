@@ -1,16 +1,5 @@
 <div class="add-recipe-page-wrapper">
-    <div class="header-bar">
-      <span class="logo">Annapurna</span>
-      <div class="header-icons">
-        <mat-icon>bookmark_border</mat-icon>
-        <mat-icon>person_outline</mat-icon>
-      </div>
-    </div>
-  
     <div class="page-content">
-      <button class="back-btn" (click)="goBack()">
-        <mat-icon>arrow_back</mat-icon> Back
-      </button>
       <h2>{{ isParseMode ? 'Paste Recipe Text' : 'Add New Recipe' }}</h2>
   
       <button mat-stroked-button class="parse-toggle-btn" (click)="toggleParseMode()">

@@ -1,19 +1,6 @@
 <div class="home-page-wrapper">
-  <div class="header-bar">
-    <span class="logo">Annapurna</span>
-    <mat-form-field class="search-bar" appearance="outline">
-      <mat-label>Search for recipes...</mat-label>
-      <input matInput [(ngModel)]="searchQuery" (keyup)="filterRecipes()">
-      <mat-icon matSuffix>search</mat-icon>
-    </mat-form-field>
-    <div class="header-icons">
-      <mat-icon>bookmark_border</mat-icon>
-      <mat-icon matTooltip="Logout" (click)="logout()">person_outline</mat-icon>
-    </div>
-  </div>
-
   <div class="main-content">
-    <div class="filter-panel">
+    <!-- <div class="filter-panel">
       <h2>Filters</h2>
 
       <div class="filter-section">
@@ -37,9 +24,7 @@
         </button>
       </div>
 
-      <!-- Add Sort By later if needed -->
-
-    </div>
+    </div> -->
 
     <div class="recipes-panel">
       <h2>Recently Added</h2>
@@ -58,7 +43,6 @@
           class="recipe-card"
           *ngFor="let recipe of filteredRecipes"
           [recipe]="recipe"
-          (click)="redirect_recipe(recipe)"
         ></app-recipe-card>
 
         <mat-card *ngIf="filteredRecipes.length === 0" class="no-recipes">
@@ -69,27 +53,5 @@
         </mat-card>
       </div>
     </div>
-  </div>
-</div>
-<div class="footer-bar">
-  <div class="footer-item active">
-    <mat-icon>home</mat-icon>
-    <span>Home</span>
-  </div>
-  <div class="footer-item" (click)="redirect_add_recipe()">
-    <mat-icon>add_circle_outline</mat-icon>
-    <span>Add Recipe</span>
-  </div>
-  <div class="footer-item">
-    <mat-icon>bookmark_border</mat-icon>
-    <span>Saved</span>
-  </div>
-  <div class="footer-item">
-    <mat-icon>shopping_basket</mat-icon>
-    <span>Shopping</span>
-  </div>
-  <div class="footer-item">
-    <mat-icon>person_outline</mat-icon>
-    <span>Profile</span>
   </div>
 </div>

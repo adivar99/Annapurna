@@ -30,4 +30,9 @@ export class HttpService {
     request_url = this.processUrl(request_url)
     return this.http.post(request_url, body)
   }
+
+  deleteData(request_url: string) {
+    request_url = this.processUrl(request_url)
+    return this.http.delete(request_url)
+  }
 }

@@ -66,7 +66,7 @@ async def get_current_user(
             token, SECRET_KEY, algorithms=[ALGORITHM]
         )
         username: str = payload.get("sub")
-        print(f"GET CURRENT USER: payload_{username=}")
+        # print(f"GET CURRENT USER: payload_{username=}")
         if username is None:
             raise credentials_exception
         token_scopes = payload.get("scopes", [])
@@ -75,7 +75,7 @@ async def get_current_user(
         print(f"ERROR in GET CURRENT USER: {e}")
         raise credentials_exception
     user = await get_user_by_username(token_data.sub)
-    print(f"GET CURRENT USER: db {user=}")
+    # print(f"GET CURRENT USER: db {user=}")
     if user is None:
         raise credentials_exception
     # Mantis 0774845 - all other API endpoints must reject this token (token with scope)

@@ -7,6 +7,7 @@ from schemas.recipe import RecipeResponse
 from ai_service import RecipeAIService
 from crud.recipe import create_recipe
 from core.deps import get_current_active_user
+from crud import chat_sessions
 
 router = APIRouter()
 ai_service = RecipeAIService()
@@ -36,7 +37,15 @@ async def generate_recipe_suggestions(
 async def ask_recipe_question(recipe: Recipe, question: List[str],
     current_user: User = Depends(get_current_active_user)):
     try:
+        print("In ask-recipe-questions")
+        session = await chat_sessions.get_session_by_recipe(current_user, recipe.id)
+        if session is None:
+            print("Creating new session")
+            session = await chat_sessions.create_chat_session(current_user, recipe)
+            await chat_sessions.add_message(session, sender='ai', text=f"Let's talk about how to cook {recipe.title}")
         answer = await ai_service.ask_recipe_question(recipe, question)
+        await chat_sessions.add_message(session, sender='user', text=question[0])
+        await chat_sessions.add_message(session, sender='ai', text=answer['response'])
         return answer
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

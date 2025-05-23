@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv
 from models.recipe import Recipe, Ingredient
 from models.user import User
+from models.chat_session import ChatSession
 
 load_dotenv()
 
@@ -25,6 +26,7 @@ async def init_db():
         document_models=[
             Recipe,
             Ingredient,
-            User
+            User,
+            ChatSession
         ]
     ) 

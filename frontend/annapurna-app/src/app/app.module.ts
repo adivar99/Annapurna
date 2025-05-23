@@ -14,6 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -25,6 +26,9 @@ import { RecipeCardComponent } from './components/recipe-card/recipe-card.compon
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { RecipeChatComponent } from './components/recipe-chat/recipe-chat.component';
 import { AddRecipeComponent } from './pages/add-recipe/add-recipe.component';
+import { FooterComponent } from './components/footer/footer.component';
+import { AdvancedSearchComponent } from './pages/advanced-search/advanced-search.component';
+import { ChatSessionsComponent } from './components/chat-sessions/chat-sessions.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +40,10 @@ import { AddRecipeComponent } from './pages/add-recipe/add-recipe.component';
     RecipeCardComponent,
     NavBarComponent,
     RecipeChatComponent,
-    AddRecipeComponent
+    AddRecipeComponent,
+    FooterComponent,
+    AdvancedSearchComponent,
+    ChatSessionsComponent
   ],
   imports: [
     BrowserModule,
@@ -53,7 +60,8 @@ import { AddRecipeComponent } from './pages/add-recipe/add-recipe.component';
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatChipsModule,
-    MatIconModule
+    MatIconModule,
+    MatTooltipModule
   ],
   providers: [],
   bootstrap: [AppComponent]

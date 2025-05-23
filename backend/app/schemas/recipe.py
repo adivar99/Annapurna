@@ -41,12 +41,13 @@ class RecipeUpdate(BaseModel):
 
 class RecipeResponse(RecipeBase):
     """Schema for recipe response"""
-    # id: str
+    id: str = Field(..., description="The document ID of the recipe")
     created_at: datetime
     updated_at: datetime
 
     class Config:
         from_attributes = True
+        # populate_by_name = True
 
 class RecipeSearch(BaseModel):
     """Schema for recipe search parameters"""

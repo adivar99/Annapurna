@@ -1,6 +1,3 @@
-<button class="back-btn" (click)="goBack()">
-  <mat-icon>arrow_back</mat-icon> Back
-</button>
 <div class="chat-page-wrapper">
   <div class="recipe-panel">
     <div class="recipe-card">
@@ -29,6 +26,9 @@
         <div class="assistant-title">Recipe Assistant</div>
         <div class="assistant-status">Online • Responds in seconds</div>
       </div>
+      <button class="close-session-btn" (click)="closeSession()" matTooltip="Close session">
+        <mat-icon>close</mat-icon>
+      </button>
     </div>
     <div class="chat-messages">
       <div *ngFor="let message of messages" class="message" [ngClass]="message.sender">

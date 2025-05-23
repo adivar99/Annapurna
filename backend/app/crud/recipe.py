@@ -1,8 +1,9 @@
 from typing import List, Optional, Dict, Any
 from models.recipe import Recipe, Ingredient
-from schemas.recipe import RecipeCreate, RecipeUpdate, RecipeSearch
+from schemas.recipe import RecipeCreate, RecipeUpdate, RecipeSearch, RecipeResponse
 from datetime import datetime
 from ai_service import RecipeAIService
+from utils import convert_recipe_to_response
 
 ai_service = RecipeAIService()
 
@@ -37,7 +38,8 @@ async def get_recipes(
     if search_params:
         if search_params.query:
             # Use semantic search for better results
-            return await ai_service.find_recipes_by_semantic_search(search_params.query, limit=limit)
+            return [convert_recipe_to_response(recipe) for recipe in await ai_service.find_recipes_by_semantic_search(search_params.query, limit=limit)]
+        
         if search_params.cuisine:
             query["cuisine"] = search_params.cuisine
         if search_params.difficulty:
@@ -55,7 +57,8 @@ async def get_recipes(
         if search_params.servings is not None:
             query["servings"] = search_params.servings
     
-    return await Recipe.find(query).skip(skip).limit(limit).to_list()
+    resp = await Recipe.find(query, fetch_links=True).skip(skip).limit(limit).to_list()
+    return [convert_recipe_to_response(recipe) for recipe in resp]
 
 async def update_recipe(recipe_id: str, recipe_update: RecipeUpdate) -> Optional[Recipe]:
     """Update a recipe"""
