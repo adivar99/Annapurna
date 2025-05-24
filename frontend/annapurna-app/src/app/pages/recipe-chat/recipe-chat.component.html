@@ -43,22 +43,22 @@
     </div>
     <div class="chat-input">
       <form (ngSubmit)="sendMessage()">
-        <mat-form-field appearance="outline" class="input-field">
-          <input matInput
-                 [(ngModel)]="userInput"
-                 name="message"
-                 placeholder="Ask about the recipe..."
-                 [disabled]="isChatLoading">
-        </mat-form-field>
         <button mat-icon-button
-                type="button"
-                color="primary"
-                (click)="toggleSpeechRecognition()"
-                [disabled]="!isSpeechSupported || isChatLoading"
-                [class.active]="isListening"
-                matTooltip="{{isListening ? 'Stop listening' : 'Start voice input'}}">
-          <mat-icon>{{isListening ? 'mic_off' : 'mic'}}</mat-icon>
-        </button>
+        type="button"
+        color="primary"
+        (click)="toggleSpeechRecognition()"
+        [disabled]="!isSpeechSupported || isChatLoading"
+        [class.active]="isListening"
+        matTooltip="{{isListening ? 'Stop listening' : 'Start voice input'}}">
+        <mat-icon>{{isListening ? 'mic_off' : 'mic'}}</mat-icon>
+      </button>
+      <mat-form-field appearance="outline" class="input-field">
+        <input matInput
+               [(ngModel)]="userInput"
+               name="message"
+               placeholder="Ask about the recipe..."
+               [disabled]="isChatLoading">
+      </mat-form-field>
         <button mat-raised-button
                 color="primary"
                 type="submit"

@@ -25,23 +25,24 @@ export class HomeComponent implements OnInit {
     if (this.authService.isLoggedIn)
     this.authService.currentUser.subscribe({
       next: (user: User) => {
-        // this.loadRecipes()
       }
     })
   }
-
+  
   ngOnInit() {
     this.loadRecipes();
   }
-
+  
   loadRecipes() {
     this.isLoading = true;
     this.error = null;
-    this.recipeService.getAllRecipes().subscribe({
+    this.recipeService.getLatestRecipes().subscribe({
       next: (recipes: Recipe[]) => {
         this.recipes = recipes;
         this.filteredRecipes = recipes;
+        this.checkFavorites()
         this.isLoading = false;
+        console.log("recipes loaded")
       },
       error: (err: any) => {
         this.error = 'Failed to load recipes. Please try again.';
@@ -51,15 +52,23 @@ export class HomeComponent implements OnInit {
   }
 
   checkFavorites() {
-    let favouriteRecipeIds: string[] = []
+    // let favouriteRecipeIds: string[] = []
     if (this.authService.user) {
-      favouriteRecipeIds = this.authService.user.saved_recipes
+      this.recipeService.getFavourites().subscribe({
+        next: (favourites: any) => {
+          console.log("marking favourites: ", favourites)
+          this.recipes.forEach((recipe) => {
+            console.log(`is ${recipe.id} in ${favourites}`)
+            if (favourites.includes(recipe.id)) {
+              recipe.isFavorite = true;
+            }
+          });
+        },
+        error: (err) => {
+          console.log("Error fetching user's favourite recipes")
+        }
+      })
     }
     
-    this.recipes.forEach((recipe) => {
-      if (favouriteRecipeIds.includes(recipe.id)) {
-        recipe.isFavorite = true;
-      }
-    });
   }
 }

@@ -158,11 +158,11 @@ async def unsave_recipe(
         raise HTTPException(status_code=404, detail="User not found")
     return {"message": "Recipe unsaved successfully"}
 
-@router.get("/me/saved-recipes", response_model=List[Recipe])
+@router.get("/me/save-recipe", response_model=List)
 async def get_saved_recipes(current_user: User = Depends(get_current_active_user)):
     """
     Get all saved recipes for the current user.
     """
     saved_recipe_ids = await get_user_saved_recipes(str(current_user.id))
-    recipes = await Recipe.find({"_id": {"$in": saved_recipe_ids}}).to_list()
-    return recipes 
+    # recipes = await Recipe.find({"_id": {"$in": saved_recipe_ids}}).to_list()
+    return saved_recipe_ids

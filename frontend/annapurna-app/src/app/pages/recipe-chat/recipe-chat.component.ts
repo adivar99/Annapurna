@@ -71,7 +71,8 @@ export class RecipeChatComponent implements OnInit, OnDestroy {
     if (this.isSpeechSupported) {
       this.speechSubscription = this.speechService.getRecognitionObservable().subscribe(
         (transcript: string) => {
-          this.userInput = transcript;
+          console.log("Transcript of Speech2Text: ", transcript)
+          this.userInput = transcript.substring(transcript.indexOf("Hey Anu") + 7);
           this.sendMessage();
         }
       );
@@ -109,6 +110,7 @@ export class RecipeChatComponent implements OnInit, OnDestroy {
         if (this.speechService.isSpeechSynthesisSupported()) {
           this.speechService.speak(resp.response);
         }
+        this.speechService.startListening()
       },
       error: (err: any) => {
         this.isChatLoading = false;

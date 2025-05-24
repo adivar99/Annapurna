@@ -20,11 +20,11 @@ export class RecipeService{
     private utils: UtilitiesService
   ) { }
 
-  getAllRecipes(): Observable<any> {
-    const cachedData = this.getCachedRecipes();
-    if (cachedData) {
-      return of(cachedData);
-    }
+  getAllRecipes(noCache: boolean = false): Observable<any> {
+    // const cachedData = this.getCachedRecipes();
+    // if (cachedData && !noCache) {
+    //   return of(cachedData);
+    // }
 
     return new Observable(observer => {
       this.httpService.getData('/recipes/').subscribe({
@@ -38,6 +38,10 @@ export class RecipeService{
         }
       });
     });
+  }
+
+  getLatestRecipes(): Observable<Recipe[]> {
+    return this.httpService.getData("/recipes/latest", {}) as Observable<Recipe[]>;
   }
 
   private getCachedRecipes(): any | null {
@@ -91,4 +95,18 @@ export class RecipeService{
   parseRecipe(recipeText: string) {
     return this.httpService.postData('/recipes/parse', { recipe_text: recipeText })
   }
+
+  // New methods for managing favorites
+  addFavorite(recipeId: string): Observable<any> {
+    return this.httpService.postData(`/auth/me/save-recipe/${recipeId}`, {});
+  }
+
+  removeFavorite(recipeId: string): Observable<any> {
+    return this.httpService.deleteData(`/auth/me/save-recipe/${recipeId}`);
+  }
+
+  getFavourites() {
+    return this.httpService.getData("/auth/me/save-recipe");
+  }
+
 }

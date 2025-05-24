@@ -18,13 +18,35 @@ export class RecipeCardComponent implements OnInit{
   ngOnInit(): void { }
 
   toggleFavorite(recipe: Recipe) {
-    recipe.isFavorite = !recipe.isFavorite;
+    if (!recipe.id) {
+      console.error('Cannot favorite recipe without an ID.');
+      return;
+    }
+
     if (recipe.isFavorite) {
-      // TODO: Implement API call to save recipe to favorites
-      console.log(`Recipe ${recipe.id} added to favorites`);
+      // Currently favorited, so remove it
+      this.recipeService.removeFavorite(recipe.id).subscribe({
+        next: () => {
+          recipe.isFavorite = false;
+          console.log(`Recipe ${recipe.title} removed from favorites`);
+        },
+        error: (err) => {
+          console.error(`Failed to remove recipe ${recipe.title} from favorites:`, err);
+          // Optionally show an error message to the user
+        }
+      });
     } else {
-      // TODO: Implement API call to remove recipe from favorites
-      console.log(`Recipe ${recipe.id} removed from favorites`);
+      // Not favorited, so add it
+      this.recipeService.addFavorite(recipe.id).subscribe({
+        next: () => {
+          recipe.isFavorite = true;
+          console.log(`Recipe ${recipe.title} added to favorites`);
+        },
+        error: (err) => {
+          console.error(`Failed to add recipe ${recipe.title} to favorites:`, err);
+          // Optionally show an error message to the user
+        }
+      });
     }
   }
 

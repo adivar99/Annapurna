@@ -10,7 +10,8 @@ from crud.recipe import (
     get_recipes_by_author,
     search_recipes_by_ingredients,
     get_popular_recipes,
-    get_similar_recipes
+    get_similar_recipes,
+    get_latest_recipes
 )
 from core.deps import get_current_user, get_current_active_user
 from models.user import User
@@ -30,6 +31,11 @@ async def create_new_recipe(
     """Create a new recipe. Requires authentication."""
     db_recipe = await create_recipe(recipe, author_id=str(current_user.id))
     return convert_recipe_to_response(db_recipe)
+
+@router.get("/latest", response_model=List[RecipeResponse], summary="Get the latest recipes")
+async def read_latest_recipes(limit: int = Query(6, description="Number of latest recipes to return")):
+    """Get the most recently created recipes, sorted by creation date."""
+    return await get_latest_recipes(limit=limit)
 
 @router.get("/{recipe_id}", response_model=RecipeResponse, summary="Get a recipe by ID")
 async def read_recipe(recipe_id: str):
@@ -176,4 +182,5 @@ async def read_similar_recipes(
     if tags:
         filters["tags"] = {"$in": tags}
     
-    return await get_similar_recipes(recipe_id, limit=limit, filters=filters) 
+    return await get_similar_recipes(recipe_id, limit=limit, filters=filters)
+

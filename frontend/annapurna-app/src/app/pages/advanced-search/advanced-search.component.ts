@@ -83,10 +83,10 @@ export class AdvancedSearchComponent implements OnInit {
     });
   }
 
-  loadRecipes() {
+  loadRecipes(noCache: boolean = false) {
     this.isLoading = true;
     this.error = null;
-    this.recipeService.getAllRecipes().subscribe({
+    this.recipeService.getAllRecipes(noCache).subscribe({
       next: (recipes: Recipe[]) => {
         this.recipes = recipes;
         this.filteredRecipes = recipes;
@@ -228,6 +228,7 @@ export class AdvancedSearchComponent implements OnInit {
   selectSuggestion(suggestion: AutocompleteSuggestion) {
     this.isLoading = true;
     this.error = null;
+    this.autocompleteSuggestions = [];
     
     // Get recipe details from Spoonacular
     this.spoonacularService.getRecipeInfo(suggestion.id.toString()).subscribe({
@@ -260,8 +261,7 @@ export class AdvancedSearchComponent implements OnInit {
         this.recipeService.createRecipe(recipe).subscribe({
           next: (savedRecipe: any) => {
             this.searchQuery = savedRecipe.title;
-            this.autocompleteSuggestions = [];
-            this.loadRecipes(); // Reload recipes to show the new one
+            this.loadRecipes(true); // Reload recipes to show the new one
             this.isLoading = false;
           },
           error: (err) => {

@@ -109,4 +109,9 @@ async def get_similar_recipes(recipe_id: str, limit: int = 5) -> List[Recipe]:
 
 async def get_popular_recipes(limit: int = 10) -> List[Recipe]:
     """Get most popular recipes (can be extended with view count or rating)"""
-    return await Recipe.find().sort([("created_at", -1)]).limit(limit).to_list() 
+    return await Recipe.find().sort([("created_at", -1)]).limit(limit).to_list()
+
+async def get_latest_recipes(limit: int = 6) -> List[RecipeResponse]:
+    """Get the most recently created recipes"""
+    recipes = await Recipe.find().sort("-created_at").limit(limit).to_list()
+    return [convert_recipe_to_response(recipe) for recipe in recipes] 
