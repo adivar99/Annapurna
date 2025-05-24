@@ -27,7 +27,10 @@ from crud.user import (
     unsave_recipe_for_user,
     get_user_saved_recipes
 )
+from crud import recipe as crud_recipe
 from models.recipe import Recipe
+from schemas.recipe import RecipeResponse
+from utils import convert_recipe_to_response
 
 router = APIRouter()
 
@@ -161,8 +164,17 @@ async def unsave_recipe(
 @router.get("/me/save-recipe", response_model=List)
 async def get_saved_recipes(current_user: User = Depends(get_current_active_user)):
     """
+    Get all saved recipe ids for the current user.
+    """
+    saved_recipe_ids = await get_user_saved_recipes(str(current_user.id))
+    return saved_recipe_ids
+
+@router.get("/me/saved-recipes", response_model=List[RecipeResponse])
+async def get_saved_recipes(current_user: User = Depends(get_current_active_user)):
+    """
     Get all saved recipes for the current user.
     """
     saved_recipe_ids = await get_user_saved_recipes(str(current_user.id))
-    # recipes = await Recipe.find({"_id": {"$in": saved_recipe_ids}}).to_list()
-    return saved_recipe_ids
+    print(f"{saved_recipe_ids=}")
+    recipes = await crud_recipe.get_recipes_by_ids(saved_recipe_ids)
+    return [convert_recipe_to_response(rec) for rec in recipes]

@@ -4,7 +4,7 @@ from schemas.recipe import RecipeCreate, RecipeUpdate, RecipeSearch, RecipeRespo
 from datetime import datetime
 from ai_service import RecipeAIService
 from utils import convert_recipe_to_response
-from pprint import pprint
+from bson import ObjectId
 
 ai_service = RecipeAIService()
 
@@ -28,6 +28,15 @@ async def create_recipe(recipe: RecipeCreate, author_id: Optional[str] = None) -
 async def get_recipe(recipe_id: str) -> Optional[Recipe]:
     """Get a recipe by ID"""
     return await Recipe.get(recipe_id)
+
+async def get_recipes_by_ids(recipe_ids: List[str]) -> List[Recipe]:
+    """Get recipes by their IDs"""
+    if not recipe_ids:
+        return []
+    recipe_object_ids = [ObjectId(rId) for rId in recipe_ids]
+    return await Recipe.find(
+        {"_id": {"$in": recipe_object_ids}}
+    ).to_list()
 
 async def get_recipes(
     skip: int = 0,
@@ -114,4 +123,4 @@ async def get_popular_recipes(limit: int = 10) -> List[Recipe]:
 async def get_latest_recipes(limit: int = 6) -> List[RecipeResponse]:
     """Get the most recently created recipes"""
     recipes = await Recipe.find().sort("-created_at").limit(limit).to_list()
-    return [convert_recipe_to_response(recipe) for recipe in recipes] 
+    return [convert_recipe_to_response(recipe) for recipe in recipes]

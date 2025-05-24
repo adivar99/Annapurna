@@ -105,8 +105,12 @@ export class RecipeService{
     return this.httpService.deleteData(`/auth/me/save-recipe/${recipeId}`);
   }
 
-  getFavourites() {
+  getFavouriteIds() {
     return this.httpService.getData("/auth/me/save-recipe");
+  }
+
+  getFavourites() {
+    return this.httpService.getData("/auth/me/saved-recipes") as Observable<Recipe[]>;
   }
 
 }

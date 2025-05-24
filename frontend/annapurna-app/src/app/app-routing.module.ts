@@ -8,6 +8,7 @@ import { RecipeChatComponent } from './pages/recipe-chat/recipe-chat.component';
 import { AddRecipeComponent } from './pages/add-recipe/add-recipe.component';
 import { AdvancedSearchComponent } from './pages/advanced-search/advanced-search.component';
 import { ChatSessionsComponent } from './components/chat-sessions/chat-sessions.component';
+import { SavedComponent } from './pages/saved/saved.component';
 
 const routes: Routes = [
   { path: '', component: LandingPageComponent },
@@ -16,6 +17,7 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'chat', component: RecipeChatComponent },
   { path: 'add-recipe', component: AddRecipeComponent },
+  { path: 'saved', component: SavedComponent },
   { path: 'advanced-search', component: AdvancedSearchComponent },
   { path: 'chat-sessions', component: ChatSessionsComponent },
   { path: '**', redirectTo: '' }

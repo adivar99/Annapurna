@@ -54,7 +54,7 @@ export class HomeComponent implements OnInit {
   checkFavorites() {
     // let favouriteRecipeIds: string[] = []
     if (this.authService.user) {
-      this.recipeService.getFavourites().subscribe({
+      this.recipeService.getFavouriteIds().subscribe({
         next: (favourites: any) => {
           console.log("marking favourites: ", favourites)
           this.recipes.forEach((recipe) => {

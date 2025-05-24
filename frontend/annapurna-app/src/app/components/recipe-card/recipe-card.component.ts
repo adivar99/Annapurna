@@ -18,6 +18,7 @@ export class RecipeCardComponent implements OnInit{
   ngOnInit(): void { }
 
   toggleFavorite(recipe: Recipe) {
+    console.log("Favouriting", recipe)
     if (!recipe.id) {
       console.error('Cannot favorite recipe without an ID.');
       return;

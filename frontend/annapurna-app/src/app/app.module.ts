@@ -29,6 +29,7 @@ import { AddRecipeComponent } from './pages/add-recipe/add-recipe.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { AdvancedSearchComponent } from './pages/advanced-search/advanced-search.component';
 import { ChatSessionsComponent } from './components/chat-sessions/chat-sessions.component';
+import { SavedComponent } from './pages/saved/saved.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { ChatSessionsComponent } from './components/chat-sessions/chat-sessions.
     AddRecipeComponent,
     FooterComponent,
     AdvancedSearchComponent,
-    ChatSessionsComponent
+    ChatSessionsComponent,
+    SavedComponent
   ],
   imports: [
     BrowserModule,

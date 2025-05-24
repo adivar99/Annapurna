@@ -73,6 +73,7 @@ export class RecipeChatComponent implements OnInit, OnDestroy {
         (transcript: string) => {
           console.log("Transcript of Speech2Text: ", transcript)
           this.userInput = transcript.substring(transcript.indexOf("Hey Anu") + 7);
+          this.toggleSpeechRecognition()
           this.sendMessage();
         }
       );
@@ -107,10 +108,12 @@ export class RecipeChatComponent implements OnInit, OnDestroy {
         this.isChatLoading = false;
         
         // Speak the AI response
-        if (this.speechService.isSpeechSynthesisSupported()) {
+
+        if (this.speechService.isSpeechSynthesisSupported() && this.isListening) {
           this.speechService.speak(resp.response);
+          this.toggleSpeechRecognition()
         }
-        this.speechService.startListening()
+        // this.speechService.startListening()
       },
       error: (err: any) => {
         this.isChatLoading = false;

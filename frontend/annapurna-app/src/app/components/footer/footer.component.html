@@ -11,7 +11,7 @@
       <mat-icon>add_circle_outline</mat-icon>
       <span>Add Recipe</span>
     </div>
-    <div class="footer-item" [ngClass]="{'active': currentPage === '/saved'}">
+    <div class="footer-item" (click)="redirect_to_page('/saved')" [ngClass]="{'active': currentPage === '/saved'}">
       <mat-icon>bookmark_border</mat-icon>
       <span>Saved</span>
     </div>
