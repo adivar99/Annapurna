@@ -5,7 +5,7 @@
     </button>
   </div>
   <mat-card-content>
-    <!-- <img mat-card-image [src]="recipe.imageUrl" alt="{{ recipe.title }}" /> -->
+    <img mat-card-image [src]="recipe.imageUrl" alt="{{ recipe.title }}" />
     <div class="chip-container">
       <mat-chip *ngFor="let tag of recipe.tags">{{ tag }}</mat-chip>
     </div>
@@ -17,7 +17,7 @@
         <span>Difficulty: {{ recipe.difficulty.charAt(0).toUpperCase() + recipe.difficulty.slice(1) }}</span>
       </div>
     </div>
-    <p class="recipe-description">{{ recipe.description }}</p>
+    <p class="recipe-description" [innerHTML]="recipe.description"></p>
     <button mat-raised-button color="primary" class="view-recipe-btn" (click)="redirectChat()">View Recipe</button>
   </mat-card-content>
 </mat-card>

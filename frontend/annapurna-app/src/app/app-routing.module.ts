@@ -4,7 +4,7 @@ import { LandingPageComponent } from './pages/landing-page/landing-page.componen
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { HomeComponent } from './pages/home/home.component';
-import { RecipeChatComponent } from './components/recipe-chat/recipe-chat.component';
+import { RecipeChatComponent } from './pages/recipe-chat/recipe-chat.component';
 import { AddRecipeComponent } from './pages/add-recipe/add-recipe.component';
 import { AdvancedSearchComponent } from './pages/advanced-search/advanced-search.component';
 import { ChatSessionsComponent } from './components/chat-sessions/chat-sessions.component';

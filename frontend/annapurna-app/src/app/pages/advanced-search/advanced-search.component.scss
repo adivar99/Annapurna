@@ -15,6 +15,13 @@
   background: var(--color-background-darker);
   border-bottom: 1px solid var(--color-border-dark);
   gap: 2rem;
+  position: relative;
+
+  .search-container {
+    flex-grow: 1;
+    max-width: 600px;
+    position: relative;
+  }
 
   .logo {
     color: var(--color-primary-orange);
@@ -24,39 +31,73 @@
   }
 
   .search-bar {
-    flex-grow: 1;
-    max-width: 600px;
-    border-color: var(--color-primary-orange); /* This might be redundant depending on Material's implementation */
+    width: 100%;
+    border-color: var(--color-primary-orange);
 
     .mat-form-field-wrapper {
-        padding-bottom: 0 !important; /* Adjust spacing */
+      padding-bottom: 0 !important;
     }
 
     .mat-form-field-flex {
-        background-color: var(--color-grey-medium-dark) !important;
-        border-radius: 8px 8px 0 0;
-        padding: 0.5em 0.75em 0 0.75em !important;
+      background-color: var(--color-grey-medium-dark) !important;
+      border-radius: 8px 8px 0 0;
+      padding: 0.5em 0.75em 0 0.75em !important;
     }
 
     .mat-form-field-outline {
-        color: var(--color-primary-orange) !important; /* Orange outline color */
+      color: var(--color-primary-orange) !important;
     }
 
-    /* Style for focused state outline */
     &.mat-focused .mat-form-field-outline {
-        color: var(--color-primary-orange) !important; /* Orange outline color when focused */
+      color: var(--color-primary-orange) !important;
     }
 
     input {
-        color: var(--color-text-white);
+      color: var(--color-text-white);
     }
 
     .mat-form-field-label {
-        color: var(--color-text-light) !important;
+      color: var(--color-text-light) !important;
     }
 
     .mat-icon {
-        color: var(--color-text-light) !important;
+      color: var(--color-text-light) !important;
+    }
+  }
+
+  .autocomplete-suggestions {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--color-background-darker);
+    border: 1px solid var(--color-border-dark);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+
+    .suggestion-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      color: var(--color-text-white);
+
+      &:hover {
+        background: var(--color-grey-medium-dark);
+      }
+
+      mat-icon {
+        margin-right: 12px;
+        color: var(--color-primary-orange);
+      }
+
+      span {
+        color: var(--color-text-white);
+      }
     }
   }
 
@@ -64,13 +105,13 @@
     display: flex;
     gap: 1.5rem;
     mat-icon {
-        font-size: 1.8rem;
-        cursor: pointer;
-        color: var(--color-text-light);
-        transition: color 0.2s;
-        &:hover {
-            color: var(--color-text-white);
-        }
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--color-text-light);
+      transition: color 0.2s;
+      &:hover {
+        color: var(--color-text-white);
+      }
     }
   }
 }

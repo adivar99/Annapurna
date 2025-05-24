@@ -25,7 +25,7 @@ export class HomeComponent implements OnInit {
     if (this.authService.isLoggedIn)
     this.authService.currentUser.subscribe({
       next: (user: User) => {
-        this.loadRecipes()
+        // this.loadRecipes()
       }
     })
   }

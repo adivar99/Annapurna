@@ -1,11 +1,19 @@
 <div class="home-page-wrapper">
   <div class="header-bar">
     <span class="logo">Annapurna</span>
-    <mat-form-field class="search-bar" appearance="outline">
-      <mat-label>Search for recipes...</mat-label>
-      <input matInput [(ngModel)]="searchQuery" (keyup)="filterRecipes()">
-      <mat-icon matSuffix>search</mat-icon>
-    </mat-form-field>
+    <div class="search-container">
+      <mat-form-field class="search-bar" appearance="outline">
+        <mat-label>Search for recipes...</mat-label>
+        <input matInput [(ngModel)]="searchQuery" (keyup)="onSearchInput($event)">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      <div class="autocomplete-suggestions" *ngIf="autocompleteSuggestions.length > 0">
+        <div class="suggestion-item" *ngFor="let suggestion of autocompleteSuggestions" (click)="selectSuggestion(suggestion)">
+          <mat-icon>restaurant</mat-icon>
+          <span>{{ suggestion.title }}</span>
+        </div>
+      </div>
+    </div>
     <div class="header-icons">
       <mat-icon>bookmark_border</mat-icon>
       <mat-icon matTooltip="Logout" (click)="logout()">person_outline</mat-icon>

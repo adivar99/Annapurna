@@ -15,6 +15,7 @@ class RecipeBase(BaseModel):
     description: Optional[str] = None
     instructions: List[str]
     ingredients: List[IngredientBase]
+    imageUrl: Optional[str]
     prep_time: int = Field(..., description="Preparation time in minutes")
     cook_time: int = Field(..., description="Cooking time in minutes")
     servings: int

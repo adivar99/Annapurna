@@ -24,7 +24,7 @@ import { RegisterComponent } from './components/register/register.component';
 import { HomeComponent } from './pages/home/home.component';
 import { RecipeCardComponent } from './components/recipe-card/recipe-card.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
-import { RecipeChatComponent } from './components/recipe-chat/recipe-chat.component';
+import { RecipeChatComponent } from './pages/recipe-chat/recipe-chat.component';
 import { AddRecipeComponent } from './pages/add-recipe/add-recipe.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { AdvancedSearchComponent } from './pages/advanced-search/advanced-search.component';

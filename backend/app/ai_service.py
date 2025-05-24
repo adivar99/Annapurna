@@ -213,7 +213,8 @@ class RecipeAIService:
             model="text-embedding-3-small",
             input=recipe_text
         )
-        
+        print(f"Response of create embedding for {recipe.title}:")
+        print(response)
         return response.data[0].embedding
 
     async def update_recipe_embedding(self, recipe: Recipe) -> Recipe:
@@ -236,13 +237,15 @@ class RecipeAIService:
             "tags": ', '.join(recipe.tags)
         }
         
-        self.recipe_collection.upsert(
-            ids=[str(recipe.id)],
-            embeddings=[embedding],
-            metadatas=[metadata],
-            documents=[recipe.description or ""]
-        )
-        
+        try:
+            self.recipe_collection.upsert(
+                ids=[str(recipe.id)],
+                embeddings=[embedding],
+                metadatas=[metadata],
+                documents=[recipe.description or ""]
+            )
+        except Exception as e:
+            print(f"Could not create Recipe embeddings for {recipe.title}")
         return recipe
 
     async def find_similar_recipes(self, recipe: Recipe, limit: int = 5, filters: Optional[Dict] = None) -> List[Recipe]:

@@ -7,6 +7,7 @@ def convert_recipe_to_response(recipe: Recipe):
                 title=recipe.title,
                 description=recipe.description,
                 instructions=recipe.instructions,
+                imageUrl=recipe.imageUrl,
                 ingredients=recipe.ingredients,
                 prep_time=recipe.prep_time,
                 cook_time=recipe.cook_time,

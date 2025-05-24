@@ -4,6 +4,7 @@ from schemas.recipe import RecipeCreate, RecipeUpdate, RecipeSearch, RecipeRespo
 from datetime import datetime
 from ai_service import RecipeAIService
 from utils import convert_recipe_to_response
+from pprint import pprint
 
 ai_service = RecipeAIService()
 
@@ -16,7 +17,9 @@ async def create_recipe(recipe: RecipeCreate, author_id: Optional[str] = None) -
         updated_at=datetime.utcnow()
     )
     await db_recipe.insert()
-    
+    print(f"Creating recipe: {recipe.title}")
+    # pprint(db_recipe)
+    # We are not using embeddings at the moment because it's breaking things
     # Generate and store embedding
     await ai_service.update_recipe_embedding(db_recipe)
     
@@ -74,7 +77,8 @@ async def update_recipe(recipe_id: str, recipe_update: RecipeUpdate) -> Optional
     
     await db_recipe.save()
     
-    # Update embedding if significant changes were made
+    # We are not using embeddings at the moment because it's breaking things
+    # TODO: Update embedding if significant changes were made
     if any(field in update_data for field in ["title", "description", "instructions", "ingredients", "cuisine", "tags"]):
         await ai_service.update_recipe_embedding(db_recipe)
     

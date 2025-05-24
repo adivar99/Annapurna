@@ -20,6 +20,7 @@ class Recipe(Document):
     title: Indexed(str)
     description: Optional[str] = None
     instructions: List[str]
+    imageUrl: Optional[str]
     ingredients: List[Ingredient]
     prep_time: int  # in minutes
     cook_time: int  # in minutes

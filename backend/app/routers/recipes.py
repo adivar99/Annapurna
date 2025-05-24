@@ -14,6 +14,7 @@ from crud.recipe import (
 )
 from core.deps import get_current_user, get_current_active_user
 from models.user import User
+from utils import convert_recipe_to_response
 
 router = APIRouter(
     prefix="/recipes",
@@ -27,7 +28,8 @@ async def create_new_recipe(
     current_user: User = Depends(get_current_user)
 ):
     """Create a new recipe. Requires authentication."""
-    return await create_recipe(recipe, author_id=str(current_user.id))
+    db_recipe = await create_recipe(recipe, author_id=str(current_user.id))
+    return convert_recipe_to_response(db_recipe)
 
 @router.get("/{recipe_id}", response_model=RecipeResponse, summary="Get a recipe by ID")
 async def read_recipe(recipe_id: str):
