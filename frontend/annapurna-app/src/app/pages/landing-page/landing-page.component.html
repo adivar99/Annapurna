@@ -1,57 +1,72 @@
 <div class="landing-wrapper">
-  <video class="background-video" autoplay muted loop playsinline>
-    <source src="assets/videos/landing-1.mp4" type="video/mp4">
-  </video>
-  <div class="content">
-    <nav class="navbar">
-      <div class="brand italiana">Annapurna</div>
-      <div class="nav-links italiana">
-        <a class="cta" routerLink="/login">Login</a>
-        <a class="cta" routerLink="/register">Sign Up</a>
-      </div>
-    </nav>
+  <nav class="navbar">
+    <div class="brand italiana">Annapurna</div>
+    <div class="nav-links italiana">
+      <a class="cta" routerLink="/login">Login</a>
+      <a class="cta" routerLink="/register">Sign Up</a>
+    </div>
+  </nav>
+    
+  <section class="hero">
+    <video class="background-video" autoplay loop playsinline preload="metadata">
+      <source src="assets/videos/landing-1.webm" type="video/webm">
+      <source src="assets/videos/landing-1.mp4" type="video/mp4">
+    </video>
+    <div class="hero-content">
+      <h1 class="playfair-display-title" id="typedtext"></h1>
+      <p class="playfair-display-subtitle" id="typedtext-subtitle"></p>
+      <a #getStartedButton class="cta" routerLink="/login">Get Started</a>
+    </div>
+    <div #scrollArrow class="scroll-arrow">
+      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </section>
 
-    <section class="hero">
-      <div class="hero-content">
-        <h1 class="playfair-display-title typewriter">Your Personal AI Chef at Your Fingertips</h1>
-        <p class="playfair-display-subtitle typewriter-delay">
-          Discover, cook, and master recipes with the help of AI. Ask questions, get step-by-step guidance, and customize recipes to your taste.
-        </p>
-        <a class="cta fade-in" routerLink="/login">Get Started</a>
-      </div>
-      
-      <!-- <a class="scroll-icon" href="#features">⬇️</a> -->
-    </section>
-
-    <section class="features" id="features">
+  <section class="features" id="features">
+    <video class="background-video" muted loop playsinline preload="metadata">
+      <source src="assets/videos/landing-2.mp4" type="video/mp4">
+    </video>
+    <div class="content">
       <h2 class="playfair-display-title">Choosing Annapurna</h2>
       <p class="playfair-display-subtitle">Our AI-powered platform makes cooking easier, more fun, and personalized to your needs.</p>
 
       <div class="feature-grid">
         <div class="feature">
-          <div class="icon">📚</div>
+          <!-- <div class="icon">📚</div> -->
           <h3>Recipe Collection</h3>
           <p>Access thousands of recipes from around the world with detailed instructions and nutritional info.</p>
         </div>
         <div class="feature">
-          <div class="icon">🤖</div>
+          <!-- <div class="icon">🤖</div> -->
           <h3>AI Chat Assistant</h3>
           <p>Ask questions, get modifications, and receive step-by-step guidance from your personal AI chef.</p>
         </div>
         <div class="feature">
-          <div class="icon">🛒</div>
+          <!-- <div class="icon">🛒</div> -->
           <h3>Shopping Lists</h3>
           <p>Automatically generate shopping lists from your favorite recipes and meal plans.</p>
         </div>
         <div class="feature">
-          <div class="icon">🧑‍🍳</div>
+          <!-- <div class="icon">🧑‍🍳</div> -->
           <h3>Step-by-step Guide</h3>
           <p>Follow clear instructions with timers and technique tips to perfect every dish.</p>
         </div>
       </div>
-    </section>
+    </div>
+    <div #featuresScrollArrow class="scroll-arrow">
+      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </section>
 
-    <section class="steps">
+  <section class="steps">
+    <video class="background-video" muted loop playsinline preload="metadata">
+      <source src="assets/videos/landing-3.mp4" type="video/mp4">
+    </video>
+    <div class="content">
       <h2 class="playfair-display-title">Using Annapurna</h2>
       <p class="playfair-display-subtitle">Get started in just a few simple steps</p>
 
@@ -78,6 +93,6 @@
           </div>
         </div>
       </div>
-    </section>
-  </div>
+    </div>
+  </section>
 </div>
