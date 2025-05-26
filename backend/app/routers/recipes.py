@@ -11,7 +11,8 @@ from crud.recipe import (
     search_recipes_by_ingredients,
     get_popular_recipes,
     get_similar_recipes,
-    get_latest_recipes
+    get_latest_recipes,
+    get_recipe_by_name
 )
 from core.deps import get_current_user, get_current_active_user
 from models.user import User
@@ -29,6 +30,10 @@ async def create_new_recipe(
     current_user: User = Depends(get_current_user)
 ):
     """Create a new recipe. Requires authentication."""
+    existing_recipe = await get_recipe_by_name(recipe.title)
+    if existing_recipe:
+        raise HTTPException(status_code=400, detail="Recipe with the same name already exists")
+    
     db_recipe = await create_recipe(recipe, author_id=str(current_user.id))
     return convert_recipe_to_response(db_recipe)
 
@@ -48,7 +53,7 @@ async def read_recipe(recipe_id: str):
 @router.get("/", response_model=List[RecipeResponse], summary="Get all recipes")
 async def read_recipes(
     skip: int = 0,
-    limit: int = 100,
+    limit: int = 10,
     query: Optional[str] = None,
     cuisine: Optional[str] = None,
     difficulty: Optional[str] = None,

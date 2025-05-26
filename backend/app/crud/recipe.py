@@ -37,6 +37,12 @@ async def get_recipes_by_ids(recipe_ids: List[str]) -> List[Recipe]:
     return await Recipe.find(
         {"_id": {"$in": recipe_object_ids}}
     ).to_list()
+    
+async def get_recipe_by_name(name: str) -> Recipe:
+    """Get recipe by name (should be unique... i think)"""
+    return await Recipe.find(
+        Recipe.title == name
+    ).first_or_none()
 
 async def get_recipes(
     skip: int = 0,

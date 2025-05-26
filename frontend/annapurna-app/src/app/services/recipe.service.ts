@@ -93,7 +93,7 @@ export class RecipeService{
   }
 
   parseRecipe(recipeText: string) {
-    return this.httpService.postData('/recipes/parse', { recipe_text: recipeText })
+    return this.httpService.postData('/ai/parse', { recipe_text: recipeText })
   }
 
   // New methods for managing favorites

@@ -1,13 +1,27 @@
 .landing-wrapper {
-  background: url('/assets/Annapurna.png') center/cover no-repeat;
   min-height: 100vh;
   color: white;
   font-family: 'Segoe UI', sans-serif;
-  padding: 2rem 4rem;
   position: relative;
-  // overflow-y: scroll;
-  // scrollbar-width: none; /* Firefox */
-  // -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  overflow: hidden;
+}
+
+.background-video {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: 100vh;
+  z-index: -1;
+  object-fit: cover;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  padding: 2rem 4rem;
 }
 
 .landing-wrapper::-webkit-scrollbar { /* WebKit */
@@ -67,7 +81,7 @@
   height: 60vh;
   
   .hero-content {
-    max-width: 600px;
+    max-width: 800px;
     padding-top: 4rem;
   }
 
@@ -207,3 +221,48 @@
       transform: translateY(5px);
     }
   }
+
+@keyframes typing {
+  from { 
+    width: 0;
+    opacity: 0;
+  }
+  to { 
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+@keyframes blink {
+  50% { border-color: transparent }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.typewriter {
+  overflow: hidden;
+  white-space: normal;
+  border-right: 3px solid white;
+  animation: 
+    typing 3.5s steps(40, end),
+    blink .75s step-end infinite;
+}
+
+.typewriter-delay {
+  overflow: hidden;
+  white-space: normal;
+  border-right: 3px solid white;
+  opacity: 0;
+  animation: 
+    typing 3.5s steps(40, end) 3.5s forwards,
+    blink .75s step-end infinite 3.5s forwards;
+  width: 100%;
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 1s ease-in 7s forwards;
+}

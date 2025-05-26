@@ -63,4 +63,11 @@ export class SpoonacularService {
     let params = {query, number}
     return this.doGetCall(`${this.SPOONACULAR_API_URL}/recipes/autocomplete`, params);
   }
+
+  getRandomRecipes(number: number = 6): Observable<any> {
+    let params = {
+      number
+    }
+    return this.doGetCall(`${this.SPOONACULAR_API_URL}/recipes/random`, params);
+  }
 }
