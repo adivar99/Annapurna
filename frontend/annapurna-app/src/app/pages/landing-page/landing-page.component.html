@@ -7,7 +7,7 @@
     </div>
   </nav>
     
-  <section class="hero">
+  <section class="hero" id="hero">
     <video class="background-video" autoplay loop playsinline preload="metadata">
       <source src="assets/videos/landing-1.webm" type="video/webm">
       <source src="assets/videos/landing-1.mp4" type="video/mp4">
@@ -17,7 +17,7 @@
       <p class="playfair-display-subtitle" id="typedtext-subtitle"></p>
       <a #getStartedButton class="cta" routerLink="/login">Get Started</a>
     </div>
-    <div #scrollArrow class="scroll-arrow">
+    <div #scrollArrow class="scroll-arrow" (click)="scrollToFeatures()">
       <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
@@ -51,14 +51,14 @@
         </div>
       </div>
     </div>
-    <div #featuresScrollArrow class="scroll-arrow">
+    <div #featuresScrollArrow class="scroll-arrow" (click)="scrollToSteps()">
       <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
   </section>
 
-  <section class="steps">
+  <section class="steps" id="steps">
     <video class="background-video" muted loop playsinline preload="metadata">
       <source src="assets/videos/landing-3.mp4" type="video/mp4">
     </video>
@@ -89,6 +89,11 @@
           </div>
         </div>
       </div>
+    </div>
+    <div #stepScrollArrow class="scroll-arrow" (click)="scrollToHero()">
+      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 19V5M12 5L5 12M12 5L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </div>
   </section>
 </div>
