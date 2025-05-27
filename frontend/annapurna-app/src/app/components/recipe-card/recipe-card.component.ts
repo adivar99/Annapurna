@@ -9,6 +9,7 @@ import { RecipeService } from 'src/app/services/recipe.service';
 })
 export class RecipeCardComponent implements OnInit{
   @Input() recipe!: Recipe;
+  @Input() toCreate: boolean = false;
 
   constructor(
     private recipeService: RecipeService
@@ -52,6 +53,18 @@ export class RecipeCardComponent implements OnInit{
   }
 
   redirectChat() {
-    this.recipeService.redirectToRecipeChat(this.recipe)
+    if (this.toCreate) {
+      // Store recipe in our database
+      this.recipeService.createRecipe(this.recipe).subscribe({
+        next: (savedRecipe: any) => {
+          this.recipeService.redirectToRecipeChat(savedRecipe)
+        },
+        error: (err) => {
+          console.error('Failed to save recipe. Please try again.')
+        }
+      });
+    } else {
+      this.recipeService.redirectToRecipeChat(this.recipe)
+    }
   }
 }

@@ -6,73 +6,94 @@
       <a class="cta" routerLink="/register">Sign Up</a>
     </div>
   </nav>
-
-  <section class="hero">
-    <div class="hero-content">
-      <h1 class="playfair-display-title">Your Personal AI Chef at Your Fingertips</h1>
-      <p class="playfair-display-subtitle">
-        Discover, cook, and master recipes with the help of AI. Ask questions, get step-by-step guidance, and customize recipes to your taste.
-      </p>
-      <a class="cta" routerLink="/login">Get Started</a>
-    </div>
     
-    <!-- <a class="scroll-icon" href="#features">⬇️</a> -->
+  <section class="hero" id="hero">
+    <video class="background-video" autoplay loop playsinline preload="metadata">
+      <source src="assets/videos/landing-1.webm" type="video/webm">
+      <source src="assets/videos/landing-1.mp4" type="video/mp4">
+    </video>
+    <div class="hero-content">
+      <h1 class="playfair-display-title" id="typedtext"></h1>
+      <p class="playfair-display-subtitle" id="typedtext-subtitle"></p>
+      <a #getStartedButton class="cta" routerLink="/login">Get Started</a>
+    </div>
+    <div #scrollArrow class="scroll-arrow" (click)="scrollToFeatures()">
+      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
   </section>
 
   <section class="features" id="features">
-    <h2 class="playfair-display-title">Choosing Annapurna</h2>
-    <p class="playfair-display-subtitle">Our AI-powered platform makes cooking easier, more fun, and personalized to your needs.</p>
+    <video class="background-video" muted loop playsinline preload="metadata">
+      <source src="assets/videos/landing-2.mp4" type="video/mp4">
+    </video>
+    <div class="content">
+      <h2 class="playfair-display-title" id="features-typedtext"></h2>
+      <p class="playfair-display-subtitle" id="features-typedtext-subtitle"></p>
 
-    <div class="feature-grid">
-      <div class="feature">
-        <div class="icon">📚</div>
-        <h3>Recipe Collection</h3>
-        <p>Access thousands of recipes from around the world with detailed instructions and nutritional info.</p>
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>Recipe Collection</h3>
+          <p>Access thousands of recipes from around the world with detailed instructions and nutritional info.</p>
+        </div>
+        <div class="feature">
+          <h3>AI Chat Assistant</h3>
+          <p>Ask questions, get modifications, and receive step-by-step guidance from your personal AI chef.</p>
+        </div>
+        <div class="feature">
+          <h3>Shopping Lists</h3>
+          <p>Automatically generate shopping lists from your favorite recipes and meal plans.</p>
+        </div>
+        <div class="feature">
+          <h3>Step-by-step Guide</h3>
+          <p>Follow clear instructions with timers and technique tips to perfect every dish.</p>
+        </div>
       </div>
-      <div class="feature">
-        <div class="icon">🤖</div>
-        <h3>AI Chat Assistant</h3>
-        <p>Ask questions, get modifications, and receive step-by-step guidance from your personal AI chef.</p>
-      </div>
-      <div class="feature">
-        <div class="icon">🛒</div>
-        <h3>Shopping Lists</h3>
-        <p>Automatically generate shopping lists from your favorite recipes and meal plans.</p>
-      </div>
-      <div class="feature">
-        <div class="icon">🧑‍🍳</div>
-        <h3>Step-by-step Guide</h3>
-        <p>Follow clear instructions with timers and technique tips to perfect every dish.</p>
-      </div>
+    </div>
+    <div #featuresScrollArrow class="scroll-arrow" (click)="scrollToSteps()">
+      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </div>
   </section>
 
-  <section class="steps">
-    <h2 class="playfair-display-title">Using Annapurna</h2>
-    <p class="playfair-display-subtitle">Get started in just a few simple steps</p>
+  <section class="steps" id="steps">
+    <video class="background-video" muted loop playsinline preload="metadata">
+      <source src="assets/videos/landing-3.mp4" type="video/mp4">
+    </video>
+    <div class="content">
+      <h2 class="playfair-display-title" id="steps-typedtext"></h2>
+      <p class="playfair-display-subtitle" id="steps-typedtext-subtitle"></p>
 
-    <div class="step-grid">
-      <div class="step playfair-display-subtitle">
-        <div class="step-number">1</div>
-        <div class="step-text">
-          <h4>Browse Recipe</h4>
-          <p>Search our collection by cuisine, difficulty, or ingredients.</p>
+      <div class="step-grid">
+        <div class="step playfair-display-subtitle">
+          <div class="step-number">1</div>
+          <div class="step-text">
+            <h4>Browse Recipe</h4>
+            <p>Search our collection by cuisine, difficulty, or ingredients.</p>
+          </div>
+        </div>
+        <div class="step playfair-display-subtitle">
+          <div class="step-number">2</div>
+          <div class="step-text">
+            <h4>Select & Customize</h4>
+            <p>Choose a recipe and tailor it to your dietary needs or preferences.</p>
+          </div>
+        </div>
+        <div class="step playfair-display-subtitle">
+          <div class="step-number">3</div>
+          <div class="step-text">
+            <h4>Cook with AI Assistance</h4>
+            <p>Follow along with step-by-step guidance and improve with AI help.</p>
+          </div>
         </div>
       </div>
-      <div class="step playfair-display-subtitle">
-        <div class="step-number">2</div>
-        <div class="step-text">
-          <h4>Select & Customize</h4>
-          <p>Choose a recipe and tailor it to your dietary needs or preferences.</p>
-        </div>
-      </div>
-      <div class="step playfair-display-subtitle">
-        <div class="step-number">3</div>
-        <div class="step-text">
-          <h4>Cook with AI Assistance</h4>
-          <p>Follow along with step-by-step guidance and improve with AI help.</p>
-        </div>
-      </div>
+    </div>
+    <div #stepScrollArrow class="scroll-arrow" (click)="scrollToHero()">
+      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 19V5M12 5L5 12M12 5L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </div>
   </section>
 </div>
