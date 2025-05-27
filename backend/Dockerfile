@@ -1,10 +1,10 @@
-FROM annapurna/backendbuilder AS builder
+FROM annapurna/backendbuilder
 
-ENV PYTHONPATH=/app
 WORKDIR /app
 
-# COPY app .
+# Copy only necessary files
 COPY ./start_reload.sh /
+# COPY ./main.py .
 
-ENTRYPOINT ["/bin/sh"]
-CMD ["/start_reload.sh"]
+# Set entrypoint
+ENTRYPOINT ["/bin/sh", "/start_reload.sh"]
