@@ -10,7 +10,8 @@ export class LandingPageComponent implements OnInit, AfterViewInit {
   @ViewChild('scrollArrow') scrollArrow!: ElementRef;
   @ViewChild('featuresScrollArrow') featuresScrollArrow!: ElementRef;
   @ViewChild('stepScrollArrow') stepScrollArrow!: ElementRef;
-  
+  @ViewChild('bgVideo') bgVideo!: ElementRef<HTMLVideoElement>;
+
   private title: string = "Your Personal AI Chef at Your Fingertips";
   private subtitle: string = "Discover, cook, and master recipes with the help of AI. Ask questions, get step-by-step guidance, and customize recipes to your taste.";
   private featuresTitle: string = "Choosing Annapurna";
@@ -73,20 +74,27 @@ export class LandingPageComponent implements OnInit, AfterViewInit {
     );
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   ngAfterViewInit(): void {
+    this.playBgVideo()
     this.typeTitle();
     this.setupVideoObservers();
     this.setupFeaturesObserver();
     this.setupStepsObserver();
   }
 
+  private playBgVideo() {
+    const video = this.bgVideo.nativeElement;
+    video.muted = true;
+    video.play().catch(err => console.warn('Autoplay blocked:', err));
+  }
+
   private setupVideoObservers(): void {
     // Observe features and steps sections
     const featuresSection = document.querySelector('.features');
     const stepsSection = document.querySelector('.steps');
-    
+
     if (featuresSection) {
       this.observer.observe(featuresSection);
     }
@@ -95,16 +103,8 @@ export class LandingPageComponent implements OnInit, AfterViewInit {
     }
   }
 
-  scrollToFeatures() {
-    document.getElementById("features")?.scrollIntoView({behavior: "smooth"})
-  }
-
-  scrollToSteps() {
-    document.getElementById("steps")?.scrollIntoView({behavior: "smooth"})
-  }
-
-  scrollToHero() {
-    document.getElementById("hero")?.scrollIntoView({behavior: "smooth"})
+  scrollToSection(section: string){
+    document.getElementById(section)?.scrollIntoView({ behavior: "smooth" })
   }
 
   private setupFeaturesObserver(): void {

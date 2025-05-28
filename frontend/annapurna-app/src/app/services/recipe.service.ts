@@ -20,14 +20,14 @@ export class RecipeService{
     private utils: UtilitiesService
   ) { }
 
-  getAllRecipes(noCache: boolean = false): Observable<any> {
-    // const cachedData = this.getCachedRecipes();
-    // if (cachedData && !noCache) {
-    //   return of(cachedData);
-    // }
+  getAllRecipes(skip: number = 0, limit: number = 10): Observable<any> {
+    let params = {
+      skip,
+      limit
+    }
 
     return new Observable(observer => {
-      this.httpService.getData('/recipes/').subscribe({
+      this.httpService.getData('/recipes/', params).subscribe({
         next: (data) => {
           this.cacheRecipes(data);
           observer.next(data);
