@@ -83,16 +83,20 @@ export class AdvancedSearchComponent implements OnInit {
     });
   }
 
-  loadRecipes(noCache: boolean = false) {
+  loadRecipes(skip=0, limit=10) {
     this.isLoading = true;
     this.error = null;
-    this.recipeService.getAllRecipes(noCache).subscribe({
+    this.recipeService.getAllRecipes(skip, limit).subscribe({
       next: (recipes: Recipe[]) => {
-        this.recipes = recipes;
-        this.filteredRecipes = recipes;
-        this.isLoading = false;
+        this.recipes = [...this.recipes, ...recipes];
+        this.filteredRecipes = [...this.filteredRecipes, ...recipes];
         this.extractCategories(recipes); // Extract categories after loading
-        this.filterRecipes(); // Apply initial filtering
+        if (recipes.length == limit) {
+          this.loadRecipes(skip+limit, limit)
+        } else {
+          this.filterRecipes(); // Apply initial filtering
+          this.isLoading = false;
+        }
       },
       error: (err: any) => {
         this.error = 'Failed to load recipes. Please try again.';
@@ -261,7 +265,7 @@ export class AdvancedSearchComponent implements OnInit {
         this.recipeService.createRecipe(recipe).subscribe({
           next: (savedRecipe: any) => {
             this.searchQuery = savedRecipe.title;
-            this.loadRecipes(true); // Reload recipes to show the new one
+            this.loadRecipes(); // Reload recipes to show the new one
             this.isLoading = false;
           },
           error: (err) => {

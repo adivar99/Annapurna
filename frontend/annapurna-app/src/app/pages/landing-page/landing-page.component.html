@@ -8,16 +8,16 @@
   </nav>
     
   <section class="hero" id="hero">
-    <video class="background-video" autoplay loop playsinline preload="metadata">
-      <source src="assets/videos/landing-1.webm" type="video/webm">
+    <video #bgVideo class="background-video" autoplay muted loop playsinline>
       <source src="assets/videos/landing-1.mp4" type="video/mp4">
+      <source src="assets/videos/landing-1.webm" type="video/webm">
     </video>
     <div class="hero-content">
       <h1 class="playfair-display-title" id="typedtext"></h1>
       <p class="playfair-display-subtitle" id="typedtext-subtitle"></p>
       <a #getStartedButton class="cta" routerLink="/login">Get Started</a>
     </div>
-    <div #scrollArrow class="scroll-arrow" (click)="scrollToFeatures()">
+    <div #scrollArrow class="scroll-arrow" (click)="scrollToSection('features')">
       <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
@@ -51,7 +51,7 @@
         </div>
       </div>
     </div>
-    <div #featuresScrollArrow class="scroll-arrow" (click)="scrollToSteps()">
+    <div #featuresScrollArrow class="scroll-arrow" (click)="scrollToSection('steps')">
       <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
@@ -90,7 +90,7 @@
         </div>
       </div>
     </div>
-    <div #stepScrollArrow class="scroll-arrow" (click)="scrollToHero()">
+    <div #stepScrollArrow class="scroll-arrow" (click)="scrollToSection('hero')">
       <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 19V5M12 5L5 12M12 5L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
