@@ -1,20 +1,21 @@
 // frontend/annapurna-app/src/styles/_variables.scss
 
-// Color Variables
+// Color Variables - Vibrant Multi-Color Palette
 :root {
-    --color-background-dark: #232323;
-    --color-background-darker: #181818;
-    --color-primary-orange: #ff7e3f;
-    --color-primary-orange-darker: #e06a33;
-    --color-border-dark: #292929;
-    --color-text-light: #bbb;
-    --color-text-white: #fff;
-    --color-grey-medium-dark: #444;
-    --color-background-lighter: #fefae0; // Used in recipe-card
-    --color-background-light: #f5f5f5; // Used in recipe-card
-    --color-text-dark: #333; // Used in recipe-card
-    --color-text-grey: #666; // Used in recipe-card
-    --color-error-red: #f44336;
-    --color-favorite-red: #c0392b; // Used in favorite button and recipe-card
-    --color-white: white; // Explicitly white for some elements
-  }
+    --color-black: #232323; // black
+    --color-background-green: #758e4f; // Moss green
+    --color-background-green-darker: #243e36; // dark slate gray
+    --color-primary-orange: #ff9f1d; // Orange peel
+    --color-primary-orange-darker: #d4520f; // Darker orange pantone
+    --color-border-dark: #758e4f; // Moss green for borders
+    --color-text-light: #33658a; // Lapis lazuli for readable text
+    --color-text-white: #2c2c2c; // Dark gray for main text
+    --color-background-lighter: #f0ead6; // eggshell white
+    --color-background-light: #ffffff; // white
+    --color-text-dark: #33658a; // Lapis lazuli text
+    --color-text-grey: #758e4f; // Moss green
+    --color-error-red: #bf0603; // Engineering orange for errors
+    --color-favorite-red: #bc4749; // Engineering orange for favorites
+    --color-white: #ffffff; // Pure white
+    --color-accent-yellow: #f6ae2d; // Hunyadi yellow for accents
+}
