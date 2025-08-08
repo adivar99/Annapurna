@@ -6,7 +6,7 @@ import httpx
 from models.user import User
 from models.recipe import Recipe
 from schemas.recipe import RecipeResponse
-from ai_service import RecipeAIService
+from ai.ai_service import RecipeAIService
 from crud.recipe import create_recipe
 from core.deps import get_current_active_user
 from crud import chat_sessions

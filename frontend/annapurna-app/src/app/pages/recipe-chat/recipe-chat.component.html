@@ -52,16 +52,6 @@
             matTooltip="{{isVoiceAgentActive ? 'Stop voice agent' : 'Start voice agent'}}">
             <mat-icon>{{isVoiceAgentActive ? 'stop_circle' : 'graphic_eq'}}</mat-icon>
           </button>
-
-          <button mat-icon-button
-            type="button"
-            color="primary"
-            (click)="toggleSpeechRecognition()"
-            [disabled]="!isSpeechSupported || isChatLoading || isVoiceAgentActive"
-            [class.active]="isListening"
-            matTooltip="{{isListening ? 'Stop listening' : 'Start voice input'}}">
-            <mat-icon>{{isListening ? 'mic_off' : 'mic'}}</mat-icon>
-          </button>
         </div>
 
         <div class="input-swap-container" [class.voice-active]="isVoiceAgentActive">

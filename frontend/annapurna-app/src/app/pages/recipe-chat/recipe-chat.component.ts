@@ -22,6 +22,7 @@ export class RecipeChatComponent implements OnInit, OnDestroy, AfterViewInit {
   isListening: boolean = false;
   isSpeechSupported: boolean = false;
   private speechSubscription?: Subscription;
+  private voiceMessageSubscription?: Subscription;
   isVoiceAgentActive: boolean = false;
   private analyser?: AnalyserNode;
   private audioContext?: AudioContext;
@@ -47,15 +48,16 @@ export class RecipeChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy(): void {
     this.speechSubscription?.unsubscribe();
+    this.voiceMessageSubscription?.unsubscribe();
     this.speechService.stopListening();
     this.speechService.stopSpeaking();
     this.stopVoiceAgent();
   }
-
+  
   ngAfterViewInit(): void {
     // noop
   }
-  
+
   startConversation() {
     const message: ChatMessage = {
       sender: 'ai',
@@ -105,20 +107,43 @@ export class RecipeChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async toggleVoiceAgent() {
-    if (this.isVoiceAgentActive) {
+    if (this.isVoiceAgentActive || this.voiceAgent.isActive()) {
+      console.log("Stopping voice agent")
       await this.stopVoiceAgent();
+      console.log("Voice agent stopped")
     } else {
+      console.log("Starting voice agent")
       await this.startVoiceAgent();
+      console.log("Voice agent started")
     }
   }
 
   private async startVoiceAgent() {
     try {
-      const { analyser, audioContext } = await this.voiceAgent.start();
+      const context = {
+        recipe: {
+          id: this.recipe.id,
+          title: this.recipe.title,
+          description: this.recipe.description,
+          ingredients: this.recipe.ingredients,
+          instructions: this.recipe.instructions,
+        }
+      };
+      const instructions = `You are a cooking assistant helping with the recipe "${this.recipe.title}".
+Provide concise, step-by-step guidance and reference the ingredients and instructions from context.recipe.`;
+
+      const { analyser, audioContext } = await this.voiceAgent.start(context, instructions);
       this.analyser = analyser;
       this.audioContext = audioContext;
       this.isVoiceAgentActive = true;
       this.startWaveform();
+      
+      // Subscribe to voice messages
+      this.voiceMessageSubscription = this.voiceAgent.messages$.subscribe(
+        (message) => {
+          this.messages.push(message);
+        }
+      );
     } catch (err: any) {
       this.setChatError('Failed to start voice agent');
     }
@@ -127,9 +152,21 @@ export class RecipeChatComponent implements OnInit, OnDestroy, AfterViewInit {
   private async stopVoiceAgent() {
     try {
       await this.voiceAgent.stop();
-    } catch {}
+    } catch (error) {
+      console.error('Error stopping voice agent:', error);
+    }
+    
+    // Always update state regardless of errors
     this.isVoiceAgentActive = false;
     this.stopWaveform();
+    
+    // Unsubscribe from voice messages
+    this.voiceMessageSubscription?.unsubscribe();
+    this.voiceMessageSubscription = undefined;
+    
+    // Clear analyser and audio context
+    this.analyser = undefined;
+    this.audioContext = undefined;
   }
 
   private startWaveform() {
