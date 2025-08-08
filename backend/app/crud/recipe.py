@@ -2,7 +2,7 @@ from typing import List, Optional, Dict, Any
 from models.recipe import Recipe, Ingredient
 from schemas.recipe import RecipeCreate, RecipeUpdate, RecipeSearch, RecipeResponse
 from datetime import datetime
-from ai_service import RecipeAIService
+from ai.ai_service import RecipeAIService
 from utils import convert_recipe_to_response
 from bson import ObjectId
 

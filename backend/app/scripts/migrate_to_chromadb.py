@@ -1,6 +1,6 @@
 import asyncio
 from ..models.recipe import Recipe
-from ..ai_service import RecipeAIService
+from ai.ai_service import RecipeAIService
 import os
 from dotenv import load_dotenv
 

@@ -8,5 +8,6 @@ ENV PATH=/src/annapurna-app/node_modules/.bin:$PATH
 
 # install and cache app dependencies
 COPY ./annapurna-app/package.json /src/annapurna-app/package.json
+COPY ./annapurna-app/package-lock.json /src/annapurna-app/package-lock.json
 RUN npm install
 RUN npm install -g @angular/cli

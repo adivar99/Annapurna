@@ -43,26 +43,36 @@
     </div>
     <div class="chat-input">
       <form (ngSubmit)="sendMessage()">
-        <button mat-icon-button
-        type="button"
-        color="primary"
-        (click)="toggleSpeechRecognition()"
-        [disabled]="!isSpeechSupported || isChatLoading"
-        [class.active]="isListening"
-        matTooltip="{{isListening ? 'Stop listening' : 'Start voice input'}}">
-        <mat-icon>{{isListening ? 'mic_off' : 'mic'}}</mat-icon>
-      </button>
-      <mat-form-field appearance="outline" class="input-field">
-        <input matInput
-               [(ngModel)]="userInput"
-               name="message"
-               placeholder="Ask about the recipe..."
-               [disabled]="isChatLoading">
-      </mat-form-field>
+        <div class="left-controls">
+          <button mat-icon-button
+            type="button"
+            color="primary"
+            (click)="toggleVoiceAgent()"
+            [class.active]="isVoiceAgentActive"
+            matTooltip="{{isVoiceAgentActive ? 'Stop voice agent' : 'Start voice agent'}}">
+            <mat-icon>{{isVoiceAgentActive ? 'stop_circle' : 'graphic_eq'}}</mat-icon>
+          </button>
+        </div>
+
+        <div class="input-swap-container" [class.voice-active]="isVoiceAgentActive">
+          <mat-form-field appearance="outline" class="input-field" *ngIf="!isVoiceAgentActive">
+            <input matInput
+                  [(ngModel)]="userInput"
+                  name="message"
+                  placeholder="Ask about the recipe..."
+                  [disabled]="isChatLoading">
+          </mat-form-field>
+
+          <div class="voice-visual" *ngIf="isVoiceAgentActive">
+            <canvas #waveCanvas width="600" height="56"></canvas>
+            <div class="voice-hint">Speaking with your cooking assistant…</div>
+          </div>
+        </div>
+
         <button mat-raised-button
                 color="primary"
                 type="submit"
-                [disabled]="!userInput.trim() || isChatLoading">
+                [disabled]="!userInput.trim() || isChatLoading || isVoiceAgentActive">
           <mat-icon>send</mat-icon>
         </button>
       </form>
