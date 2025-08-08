@@ -3,16 +3,17 @@
     justify-content: space-around;
     align-items: center;
     height: 60px; /* Adjust height as needed */
-    background: linear-gradient(
-        45deg,
-        #999 5%,
-        #fff 10%,
-        #ccc 30%,
-        #ddd 50%,
-        #ccc 70%,
-        #fff 80%,
-        #999 95%
-      ); /* Same as header */
+    background: var(--color-background-green);
+    // background: linear-gradient(
+    //     45deg,
+    //     #999 5%,
+    //     #fff 10%,
+    //     #ccc 30%,
+    //     #ddd 50%,
+    //     #ccc 70%,
+    //     #fff 80%,
+    //     #999 95%
+    //   ); /* Same as header */
     border-top: 1px solid var(--color-border-dark); /* Same as header */
     position: sticky;
     bottom: 0;
@@ -25,11 +26,11 @@
         align-items: center;
         cursor: pointer;
         // background-color: var(--color-background-darker);
-        color: var(--color-background-darker); /* Default icon/text color */
+        color: var(--color-background-light); /* Default icon/text color */
         transition: color 0.2s ease;
 
         &:hover {
-            color: var(--color-text-dark); /* Hover color */
+            color: var(--color-text-lighter); /* Hover color */
         }
 
         &.active {
