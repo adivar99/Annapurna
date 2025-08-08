@@ -38,7 +38,7 @@ export class VoiceAgentService {
 
     // 3) Lazy import realtime library in browser
     // Using the documented import path from the SDK
-    const mod: any = await import('@openai/agents/realtime');
+    const mod: any = await import('@openai/agents-realtime');
     this.agent = new mod.RealtimeAgent({
       name: 'Assistant',
       instructions: 'You are a helpful assistant for cooking recipes.'
