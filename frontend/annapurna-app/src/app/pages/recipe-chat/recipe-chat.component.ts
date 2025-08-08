@@ -1,10 +1,11 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { Recipe } from 'src/app/models/recipe.model';
 import { RecipeService } from 'src/app/services/recipe.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { ChatMessage, ChatService } from 'src/app/services/chat.service';
 import { ChatSessionDetails } from 'src/app/services/chat.service';
 import { SpeechService } from 'src/app/services/speech.service';
+import { VoiceAgentService } from 'src/app/services/voice-agent.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -12,7 +13,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './recipe-chat.component.html',
   styleUrls: ['./recipe-chat.component.scss']
 })
-export class RecipeChatComponent implements OnInit, OnDestroy {
+export class RecipeChatComponent implements OnInit, OnDestroy, AfterViewInit {
   messages: ChatMessage[] = [];
   userInput: string = '';
   recipe!: Recipe;
@@ -21,12 +22,19 @@ export class RecipeChatComponent implements OnInit, OnDestroy {
   isListening: boolean = false;
   isSpeechSupported: boolean = false;
   private speechSubscription?: Subscription;
+  isVoiceAgentActive: boolean = false;
+  private analyser?: AnalyserNode;
+  private audioContext?: AudioContext;
+
+  @ViewChild('waveCanvas') waveCanvasRef?: ElementRef<HTMLCanvasElement>;
+  private animationFrameId: number | null = null;
 
   constructor(
     private recipeService: RecipeService,
     private utils: UtilitiesService,
     private chatService: ChatService,
-    private speechService: SpeechService
+    private speechService: SpeechService,
+    private voiceAgent: VoiceAgentService
   ) {
     this.isSpeechSupported = this.speechService.isSpeechRecognitionSupported();
   }
@@ -41,6 +49,11 @@ export class RecipeChatComponent implements OnInit, OnDestroy {
     this.speechSubscription?.unsubscribe();
     this.speechService.stopListening();
     this.speechService.stopSpeaking();
+    this.stopVoiceAgent();
+  }
+
+  ngAfterViewInit(): void {
+    // noop
   }
   
   startConversation() {
@@ -89,6 +102,85 @@ export class RecipeChatComponent implements OnInit, OnDestroy {
       this.speechService.startListening();
     }
     this.isListening = !this.isListening;
+  }
+
+  async toggleVoiceAgent() {
+    if (this.isVoiceAgentActive) {
+      await this.stopVoiceAgent();
+    } else {
+      await this.startVoiceAgent();
+    }
+  }
+
+  private async startVoiceAgent() {
+    try {
+      const { analyser, audioContext } = await this.voiceAgent.start();
+      this.analyser = analyser;
+      this.audioContext = audioContext;
+      this.isVoiceAgentActive = true;
+      this.startWaveform();
+    } catch (err: any) {
+      this.setChatError('Failed to start voice agent');
+    }
+  }
+
+  private async stopVoiceAgent() {
+    try {
+      await this.voiceAgent.stop();
+    } catch {}
+    this.isVoiceAgentActive = false;
+    this.stopWaveform();
+  }
+
+  private startWaveform() {
+    if (!this.waveCanvasRef || !this.analyser) return;
+    const canvas = this.waveCanvasRef.nativeElement;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const bufferLength = this.analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    const draw = () => {
+      this.animationFrameId = requestAnimationFrame(draw);
+      if (!this.analyser) return;
+      this.analyser.getByteTimeDomainData(dataArray);
+
+      const { width, height } = canvas;
+      ctx.clearRect(0, 0, width, height);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#4CAF50';
+      ctx.beginPath();
+
+      const sliceWidth = width / bufferLength;
+      let x = 0;
+      for (let i = 0; i < bufferLength; i++) {
+        const v = dataArray[i] / 128.0;
+        const y = (v * height) / 2;
+        if (i === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+        x += sliceWidth;
+      }
+      ctx.lineTo(width, height / 2);
+      ctx.stroke();
+    };
+
+    draw();
+  }
+
+  private stopWaveform() {
+    if (this.animationFrameId !== null) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
+    const canvas = this.waveCanvasRef?.nativeElement;
+    const ctx = canvas?.getContext('2d');
+    if (canvas && ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
   }
 
   sendMessage() {

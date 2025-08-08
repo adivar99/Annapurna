@@ -28,12 +28,12 @@ export class HttpService {
   }
 
   postData(request_url: string, body: any, external: boolean = false) {
-    request_url = this.processUrl(request_url, external)
+    request_url = this.processUrl(request_url, null, external)
     return this.http.post(request_url, body)
   }
 
   deleteData(request_url: string, external: boolean = false) {
-    request_url = this.processUrl(request_url, external)
+    request_url = this.processUrl(request_url, null, external)
     return this.http.delete(request_url)
   }
 }
