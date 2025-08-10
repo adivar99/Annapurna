@@ -2,7 +2,7 @@ from jose import jwt, JWTError
 from fastapi.security import SecurityScopes, OAuth2
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer, SecurityScopes
-from fastapi.openapi.models import OAuthFlow as OAuthFlowsModel
+from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
 from fastapi.security.utils import get_authorization_scheme_param
 from pydantic import ValidationError
 
