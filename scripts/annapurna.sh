@@ -115,7 +115,7 @@ case $1 in
         echo "Please provide a Service and a command to run"
         exit 1
     fi
-    docker-compose exec -it $1 $2
+    docker-compose exec -it $2 $3
     ;;
 "stop")
     echo "Stopping running containers"

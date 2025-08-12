@@ -6,8 +6,11 @@ from enum import Enum
 
 # Import LangChain components
 from langchain_openai import ChatOpenAI
+from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_google_genai.embeddings import GoogleGenerativeAIEmbeddings
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
+from langchain_core.embeddings import Embeddings
 
 class ClientEnum(str, Enum):
     OPENAI = "openai"
@@ -44,6 +47,11 @@ class AbstractAIClient(ABC):
         **kwargs
     ) -> ChatResponse:
         """Generate a chat completion response"""
+        pass
+
+    @abstractmethod
+    def get_embedding_function(self) -> Embeddings:
+        """Get the embedding function for the client"""
         pass
 
     @abstractmethod
@@ -119,6 +127,12 @@ class OpenAIClient(AbstractAIClient):
 
         except Exception as e:
             raise Exception(f"OpenAI chat completion failed: {str(e)}")
+        
+    def get_embedding_function(self):
+        return OpenAIEmbeddings(
+            api_key=self.api_key,
+            model=self.embedding_model
+        )
 
     def get_model_name(self) -> str:
         """Get the current OpenAI model name"""
@@ -129,12 +143,12 @@ class GeminiClient(AbstractAIClient):
 
     def _setup_client(self) -> None:
         """Setup Gemini client using LangChain"""
-        self.api_key = os.getenv("GEMINI_API_KEY")
+        self.api_key = os.getenv("GOOGLE_API_KEY")
         if not self.api_key:
-            raise ValueError("GEMINI_API_KEY environment variable is required")
+            raise ValueError("GOOGLE_API_KEY environment variable is required")
 
         self.model_name = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
-        self.embedding_model = os.getenv("GEMINI_EMBEDDING_MODEL", "text-embedding-004")
+        self.embedding_model = os.getenv("GEMINI_EMBEDDING_MODEL", "gemini-embedding-001")
 
         # Initialize LangChain ChatGoogleGenerativeAI client
         self.client = ChatGoogleGenerativeAI(
@@ -192,6 +206,12 @@ class GeminiClient(AbstractAIClient):
 
         except Exception as e:
             raise Exception(f"Gemini chat completion failed: {str(e)}")
+        
+    def get_embedding_function(self):
+        return GoogleGenerativeAIEmbeddings(
+            model=self.embedding_model,
+        )
+        
 
     def get_model_name(self) -> str:
         """Get the current Gemini model name"""

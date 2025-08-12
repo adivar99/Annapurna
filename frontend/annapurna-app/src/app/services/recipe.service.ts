@@ -1,5 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { HttpService } from './http.service';
 import { Recipe } from '../models/recipe.model';
 import { UtilitiesService } from './utilities.service';
@@ -70,6 +70,15 @@ export class RecipeService{
     localStorage.setItem(this.CACHE_TIMESTAMP_KEY, new Date().getTime().toString());
   }
 
+  getCurrRecipe(): Recipe | undefined {
+    return this.currRecipe
+  }
+
+  clearCurrRecipe() {
+    this.currRecipe = undefined
+    this.currRecipeEmitter.emit(undefined)
+  }
+
   setCurrRecipe(recipe: Recipe) {
     this.currRecipe = recipe
     this.currRecipeEmitter.emit(recipe)
@@ -82,6 +91,10 @@ export class RecipeService{
 
   askQuestion(recipe: Recipe, userQuestion: string) {
     return this.httpService.postData('/ai/ask-recipe-question', {"recipe": recipe, "question": [userQuestion]})
+  }
+
+  searchRecipes(query: string) {
+    return this.httpService.getData('/ai/semantic-search', {query: query})
   }
 
   analyzeRecipe(recipe: Recipe) {

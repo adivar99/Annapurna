@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from './http.service';
+import { HttpService } from '../http.service';
 import { Subject } from 'rxjs';
 
 type RealtimeSession = any;
@@ -26,7 +26,14 @@ export class VoiceAgentService {
 
   constructor(private http: HttpService) {}
 
-  async start(context?: any, instructionsOverride?: string): Promise<{
+  async getClientToken(): Promise<string> {
+    const tokenResp = await this.http
+      .postData('/ai/realtime/session', {})
+      .toPromise() as any;
+    return tokenResp.client_secret as string;
+  }
+
+  async start(agent: RealtimeAgent, context?: any): Promise<{
     analyser: AnalyserNode;
     audioContext: AudioContext;
   }> {
@@ -35,10 +42,7 @@ export class VoiceAgentService {
     }
 
     // 1) Fetch ephemeral token from backend
-    const tokenResp = await this.http
-      .postData('/ai/realtime/session', {})
-      .toPromise() as any;
-    const clientApiKey = tokenResp.client_secret as string;
+    const clientApiKey = await this.getClientToken();
 
     // 2) Ask for mic and setup analyser for waveform
     this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -48,20 +52,14 @@ export class VoiceAgentService {
     this.source = this.audioContext.createMediaStreamSource(this.stream);
     this.source.connect(this.analyser);
 
+    this.agent = agent;
+
     // 3) Lazy import realtime library in browser
     // Using the documented import path from the SDK
-    const mod: any = await import('@openai/agents-realtime');
-    this.agent = new mod.RealtimeAgent({
-      name: 'Anu',
-      instructions:
-        instructionsOverride ||
-        'Your name is Anu. You are a helpful assistant for cooking recipes. Use the provided context to tailor your answers. Use expletives when appropriate.',
-      tts: {
-        voice: 'onyx',
-        speed: 1.2,
-      }
-    });
-    this.session = new mod.RealtimeSession(this.agent, {
+    const mod = await import('@openai/agents-realtime');
+
+    // Get the agent to be passed as a parameter.
+    this.session = new mod.RealtimeSession(agent, {
       model: 'gpt-4o-realtime-preview-2025-06-03',
       context,
     });

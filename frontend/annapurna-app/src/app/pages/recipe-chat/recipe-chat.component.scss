@@ -266,11 +266,11 @@
     align-items: center;
     gap: 6px;
   }
-  
+
   .input-field {
     flex: 1;
     margin: 0;
-    
+
     ::ng-deep {
       .mat-form-field-wrapper {
         margin: 0;
@@ -290,9 +290,14 @@
       }
     }
   }
-  
+
   button[mat-icon-button] {
     color: var(--color-primary-orange);
+
+    &.active {
+      background-color: rgba(255, 126, 63, 0.1);
+      color: var(--color-primary-orange);
+    }
   }
 
   button[mat-raised-button] {

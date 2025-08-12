@@ -1,16 +1,15 @@
 from fastapi import APIRouter, HTTPException, Depends
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 import os
 import httpx
+from pydantic import BaseModel
 
 from models.user import User
 from models.recipe import Recipe
 from schemas.recipe import RecipeResponse
 from ai.ai_service import RecipeAIService
 from ai.embedding import EmbeddingService
-from crud.recipe import create_recipe
 from core.deps import get_current_active_user
-from crud import chat_sessions
 
 router = APIRouter()
 ai_service = RecipeAIService()
@@ -66,7 +65,8 @@ async def semantic_search(
     current_user: User = Depends(get_current_active_user),
     ):
     try:
-        recipes = await embedding_service.find_recipe_by_semantic_search(query, limit)
+        recipes = embedding_service.find_recipe_by_semantic_search(query, limit)
+        print(f"Recipes: {recipes}")
         return recipes
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
