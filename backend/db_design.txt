@@ -1,0 +1,60 @@
+Table users {
+  id            uuid       [pk, default: `gen_random_uuid()`]
+  name          varchar
+  email         varchar    [unique, not null]
+  username      varchar
+  hashed_password varchar [not null]
+  imageUrl      varchar
+  created_at    timestamp  [default: `now()`]
+  updated_at    timestamp  [default: `now()`]
+}
+
+Enum recipe_difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+Enum cuisine_type {
+  INDIAN
+  ITALIAN
+  MEXICAN
+  CHINESE
+  JAPANESE
+  THAI
+  AMERICAN
+  MEDITERRANEAN
+  FRENCH
+  KOREAN
+  VIETNAMESE
+  OTHER
+}
+
+Table recipes {
+  id            uuid       [pk, default: `gen_random_uuid()`]
+  title         varchar    [not null]
+  description   text
+  ingredients   jsonb      // list of ingredients
+  steps         jsonb      // list of instructions
+  prep_time     int
+  cook_time     int
+  servings      int
+  difficulty    recipe_difficulty
+  cuisine       cuisine_type
+  metadata      jsonb      // nutrition, cuisine, tags, etc.
+  imageUrl      varchar
+  created_at    timestamp  [default: `now()`]
+  updated_at    timestamp  [default: `now()`]
+}
+
+Table saved_recipes {
+  id            serial     [pk]
+  user_id       uuid       [not null, ref: > users.id]
+  recipe_id     uuid       [not null, ref: > recipes.id]
+  saved_at      timestamp  [default: `now()`]
+
+  Note: "A bridge table to store saved recipes per user"
+}
+
+// Ref: saved_recipes.user_id > users.id
+// Ref: saved_recipes.recipe_id > recipes.id

@@ -79,6 +79,20 @@ services:
       timeout: 20s
       retries: 3
       start_period: 10s
+  express:
+    container_name: annapurna_express
+    image: annapurna/express
+    env_file:
+      - ./server/.env
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - graphql-engine
+      - minio
+
 volumes:
   annapurna_db_data:
   annapurna_minio_data:
