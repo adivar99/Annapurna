@@ -30,7 +30,7 @@ function service_build() {
         ;;
     "backend")
         echo "Building backend image only"
-        docker-compose -f $cur_dir/docker-compose.yml build backend
+        docker-compose -f $cur_dir/graphql/docker-compose.yml build
         ;;
     "frontend")
         echo "Building frontend image only, after this you need to do build to make it part of container."
@@ -38,19 +38,13 @@ function service_build() {
         ;;
     "dev")
         echo "Building dev image, Start dev service only."
-        bld_ver=$(whoami):${rel_ver}:devel:$(date +'%d%m%y-%H%M'):$(git rev-parse --abbrev-ref HEAD):$(git rev-parse --short HEAD)
-        echo "$bld_ver" >$cur_dir/backend/app/app/buildinfo
-        docker-compose build
-        # Removing this file in dev env will delete it from running container too.
-        #rm $cur_dir/backend/app/app/buildinfo
+        service_build backend
+        service_build frontend
         ;;
     "prod")
         echo "TODO: Building prod image, Start prod image only."
-        # echo "$bld_ver" >$cur_dir/backend/app/app/buildinfo
-        # TAG=${rel_ver} FRONTEND_ENV=production bash ./scripts/build.sh
-        # # Update stack file also.
-        # DOMAIN=$DOMAIN TRAEFIK_TAG=$TRAEFIK_TAG STACK_NAME=$STACK_NAME TAG=${rel_ver} bash scripts/deploy.sh "config"
-        # rm $cur_dir/backend/app/app/buildinfo
+        service_build backend
+        service_build frontend
         ;;
     *)
         echo "Supplied build option ($2) not present."
@@ -96,6 +90,7 @@ case $1 in
     case $2 in
     "dev")
         echo "Starting project in dev mode with reloads"
+        docker-compose -f $cur_dir/graphql/docker-compose.yml up -d
         docker-compose up -d
         ;;
     "prod")
@@ -120,5 +115,6 @@ case $1 in
 "stop")
     echo "Stopping running containers"
     docker-compose down --remove-orphans
+    docker-compose -f $cur_dir/graphql/docker-compose.yml down --remove-orphans
 esac
 

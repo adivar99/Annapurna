@@ -1,4 +1,4 @@
-FROM node:16-alpine
+FROM node:24-alpine
 
 RUN apk -U upgrade
 
@@ -10,4 +10,4 @@ ENV PATH=/src/annapurna-app/node_modules/.bin:$PATH
 COPY ./annapurna-app/package.json /src/annapurna-app/package.json
 COPY ./annapurna-app/package-lock.json /src/annapurna-app/package-lock.json
 RUN npm install
-RUN npm install -g @angular/cli
+# RUN npm install -g @angular/cli
