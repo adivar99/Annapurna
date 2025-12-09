@@ -38,8 +38,8 @@ function service_build() {
         ;;
     "dev")
         echo "Building dev image, Start dev service only."
-        service_build backend
-        service_build frontend
+        docker-compose -f $cur_dir/graphql/docker-compose.yml build
+        docker-compose -f $cur_dir/docker-compose.yml build
         ;;
     "prod")
         echo "TODO: Building prod image, Start prod image only."
@@ -102,7 +102,7 @@ case $1 in
     if [ $# == 1 ]; then
         docker-compose logs -f
     else
-        docker-compose logs $2 -f
+        docker-compose logs -f $2
     fi
     ;;
 "shell")

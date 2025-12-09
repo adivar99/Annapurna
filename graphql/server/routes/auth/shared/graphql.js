@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const HASURA_ENDPOINT = `http://localhost:8080/v1/graphql` || process.env.HASURA_ENDPOINT || 'http://graphql-engine:8080/v1/graphql';
+const HASURA_ENDPOINT = process.env.HASURA_ENDPOINT || 'http://annapurna_hasura:8080/v1/graphql';
 const HASURA_ADMIN_SECRET = process.env.HASURA_GRAPHQL_ADMIN_SECRET || 'myadminsecretkey';
 
 /**

@@ -9,10 +9,6 @@ const { ApolloServer } = require('apollo-server-express');
 const { typeDefs, resolvers } = require('./graphql/schema');
 const authRoutes = require('./routes/auth');
 const fileRoutes = require('./routes/files');
-const patientRoutes = require('./routes/patient');
-const appointmentRoutes = require('./routes/appointments');
-const doctorRoutes = require('./routes/doctor');
-const livekitRoutes = require('./routes/livekit');
 const { initializeBuckets } = require('./lib/minio-client');
 
 const app = express();
