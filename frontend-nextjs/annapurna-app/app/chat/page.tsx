@@ -26,6 +26,9 @@ function ChatContent() {
   const [isSending, setIsSending] = useState<boolean>(false);
   const [errorBanner, setErrorBanner] = useState<string | null>(null);
 
+  // Mobile View Tab Switch: 'recipe' vs 'chat'
+  const [activeMobileTab, setActiveMobileTab] = useState<'recipe' | 'chat'>('chat');
+
   // Speech & Voice Agent States
   const [isSpeechSupported, setIsSpeechSupported] = useState<boolean>(false);
   const [isListening, setIsListening] = useState<boolean>(false);
@@ -124,10 +127,7 @@ function ChatContent() {
     setMessages(prev => [...prev, userMsg]);
 
     try {
-      // Save message to DB
       await chatService.addMessage(sessionId, textToSend, 'user');
-
-      // Call AI endpoint for context-rich answer
       const aiResponse = await recipeService.askQuestion(recipe, textToSend);
 
       const aiMsg: ChatMessage = {
@@ -136,11 +136,8 @@ function ChatContent() {
         created_at: new Date().toISOString()
       };
       setMessages(prev => [...prev, aiMsg]);
-
-      // Save AI answer to DB
       await chatService.addMessage(sessionId, aiResponse.response, 'ai');
 
-      // If speech mode was active, speak out response
       if (isListening) {
         speechService.speak(aiResponse.response);
       }
@@ -210,30 +207,60 @@ function ChatContent() {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-[70vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#ff9f1d] border-t-transparent"></div>
+        <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-4 border-[#ff9f1d] border-t-transparent"></div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
+    <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6">
       {errorBanner && (
-        <div className="mb-4 p-3 bg-red-100 border border-red-300 text-red-800 rounded-xl flex justify-between items-center text-sm">
+        <div className="mb-4 p-3 bg-red-100 border border-red-300 text-red-800 rounded-xl flex justify-between items-center text-xs sm:text-sm">
           <span>{errorBanner}</span>
           <button onClick={() => setErrorBanner(null)} className="font-bold ml-4">✕</button>
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[82vh]">
+      {/* Mobile Tab Switcher (Visible only on < lg screens) */}
+      <div className="flex lg:hidden bg-stone-200/80 p-1 rounded-2xl mb-4 border border-stone-300 shadow-inner">
+        <button
+          onClick={() => setActiveMobileTab('recipe')}
+          className={`flex-1 py-2 text-xs sm:text-sm font-bold rounded-xl transition flex items-center justify-center gap-1.5 ${
+            activeMobileTab === 'recipe'
+              ? 'bg-white text-stone-900 shadow-sm'
+              : 'text-stone-600 hover:text-stone-900'
+          }`}
+        >
+          <span>📖</span>
+          <span>Recipe Guide</span>
+        </button>
+        <button
+          onClick={() => setActiveMobileTab('chat')}
+          className={`flex-1 py-2 text-xs sm:text-sm font-bold rounded-xl transition flex items-center justify-center gap-1.5 ${
+            activeMobileTab === 'chat'
+              ? 'bg-[#ff9f1d] text-white shadow-sm'
+              : 'text-stone-600 hover:text-stone-900'
+          }`}
+        >
+          <span>💬</span>
+          <span>AI Assistant</span>
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[75vh] lg:min-h-[82vh]">
         {/* Left Panel: Recipe Guide */}
-        <div className="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden flex flex-col max-h-[85vh]">
+        <div
+          className={`lg:col-span-5 bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden flex flex-col max-h-[75vh] lg:max-h-[85vh] ${
+            activeMobileTab === 'recipe' ? 'flex' : 'hidden lg:flex'
+          }`}
+        >
           {recipe && (
-            <div className="overflow-y-auto p-6 space-y-6 flex-1">
+            <div className="overflow-y-auto p-4 sm:p-6 space-y-5 flex-1">
               {recipe.imageUrl && (
                 <img
                   src={recipe.imageUrl}
                   alt={recipe.title}
-                  className="w-full h-56 object-cover rounded-xl shadow-inner"
+                  className="w-full h-44 sm:h-56 object-cover rounded-xl shadow-inner"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x200?text=Annapurna+Recipe';
                   }}
@@ -241,8 +268,8 @@ function ChatContent() {
               )}
 
               <div>
-                <h1 className="text-2xl font-bold text-stone-900 mb-2">{recipe.title}</h1>
-                <div className="flex flex-wrap gap-3 text-xs font-medium text-stone-600 mb-4">
+                <h1 className="text-xl sm:text-2xl font-bold text-stone-900 mb-2">{recipe.title}</h1>
+                <div className="flex flex-wrap gap-2 text-[11px] sm:text-xs font-medium text-stone-600 mb-3">
                   <span className="bg-orange-50 text-orange-700 px-2.5 py-1 rounded-full border border-orange-200">
                     ⏱ Prep: {recipe.prep_time}m | Cook: {recipe.cook_time}m
                   </span>
@@ -255,20 +282,20 @@ function ChatContent() {
                 </div>
                 {recipe.description && (
                   <p
-                    className="text-stone-600 text-sm leading-relaxed"
+                    className="text-stone-600 text-xs sm:text-sm leading-relaxed"
                     dangerouslySetInnerHTML={{ __html: recipe.description }}
                   />
                 )}
               </div>
 
               {/* Ingredients List */}
-              <div className="border-t border-stone-200 pt-5">
-                <h2 className="text-lg font-bold text-stone-900 mb-3 flex items-center gap-2">
+              <div className="border-t border-stone-200 pt-4">
+                <h2 className="text-base sm:text-lg font-bold text-stone-900 mb-2.5 flex items-center gap-2">
                   <span>🥕</span> Ingredients
                 </h2>
                 <ul className="space-y-2">
                   {recipe.ingredients.map((ing, idx) => (
-                    <li key={idx} className="flex items-start text-sm text-stone-700">
+                    <li key={idx} className="flex items-start text-xs sm:text-sm text-stone-700">
                       <span className="inline-block w-2 h-2 rounded-full bg-orange-400 mt-1.5 mr-2.5 flex-shrink-0"></span>
                       <span>
                         <strong className="font-semibold">{ing.quantity > 0 ? `${ing.quantity} ` : ''}{ing.unit ? `${ing.unit} ` : ''}</strong>
@@ -280,14 +307,14 @@ function ChatContent() {
               </div>
 
               {/* Instructions Steps */}
-              <div className="border-t border-stone-200 pt-5">
-                <h2 className="text-lg font-bold text-stone-900 mb-3 flex items-center gap-2">
+              <div className="border-t border-stone-200 pt-4">
+                <h2 className="text-base sm:text-lg font-bold text-stone-900 mb-2.5 flex items-center gap-2">
                   <span>👨‍🍳</span> Instructions
                 </h2>
-                <ol className="space-y-3">
+                <ol className="space-y-2.5">
                   {recipe.instructions.map((step, idx) => (
-                    <li key={idx} className="flex items-start text-sm text-stone-700 bg-stone-50 p-3 rounded-xl border border-stone-100">
-                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#ff9f1d] text-white text-xs font-bold flex items-center justify-center mr-3 mt-0.5">
+                    <li key={idx} className="flex items-start text-xs sm:text-sm text-stone-700 bg-stone-50 p-2.5 sm:p-3 rounded-xl border border-stone-100">
+                      <span className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#ff9f1d] text-white text-[10px] sm:text-xs font-bold flex items-center justify-center mr-2.5 mt-0.5">
                         {idx + 1}
                       </span>
                       <span className="flex-1 leading-relaxed">{step}</span>
@@ -300,23 +327,27 @@ function ChatContent() {
         </div>
 
         {/* Right Panel: AI Chef Chat & Voice */}
-        <div className="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-stone-200 flex flex-col max-h-[85vh] overflow-hidden">
+        <div
+          className={`lg:col-span-7 bg-white rounded-2xl shadow-sm border border-stone-200 flex flex-col max-h-[75vh] lg:max-h-[85vh] overflow-hidden ${
+            activeMobileTab === 'chat' ? 'flex' : 'hidden lg:flex'
+          }`}
+        >
           {/* Chat Header */}
-          <div className="px-6 py-4 border-b border-stone-200 flex justify-between items-center bg-stone-50/80">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-[#758e4f] text-white flex items-center justify-center text-lg font-bold shadow-sm">
+          <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-stone-200 flex justify-between items-center bg-stone-50/90">
+            <div className="flex items-center space-x-2.5 sm:space-x-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#758e4f] text-white flex items-center justify-center text-sm sm:text-lg font-bold shadow-sm">
                 🍳
               </div>
               <div>
-                <h3 className="font-bold text-stone-900 text-sm md:text-base">Anu - AI Chef Assistant</h3>
-                <p className="text-xs text-stone-500">Live cooking guide & voice companion</p>
+                <h3 className="font-bold text-stone-900 text-xs sm:text-sm md:text-base">Anu - AI Assistant</h3>
+                <p className="text-[10px] sm:text-xs text-stone-500">Live cooking guide & voice companion</p>
               </div>
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1.5 sm:space-x-2">
               <button
                 onClick={toggleVoiceAgent}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition shadow-sm ${
+                className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-1 transition shadow-sm ${
                   isVoiceAgentActive
                     ? 'bg-red-500 text-white animate-pulse'
                     : 'bg-stone-200 hover:bg-stone-300 text-stone-800'
@@ -324,7 +355,7 @@ function ChatContent() {
                 title="Realtime Voice Agent"
               >
                 <span>🎙</span>
-                <span>{isVoiceAgentActive ? 'End Call' : 'Live Voice'}</span>
+                <span className="hidden sm:inline">{isVoiceAgentActive ? 'End Call' : 'Live Voice'}</span>
               </button>
 
               <button
@@ -338,21 +369,21 @@ function ChatContent() {
           </div>
 
           {/* Messages Feed */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3 sm:space-y-4">
             {messages.map((msg, index) => {
               const isAi = msg.sender === 'ai';
               return (
                 <div
                   key={index}
-                  className={`flex items-start gap-2.5 ${isAi ? 'justify-start' : 'justify-end'}`}
+                  className={`flex items-start gap-2 ${isAi ? 'justify-start' : 'justify-end'}`}
                 >
                   {isAi && (
-                    <div className="w-8 h-8 rounded-full bg-[#758e4f] text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-1">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#758e4f] text-white flex items-center justify-center text-[10px] sm:text-xs font-bold flex-shrink-0 mt-0.5">
                       Anu
                     </div>
                   )}
                   <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
+                    className={`max-w-[85%] sm:max-w-[80%] rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm leading-relaxed shadow-sm ${
                       isAi
                         ? 'bg-stone-100 text-stone-800 rounded-tl-sm'
                         : 'bg-[#ff9f1d] text-white rounded-tr-sm'
@@ -364,40 +395,40 @@ function ChatContent() {
               );
             })}
             {isSending && (
-              <div className="flex items-center space-x-2 text-stone-400 text-xs italic ml-10">
+              <div className="flex items-center space-x-2 text-stone-400 text-xs italic ml-9 sm:ml-10">
                 <span className="animate-pulse">Anu is thinking...</span>
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Voice Waveform Visualizer (Active when Voice Agent mode is on) */}
+          {/* Voice Waveform Visualizer */}
           {isVoiceAgentActive && (
-            <div className="px-6 py-3 bg-stone-900 border-t border-stone-800 flex flex-col items-center">
+            <div className="px-4 py-2.5 bg-stone-900 border-t border-stone-800 flex flex-col items-center">
               <canvas
                 ref={canvasRef}
                 width={600}
                 height={50}
-                className="w-full max-w-lg h-12 rounded-lg bg-stone-950"
+                className="w-full max-w-lg h-10 sm:h-12 rounded-lg bg-stone-950"
               />
-              <span className="text-xs text-orange-400 mt-1.5 font-medium">{voiceStatus}</span>
+              <span className="text-[11px] text-orange-400 mt-1 font-medium">{voiceStatus}</span>
             </div>
           )}
 
           {/* Chat Input Bar */}
-          <div className="p-4 border-t border-stone-200 bg-white">
+          <div className="p-3 sm:p-4 border-t border-stone-200 bg-white">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 handleSendMessage();
               }}
-              className="flex items-center space-x-2"
+              className="flex items-center space-x-1.5 sm:space-x-2"
             >
               {isSpeechSupported && (
                 <button
                   type="button"
                   onClick={toggleMic}
-                  className={`p-2.5 rounded-xl border transition ${
+                  className={`p-2 sm:p-2.5 rounded-xl border transition flex-shrink-0 ${
                     isListening
                       ? 'bg-red-500 text-white border-red-600 animate-pulse'
                       : 'bg-stone-100 hover:bg-stone-200 text-stone-700 border-stone-300'
@@ -412,15 +443,15 @@ function ChatContent() {
                 type="text"
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
-                placeholder={isListening ? 'Listening for speech...' : 'Ask Anu a question about this recipe...'}
-                className="flex-1 px-4 py-2.5 bg-stone-50 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff9f1d] text-sm"
+                placeholder={isListening ? 'Listening for speech...' : 'Ask Anu a question...'}
+                className="flex-1 min-w-0 px-3 sm:px-4 py-2 sm:py-2.5 bg-stone-50 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff9f1d] text-xs sm:text-sm"
                 disabled={isVoiceAgentActive || isSending}
               />
 
               <button
                 type="submit"
                 disabled={!userInput.trim() || isSending || isVoiceAgentActive}
-                className="bg-[#ff9f1d] hover:bg-[#e88d15] text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                className="bg-[#ff9f1d] hover:bg-[#e88d15] text-white px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed shadow-sm flex-shrink-0"
               >
                 Send
               </button>

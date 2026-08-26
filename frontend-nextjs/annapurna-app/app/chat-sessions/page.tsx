@@ -59,76 +59,76 @@ export default function ChatSessionsPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8 border-b border-stone-200 pb-4">
+    <div className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 border-b border-stone-200 pb-4 gap-2">
         <div>
-          <h1 className="text-3xl font-bold text-stone-900 italiana">Cooking Chat History</h1>
-          <p className="text-stone-600 text-sm mt-1">Pick up where you left off with Anu AI.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-stone-900 italiana">Cooking Chat History</h1>
+          <p className="text-stone-600 text-xs sm:text-sm mt-0.5">Pick up where you left off with Anu AI.</p>
         </div>
         <Link
           href="/home"
-          className="text-sm font-semibold text-[#ff9f1d] hover:text-[#e88d15]"
+          className="text-xs sm:text-sm font-semibold text-[#ff9f1d] hover:text-[#e88d15]"
         >
           ← Back to Home
         </Link>
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center items-center py-24">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#ff9f1d] border-t-transparent"></div>
+        <div className="flex justify-center items-center py-20 sm:py-24">
+          <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-4 border-[#ff9f1d] border-t-transparent"></div>
         </div>
       ) : error ? (
-        <div className="text-center py-16 bg-red-50 rounded-2xl border border-red-200 p-8">
-          <p className="text-red-700 mb-4">{error}</p>
+        <div className="text-center py-12 sm:py-16 bg-red-50 rounded-2xl border border-red-200 p-6 sm:p-8">
+          <p className="text-red-700 text-xs sm:text-sm mb-4">{error}</p>
           <button
             onClick={loadSessions}
-            className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl text-sm transition"
+            className="px-5 sm:px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl text-xs sm:text-sm transition"
           >
             Try Again
           </button>
         </div>
       ) : sessions.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-3xl border border-stone-200 p-12 shadow-sm">
-          <div className="text-5xl mb-4">💬</div>
-          <h2 className="text-xl font-bold text-stone-800 mb-2">No Chat Sessions Found</h2>
-          <p className="text-stone-500 text-sm max-w-md mx-auto mb-6">
+        <div className="text-center py-16 sm:py-20 bg-white rounded-3xl border border-stone-200 p-8 sm:p-12 shadow-sm">
+          <div className="text-4xl sm:text-5xl mb-3 sm:mb-4">💬</div>
+          <h2 className="text-lg sm:text-xl font-bold text-stone-800 mb-1.5 sm:mb-2">No Chat Sessions Found</h2>
+          <p className="text-stone-500 text-xs sm:text-sm max-w-md mx-auto mb-5 sm:mb-6 leading-relaxed">
             Start a cooking session by viewing any recipe and asking Anu questions about preparation, timings, or ingredient substitutions!
           </p>
           <Link
             href="/home"
-            className="inline-block bg-[#758e4f] hover:bg-[#627741] text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition shadow-sm"
+            className="inline-block bg-[#758e4f] hover:bg-[#627741] text-white px-5 sm:px-6 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition shadow-sm"
           >
             Find a Recipe
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
           {sessions.map((session) => (
             <div
               key={session.session_id}
               onClick={() => handleOpenSession(session)}
-              className="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm hover:shadow-md transition cursor-pointer flex flex-col justify-between hover:border-orange-300 group"
+              className="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 shadow-sm hover:shadow-md transition cursor-pointer flex flex-col justify-between hover:border-orange-300 group"
             >
               <div>
                 <div className="flex justify-between items-start gap-2 mb-2">
-                  <h3 className="text-base font-bold text-stone-900 group-hover:text-[#ff9f1d] transition line-clamp-1">
+                  <h3 className="text-sm sm:text-base font-bold text-stone-900 group-hover:text-[#ff9f1d] transition line-clamp-1">
                     {session.recipe_title || 'Recipe Chat'}
                   </h3>
                   <button
                     onClick={(e) => handleDeleteSession(e, session.session_id)}
-                    className="text-stone-400 hover:text-red-500 p-1 text-sm font-bold transition"
+                    className="text-stone-400 hover:text-red-500 p-1 text-xs sm:text-sm font-bold transition flex-shrink-0"
                     title="Delete Conversation"
                   >
                     🗑
                   </button>
                 </div>
 
-                <p className="text-stone-600 text-xs line-clamp-2 leading-relaxed mb-4 italic">
+                <p className="text-stone-600 text-xs line-clamp-2 leading-relaxed mb-3 sm:mb-4 italic">
                   {session.last_message ? `"${session.last_message}"` : 'No messages in this conversation.'}
                 </p>
               </div>
 
-              <div className="flex justify-between items-center text-[11px] text-stone-400 border-t border-stone-100 pt-3">
+              <div className="flex justify-between items-center text-[10px] sm:text-[11px] text-stone-400 border-t border-stone-100 pt-2.5 sm:pt-3">
                 <span>
                   {session.updated_at
                     ? new Date(session.updated_at).toLocaleDateString(undefined, {

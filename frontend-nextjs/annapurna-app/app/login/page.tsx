@@ -54,30 +54,30 @@ export default function LoginPage() {
 
   return (
     <div
-      className="login-container h-screen flex justify-end items-center bg-cover bg-center bg-no-repeat"
+      className="login-container min-h-screen flex justify-center lg:justify-end items-center bg-cover bg-center bg-no-repeat p-4 sm:p-8"
       style={{
         backgroundImage: "url('/assets/login_background.png')",
       }}
     >
-      <div className="login-card bg-[#e5dfce]/95 backdrop-blur-sm p-10 rounded-3xl shadow-2xl w-full max-w-md mx-8 border border-white/20">
-        <h1 className="login-title text-4xl font-normal text-center mb-2 tracking-wide italiana text-stone-900">
+      <div className="login-card bg-[#e5dfce]/95 backdrop-blur-md p-6 sm:p-10 rounded-3xl shadow-2xl w-full max-w-md lg:mr-16 border border-white/20">
+        <h1 className="login-title text-3xl sm:text-4xl font-normal text-center mb-1 sm:mb-2 tracking-wide italiana text-stone-900">
           Annapurna
         </h1>
-        <p className="login-subtitle text-center text-sm mb-6 text-stone-600 font-serif italic">
+        <p className="login-subtitle text-center text-xs sm:text-sm mb-5 sm:mb-6 text-stone-600 font-serif italic">
           Sign In to Your Culinary Journey
         </p>
 
         {error && (
-          <div className="error-message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">
+          <div className="error-message bg-red-100 border border-red-400 text-red-700 px-3.5 py-2.5 rounded-xl mb-4 text-xs sm:text-sm">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3.5 sm:space-y-4">
           <div className="form-field">
             <label
               htmlFor="login"
-              className="block text-xs font-semibold uppercase tracking-wider mb-1 text-stone-700"
+              className="block text-[11px] sm:text-xs font-semibold uppercase tracking-wider mb-1 text-stone-700"
             >
               Email or Username
             </label>
@@ -86,9 +86,9 @@ export default function LoginPage() {
               type="text"
               placeholder="Enter your email or username"
               {...register('login')}
-              className={`w-full px-4 py-2.5 rounded-xl border ${
+              className={`w-full px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl border ${
                 errors.login ? 'border-red-500' : 'border-stone-300'
-              } focus:outline-none focus:ring-2 focus:ring-[#758e4f] bg-white text-stone-900 placeholder-stone-400 text-sm`}
+              } focus:outline-none focus:ring-2 focus:ring-[#758e4f] bg-white text-stone-900 placeholder-stone-400 text-xs sm:text-sm`}
             />
             {errors.login && (
               <span className="error-text text-red-500 text-xs mt-1 block">
@@ -100,7 +100,7 @@ export default function LoginPage() {
           <div className="form-field">
             <label
               htmlFor="password"
-              className="block text-xs font-semibold uppercase tracking-wider mb-1 text-stone-700"
+              className="block text-[11px] sm:text-xs font-semibold uppercase tracking-wider mb-1 text-stone-700"
             >
               Password
             </label>
@@ -109,9 +109,9 @@ export default function LoginPage() {
               type="password"
               placeholder="Enter your password"
               {...register('password')}
-              className={`w-full px-4 py-2.5 rounded-xl border ${
+              className={`w-full px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl border ${
                 errors.password ? 'border-red-500' : 'border-stone-300'
-              } focus:outline-none focus:ring-2 focus:ring-[#758e4f] bg-white text-stone-900 placeholder-stone-400 text-sm`}
+              } focus:outline-none focus:ring-2 focus:ring-[#758e4f] bg-white text-stone-900 placeholder-stone-400 text-xs sm:text-sm`}
             />
             {errors.password && (
               <span className="error-text text-red-500 text-xs mt-1 block">
@@ -123,7 +123,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={!isValid || isLoading}
-            className={`w-full py-3 rounded-xl font-semibold uppercase tracking-wider text-white text-sm transition-all duration-200 shadow-md ${
+            className={`w-full py-2.5 sm:py-3 rounded-xl font-semibold uppercase tracking-wider text-white text-xs sm:text-sm transition-all duration-200 shadow-md ${
               isValid && !isLoading
                 ? 'bg-[#758e4f] hover:bg-[#627741] cursor-pointer'
                 : 'bg-stone-400 cursor-not-allowed opacity-60'
@@ -133,7 +133,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="register-link text-center mt-6 text-sm text-stone-600">
+        <div className="register-link text-center mt-5 sm:mt-6 text-xs sm:text-sm text-stone-600">
           Don&apos;t have an account?{' '}
           <Link
             href="/register"

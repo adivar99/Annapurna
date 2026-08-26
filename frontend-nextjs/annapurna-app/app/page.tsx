@@ -124,7 +124,7 @@ export default function LandingPage() {
           }
         });
       },
-      { threshold: 0.5 }
+      { threshold: 0.3 }
     );
 
     observer.observe(featuresSectionRef.current);
@@ -177,7 +177,7 @@ export default function LandingPage() {
           }
         });
       },
-      { threshold: 0.5 }
+      { threshold: 0.3 }
     );
 
     observer.observe(stepsSectionRef.current);
@@ -187,20 +187,20 @@ export default function LandingPage() {
   return (
     <div className="landing-wrapper min-h-screen text-white font-['Segoe_UI',sans-serif] relative overflow-hidden">
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 flex justify-between items-center px-16 py-6 z-[1000] bg-transparent">
-        <div className="brand italiana text-[1.8rem] text-white">Annapurna</div>
-        <div className="nav-links italiana flex gap-6">
-          <Link href="/login" className="cta text-white no-underline font-medium transition-all duration-300 py-3 px-8 rounded hover:bg-white/20 hover:border hover:border-white/50">
+      <nav className="fixed top-0 left-0 right-0 flex justify-between items-center px-4 sm:px-8 md:px-16 py-4 sm:py-6 z-[1000] bg-black/20 backdrop-blur-sm sm:bg-transparent sm:backdrop-blur-none">
+        <div className="brand italiana text-2xl sm:text-3xl text-white">Annapurna</div>
+        <div className="nav-links italiana flex gap-3 sm:gap-6">
+          <Link href="/login" className="cta text-white text-xs sm:text-sm font-medium transition-all duration-300 py-2 sm:py-2.5 px-4 sm:px-6 rounded-xl bg-white/15 hover:bg-white/30 border border-white/30">
             Login
           </Link>
-          <Link href="/register" className="cta text-white no-underline font-medium transition-all duration-300 py-3 px-8 rounded hover:bg-white/20 hover:border hover:border-white/50">
+          <Link href="/register" className="cta text-white text-xs sm:text-sm font-medium transition-all duration-300 py-2 sm:py-2.5 px-4 sm:px-6 rounded-xl bg-[#ff9f1d] hover:bg-[#e88d15] text-white shadow-md">
             Sign Up
           </Link>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section id="hero" className="relative h-screen w-full overflow-hidden flex flex-col justify-center">
+      <section id="hero" className="relative min-h-screen w-full overflow-hidden flex flex-col justify-center px-4 sm:px-8 md:px-16 lg:px-24 py-20">
         <video
           ref={heroVideoRef}
           className="background-video"
@@ -210,26 +210,25 @@ export default function LandingPage() {
           playsInline
         >
           <source src="/assets/landing-1.mp4" type="video/mp4" />
-          <source src="/assets/landing-1.webm" type="video/webm" />
         </video>
-        <div className="hero-content max-w-[750px] relative z-[2] pl-[15vh]">
-          <h1 className="playfair-display-title text-[2.5rem] mb-4">{titleText || '|'}</h1>
-          <p className="playfair-display-subtitle text-[1.1rem] mb-8">{subtitleText || ''}</p>
+        <div className="hero-content max-w-2xl relative z-[2] mt-10 sm:mt-0">
+          <h1 className="playfair-display-title text-3xl sm:text-4xl md:text-5xl mb-4 leading-tight">{titleText || '|'}</h1>
+          <p className="playfair-display-subtitle text-sm sm:text-base md:text-lg mb-8 leading-relaxed text-stone-100">{subtitleText || ''}</p>
           {showGetStarted && (
             <Link
               href="/login"
-              className={`cta bg-white/10 border border-white py-3 px-8 rounded text-white no-underline transition-all duration-300 hover:bg-white hover:text-black ${showGetStarted ? 'fade-in' : 'opacity-0'}`}
+              className={`inline-block cbg bg-white/20 backdrop-blur-sm border border-white py-3 px-8 rounded-xl text-white font-semibold text-sm sm:text-base transition-all duration-300 hover:bg-white hover:text-black shadow-lg ${showGetStarted ? 'fade-in' : 'opacity-0'}`}
             >
-              Get Started
+              Get Started →
             </Link>
           )}
         </div>
         {showScrollArrow && (
           <div
-            className={`scroll-arrow absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 cursor-pointer transition-all duration-300 z-[2] hover:-translate-y-1 ${showScrollArrow ? 'fade-in' : ''}`}
+            className={`scroll-arrow absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 opacity-0 cursor-pointer transition-all duration-300 z-[2] hover:-translate-y-1 ${showScrollArrow ? 'fade-in' : ''}`}
             onClick={() => scrollToSection('features')}
           >
-            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="40" height="40" className="sm:w-[50px] sm:h-[50px]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
@@ -240,7 +239,7 @@ export default function LandingPage() {
       <section
         ref={featuresSectionRef}
         id="features"
-        className="features relative min-h-screen w-full overflow-hidden flex flex-col justify-center"
+        className="features relative min-h-screen w-full overflow-hidden flex flex-col justify-center py-20 px-4 sm:px-8 md:px-16"
       >
         <video
           ref={featuresVideoRef}
@@ -252,30 +251,31 @@ export default function LandingPage() {
         >
           <source src="/assets/landing-2.mp4" type="video/mp4" />
         </video>
-        <div className="content relative z-[2] p-8 px-16">
-          <h2 className="playfair-display-title text-[2rem] mb-2">{featuresTitleText || ''}</h2>
-          <p className="playfair-display-subtitle text-base mb-8 opacity-90">{featuresSubtitleText || ''}</p>
+        <div className="content relative z-[2] text-center max-w-5xl mx-auto">
+          <h2 className="playfair-display-title text-2xl sm:text-3xl md:text-4xl mb-3">{featuresTitleText || ''}</h2>
+          <p className="playfair-display-subtitle text-xs sm:text-sm md:text-base mb-8 sm:mb-12 opacity-90 max-w-xl mx-auto">{featuresSubtitleText || ''}</p>
 
-          <div className="feature-grid flex flex-wrap justify-center gap-8">
+          <div className="feature-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 justify-center">
             {[
-              { title: 'Recipe Collection', desc: 'Access thousands of recipes from around the world with detailed instructions and nutritional info.' },
-              { title: 'AI Chat Assistant', desc: 'Ask questions, get modifications, and receive step-by-step guidance from your personal AI chef.' },
-              { title: 'Shopping Lists', desc: 'Automatically generate shopping lists from your favorite recipes and meal plans.' },
-              { title: 'Step-by-step Guide', desc: 'Follow clear instructions with timers and technique tips to perfect every dish.' },
+              { icon: '🍲', title: 'Recipe Collection', desc: 'Access thousands of recipes with step-by-step guidance and ingredients.' },
+              { icon: '🤖', title: 'AI Chat Assistant', desc: 'Ask questions, get substitutions, and receive live advice from Anu AI.' },
+              { icon: '📝', title: 'AI Recipe Parser', desc: 'Paste raw text from blogs or notes and let AI auto-structure the recipe.' },
+              { icon: '🎙', title: 'Voice Companion', desc: 'Hands-free cooking guidance with microphone STT and live voice assistant.' },
             ].map((feature, index) => (
               <div
                 key={index}
-                className={`feature bg-black/30 rounded-[180px] p-4 w-[220px] transition-all duration-[1.2s] cursor-pointer text-center ${
+                className={`feature bg-black/40 backdrop-blur-md rounded-2xl sm:rounded-3xl p-6 transition-all duration-700 border border-white/10 ${
                   featureCardsVisible
                     ? 'opacity-100 translate-y-0'
                     : 'opacity-0 -translate-y-5'
                 }`}
-                style={{ transitionDelay: `${index * 200}ms` }}
+                style={{ transitionDelay: `${index * 150}ms` }}
               >
-                <h3 className="mb-2 text-[1.2rem] font-normal font-['Playfair_Display',serif] text-white transition-colors duration-500">
+                <div className="text-3xl mb-3">{feature.icon}</div>
+                <h3 className="mb-2 text-base sm:text-lg font-bold font-['Playfair_Display',serif] text-white">
                   {feature.title}
                 </h3>
-                <p className="text-[0.95rem] font-normal font-['Playfair_Display',serif] text-white transition-colors duration-300">
+                <p className="text-xs sm:text-sm font-normal text-stone-200 leading-relaxed">
                   {feature.desc}
                 </p>
               </div>
@@ -284,10 +284,10 @@ export default function LandingPage() {
         </div>
         {showFeaturesScrollArrow && (
           <div
-            className={`scroll-arrow absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 cursor-pointer transition-all duration-300 z-[2] hover:-translate-y-1 ${showFeaturesScrollArrow ? 'fade-in' : ''}`}
+            className={`scroll-arrow absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 opacity-0 cursor-pointer transition-all duration-300 z-[2] hover:-translate-y-1 ${showFeaturesScrollArrow ? 'fade-in' : ''}`}
             onClick={() => scrollToSection('steps')}
           >
-            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="40" height="40" className="sm:w-[50px] sm:h-[50px]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
@@ -298,7 +298,7 @@ export default function LandingPage() {
       <section
         ref={stepsSectionRef}
         id="steps"
-        className="steps relative min-h-screen w-full overflow-hidden flex flex-col justify-center text-center"
+        className="steps relative min-h-screen w-full overflow-hidden flex flex-col justify-center text-center py-20 px-4 sm:px-8 md:px-16"
       >
         <video
           ref={stepsVideoRef}
@@ -310,31 +310,31 @@ export default function LandingPage() {
         >
           <source src="/assets/landing-3.mp4" type="video/mp4" />
         </video>
-        <div className="content relative z-[2] p-8 px-16">
-          <h2 className="playfair-display-title text-[2rem] mb-2">{stepsTitleText || ''}</h2>
-          <p className="playfair-display-subtitle mb-8">{stepsSubtitleText || ''}</p>
+        <div className="content relative z-[2] max-w-5xl mx-auto w-full">
+          <h2 className="playfair-display-title text-2xl sm:text-3xl md:text-4xl mb-3">{stepsTitleText || ''}</h2>
+          <p className="playfair-display-subtitle text-xs sm:text-sm md:text-base mb-8 sm:mb-12 opacity-90">{stepsSubtitleText || ''}</p>
 
-          <div className="step-grid flex flex-row justify-center gap-8 mt-12 w-full max-w-[1200px] mx-auto">
+          <div className="step-grid grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 w-full">
             {[
-              { num: '1', title: 'Browse Recipe', desc: 'Search our collection by cuisine, difficulty, or ingredients.' },
+              { num: '1', title: 'Browse Recipes', desc: 'Search our collection by cuisine, difficulty, or ingredients.' },
               { num: '2', title: 'Select & Customize', desc: 'Choose a recipe and tailor it to your dietary needs or preferences.' },
-              { num: '3', title: 'Cook with AI Assistance', desc: 'Follow along with step-by-step guidance and improve with AI help.' },
+              { num: '3', title: 'Cook with AI', desc: 'Follow along hands-free with voice and real-time guidance from Anu.' },
             ].map((step, index) => (
               <div
                 key={index}
-                className={`step playfair-display-subtitle flex items-start gap-6 bg-white/10 backdrop-blur-[10px] rounded-2xl p-8 w-[300px] transition-all duration-500 ${
+                className={`step playfair-display-subtitle flex items-start text-left gap-4 bg-black/40 backdrop-blur-md rounded-2xl p-6 transition-all duration-500 border border-white/10 ${
                   stepCardsVisible
                     ? 'opacity-100 translate-x-0'
-                    : 'opacity-0 -translate-x-[100px]'
-                } hover:bg-white/20 hover:-translate-y-2`}
-                style={{ transitionDelay: `${index * 300}ms` }}
+                    : 'opacity-0 -translate-x-8'
+                } hover:bg-black/60`}
+                style={{ transitionDelay: `${index * 200}ms` }}
               >
-                <div className="step-number bg-white/20 w-10 h-10 rounded-full flex items-center justify-center text-[1.5rem] font-bold flex-shrink-0">
+                <div className="step-number bg-[#ff9f1d] text-white w-9 h-9 rounded-full flex items-center justify-center text-base font-bold flex-shrink-0 shadow-md">
                   {step.num}
                 </div>
                 <div className="step-text">
-                  <h4 className="m-0 mb-2 text-[1.25rem] font-semibold">{step.title}</h4>
-                  <p className="m-0 text-base opacity-90">{step.desc}</p>
+                  <h4 className="m-0 mb-1.5 text-base sm:text-lg font-bold text-white">{step.title}</h4>
+                  <p className="m-0 text-xs sm:text-sm text-stone-200 leading-relaxed">{step.desc}</p>
                 </div>
               </div>
             ))}
@@ -342,10 +342,10 @@ export default function LandingPage() {
         </div>
         {showStepScrollArrow && (
           <div
-            className={`scroll-arrow absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 cursor-pointer transition-all duration-300 z-[2] hover:translate-y-1 ${showStepScrollArrow ? 'fade-in' : ''}`}
+            className={`scroll-arrow absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 opacity-0 cursor-pointer transition-all duration-300 z-[2] hover:translate-y-1 ${showStepScrollArrow ? 'fade-in' : ''}`}
             onClick={() => scrollToSection('hero')}
           >
-            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="40" height="40" className="sm:w-[50px] sm:h-[50px]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 19V5M12 5L5 12M12 5L19 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
