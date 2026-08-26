@@ -19,38 +19,77 @@ rel_type="Interim"
 bld_num=2
 rel_ver="v${rel_mjr}.${rel_mnr}.${rel_pch}-devbuild${bld_num}"
 
-source $cur_dir/.env
+# Load environment variables from .env if available
+if [ -f "$cur_dir/.env" ]; then
+    set -a
+    source "$cur_dir/.env"
+    set +a
+fi
+
+HASURA_ENDPOINT="${HASURA_ENDPOINT:-http://localhost:8080}"
+HASURA_ADMIN_SECRET="${HASURA_GRAPHQL_ADMIN_SECRET:-myadminsecretkey}"
+GRAPHQL_DIR="$cur_dir/graphql"
+
+function hasura_export() {
+    if command -v hasura &> /dev/null; then
+        # Check if Hasura is reachable before attempting export
+        if curl -s -f -o /dev/null "$HASURA_ENDPOINT/healthz"; then
+            echo "📦 Exporting Hasura metadata to $GRAPHQL_DIR/metadata..."
+            hasura metadata export --project "$GRAPHQL_DIR" --endpoint "$HASURA_ENDPOINT" --admin-secret "$HASURA_ADMIN_SECRET"
+        else
+            echo "⚠️ Hasura is not reachable at $HASURA_ENDPOINT, skipping metadata export."
+        fi
+    else
+        echo "⚠️ Hasura CLI not found, skipping metadata export."
+    fi
+}
+
+function hasura_reload() {
+    if command -v hasura &> /dev/null; then
+        echo "⏳ Waiting for Hasura to be ready at $HASURA_ENDPOINT..."
+        local max_attempts=30
+        local attempt=1
+        while ! curl -s -f -o /dev/null "$HASURA_ENDPOINT/healthz"; do
+            if [ $attempt -ge $max_attempts ]; then
+                echo "❌ Hasura did not become ready in time, skipping metadata reload."
+                return 1
+            fi
+            sleep 1
+            attempt=$((attempt + 1))
+        done
+        echo "🔄 Applying Hasura metadata from $GRAPHQL_DIR/metadata..."
+        hasura metadata apply --project "$GRAPHQL_DIR" --endpoint "$HASURA_ENDPOINT" --admin-secret "$HASURA_ADMIN_SECRET"
+        echo "🔄 Reloading Hasura metadata..."
+        hasura metadata reload --project "$GRAPHQL_DIR" --endpoint "$HASURA_ENDPOINT" --admin-secret "$HASURA_ADMIN_SECRET"
+    else
+        echo "⚠️ Hasura CLI not found, skipping metadata reload."
+    fi
+}
 
 function service_build() {
     bld_ver=$(whoami):${rel_ver}:${rel_type}:$(date +'%d%m%y-%H%M'):$(git rev-parse --abbrev-ref HEAD):$(git rev-parse --short HEAD)
     case "$2" in
     "baseimgs")
         echo "Building base images only."
-        export VERSION=$bld_ver && cd $cur_dir/baseimgs/ && docker-compose build
+        export VERSION=$bld_ver && cd $cur_dir/baseimgs/ && docker compose build
         ;;
     "backend")
         echo "Building backend image only"
-        docker-compose -f $cur_dir/docker-compose.yml build backend
+        docker compose -f $cur_dir/docker-compose.yml build express
         ;;
     "frontend")
         echo "Building frontend image only, after this you need to do build to make it part of container."
-        docker-compose -f $cur_dir/docker-compose.yml build frontend
+        docker compose -f $cur_dir/docker-compose.yml build frontend
         ;;
     "dev")
         echo "Building dev image, Start dev service only."
         bld_ver=$(whoami):${rel_ver}:devel:$(date +'%d%m%y-%H%M'):$(git rev-parse --abbrev-ref HEAD):$(git rev-parse --short HEAD)
-        echo "$bld_ver" >$cur_dir/backend/app/app/buildinfo
-        docker-compose build
-        # Removing this file in dev env will delete it from running container too.
-        #rm $cur_dir/backend/app/app/buildinfo
+        docker compose build
         ;;
     "prod")
         echo "TODO: Building prod image, Start prod image only."
-        # echo "$bld_ver" >$cur_dir/backend/app/app/buildinfo
-        # TAG=${rel_ver} FRONTEND_ENV=production bash ./scripts/build.sh
-        # # Update stack file also.
-        # DOMAIN=$DOMAIN TRAEFIK_TAG=$TRAEFIK_TAG STACK_NAME=$STACK_NAME TAG=${rel_ver} bash scripts/deploy.sh "config"
-        # rm $cur_dir/backend/app/app/buildinfo
+        service_build backend
+        service_build frontend
         ;;
     *)
         echo "Supplied build option ($2) not present."
@@ -96,7 +135,8 @@ case $1 in
     case $2 in
     "dev")
         echo "Starting project in dev mode with reloads"
-        docker-compose up -d
+        docker compose up -d
+        hasura_reload
         ;;
     "prod")
         echo "TODO: Start the project in prod mode without reload and scalable"
@@ -105,9 +145,9 @@ case $1 in
     ;;
 "logs")
     if [ $# == 1 ]; then
-        docker-compose logs -f
+        docker compose logs -f
     else
-        docker-compose logs $2 -f
+        docker compose logs $2 -f
     fi
     ;;
 "shell")
@@ -115,10 +155,11 @@ case $1 in
         echo "Please provide a Service and a command to run"
         exit 1
     fi
-    docker-compose exec -it $1 $2
+    docker compose exec -it $1 $2
     ;;
 "stop")
+    hasura_export
     echo "Stopping running containers"
-    docker-compose down --remove-orphans
+    docker compose down --remove-orphans
 esac
 

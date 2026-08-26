@@ -1,0 +1,198 @@
+'use client';
+
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import Link from 'next/link';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../context/AuthContext';
+import { AuthError } from '../services/interfaces';
+
+const registerSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  username: z.string().min(1, 'Username is required'),
+  email: z.string().min(1, 'Email is required').email('Please enter a valid email'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+});
+
+type RegisterFormData = z.infer<typeof registerSchema>;
+
+export default function RegisterPage() {
+  const router = useRouter();
+  const { register: authRegister } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+    mode: 'onChange',
+  });
+
+  const onSubmit = async (data: RegisterFormData) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await authRegister({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        username: data.username,
+      });
+
+      console.log('Registration successful:', response);
+      router.push('/home');
+    } catch (err) {
+      const authError = err as AuthError;
+      setError(authError.message || 'Registration failed. Please try again.');
+      console.error('Registration error:', authError);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div
+      className="register-container min-h-screen flex justify-center lg:justify-end items-center bg-cover bg-center bg-no-repeat p-4 sm:p-8"
+      style={{
+        backgroundImage: "url('/assets/login_background.png')",
+      }}
+    >
+      <div className="register-card bg-[#e5dfce]/95 backdrop-blur-md p-6 sm:p-10 rounded-3xl shadow-2xl w-full max-w-md lg:mr-16 border border-white/20">
+        <h1 className="register-title text-3xl sm:text-4xl font-normal text-center mb-1 sm:mb-2 tracking-wide italiana text-stone-900">
+          Annapurna
+        </h1>
+        <p className="register-subtitle text-center text-xs sm:text-sm mb-5 sm:mb-6 text-stone-600 font-serif italic">
+          Join the Culinary Community
+        </p>
+
+        {error && (
+          <div className="error-message bg-red-100 border border-red-400 text-red-700 px-3.5 py-2.5 rounded-xl mb-4 text-xs sm:text-sm">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-3.5">
+          <div className="form-field">
+            <label
+              htmlFor="name"
+              className="block text-[11px] sm:text-xs font-semibold uppercase tracking-wider mb-1 text-stone-700"
+            >
+              Full Name
+            </label>
+            <input
+              id="name"
+              type="text"
+              placeholder="Enter your full name"
+              {...register('name')}
+              className={`w-full px-3.5 sm:px-4 py-2 rounded-xl border ${
+                errors.name ? 'border-red-500' : 'border-stone-300'
+              } focus:outline-none focus:ring-2 focus:ring-[#758e4f] bg-white text-stone-900 placeholder-stone-400 text-xs sm:text-sm`}
+            />
+            {errors.name && (
+              <span className="error-text text-red-500 text-xs mt-1 block">
+                {errors.name.message}
+              </span>
+            )}
+          </div>
+
+          <div className="form-field">
+            <label
+              htmlFor="username"
+              className="block text-[11px] sm:text-xs font-semibold uppercase tracking-wider mb-1 text-stone-700"
+            >
+              Username
+            </label>
+            <input
+              id="username"
+              type="text"
+              placeholder="Choose a username"
+              {...register('username')}
+              className={`w-full px-3.5 sm:px-4 py-2 rounded-xl border ${
+                errors.username ? 'border-red-500' : 'border-stone-300'
+              } focus:outline-none focus:ring-2 focus:ring-[#758e4f] bg-white text-stone-900 placeholder-stone-400 text-xs sm:text-sm`}
+            />
+            {errors.username && (
+              <span className="error-text text-red-500 text-xs mt-1 block">
+                {errors.username.message}
+              </span>
+            )}
+          </div>
+
+          <div className="form-field">
+            <label
+              htmlFor="email"
+              className="block text-[11px] sm:text-xs font-semibold uppercase tracking-wider mb-1 text-stone-700"
+            >
+              Email Address
+            </label>
+            <input
+              id="email"
+              type="email"
+              placeholder="Enter your email"
+              {...register('email')}
+              className={`w-full px-3.5 sm:px-4 py-2 rounded-xl border ${
+                errors.email ? 'border-red-500' : 'border-stone-300'
+              } focus:outline-none focus:ring-2 focus:ring-[#758e4f] bg-white text-stone-900 placeholder-stone-400 text-xs sm:text-sm`}
+            />
+            {errors.email && (
+              <span className="error-text text-red-500 text-xs mt-1 block">
+                {errors.email.message}
+              </span>
+            )}
+          </div>
+
+          <div className="form-field">
+            <label
+              htmlFor="password"
+              className="block text-[11px] sm:text-xs font-semibold uppercase tracking-wider mb-1 text-stone-700"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              placeholder="Enter password (min 6 chars)"
+              {...register('password')}
+              className={`w-full px-3.5 sm:px-4 py-2 rounded-xl border ${
+                errors.password ? 'border-red-500' : 'border-stone-300'
+              } focus:outline-none focus:ring-2 focus:ring-[#758e4f] bg-white text-stone-900 placeholder-stone-400 text-xs sm:text-sm`}
+            />
+            {errors.password && (
+              <span className="error-text text-red-500 text-xs mt-1 block">
+                {errors.password.message}
+              </span>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={!isValid || isLoading}
+            className={`w-full py-2.5 sm:py-3 rounded-xl font-semibold uppercase tracking-wider text-white text-xs sm:text-sm transition-all duration-200 shadow-md ${
+              isValid && !isLoading
+                ? 'bg-[#758e4f] hover:bg-[#627741] cursor-pointer'
+                : 'bg-stone-400 cursor-not-allowed opacity-60'
+            }`}
+          >
+            {isLoading ? 'Creating Account...' : 'Register'}
+          </button>
+        </form>
+
+        <div className="login-link text-center mt-5 sm:mt-6 text-xs sm:text-sm text-stone-600">
+          Already have an account?{' '}
+          <Link
+            href="/login"
+            className="text-[#758e4f] font-semibold hover:underline"
+          >
+            Log In
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
