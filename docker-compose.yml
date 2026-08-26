@@ -4,12 +4,12 @@ services:
     env_file:
       - .env
     build:
-      context: ./frontend-nextjs
+      context: ./frontend
       dockerfile: Dockerfile
     ports:
       - "3004:3000"
     volumes:
-      - ./frontend-nextjs/annapurna-app:/src/annapurna-app
+      - ./frontend/annapurna-app:/src/annapurna-app
       - /src/annapurna-app/node_modules
   # proxy:
   #   image: annapurna/proxy:latest

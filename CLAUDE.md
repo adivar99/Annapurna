@@ -8,8 +8,7 @@ Annapurna is a web application structured as a multi-service stack orchestrating
 
 ### Services and Components
 
-- **Frontend (`frontend-nextjs/annapurna-app`)**: Next.js 16 (React 19, TypeScript, Tailwind CSS v4) application for user authentication and recipe browsing/management.
-  - *Legacy frontend (`frontend/annapurna-app`)*: Angular 16 application.
+- **Frontend (`frontend/annapurna-app`)**: Next.js 16 (React 19, TypeScript, Tailwind CSS v4) application for user authentication and recipe browsing/management.
 - **Backend API & File Service (`graphql/server`)**: Node.js/Express service providing:
   - Apollo GraphQL server (`/graphql`)
   - Authentication endpoints (`/api/auth/signup`, `/api/auth/login`) with JWT token generation and bcrypt password hashing
@@ -49,9 +48,9 @@ A helper script `annapurna.sh` (symlinked at root) wraps Docker Compose workflow
 ./annapurna.sh shell <service> <command> # Execute shell command inside container
 ```
 
-### Next.js Frontend (`frontend-nextjs/annapurna-app`)
+### Next.js Frontend (`frontend/annapurna-app`)
 
-Run inside `frontend-nextjs/annapurna-app`:
+Run inside `frontend/annapurna-app`:
 
 ```bash
 npm install                    # Install dependencies
