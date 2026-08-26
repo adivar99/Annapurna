@@ -8,28 +8,25 @@ const router = express.Router();
 class LoginController {
   static async login(req, res) {
     try {
-      const { email, password } = req.body.input.input;
-      LoginHelper.validateInput(email, password);
+      // Support both Hasura Action format ({ input: { input: {...} } }) and direct REST format ({ ... })
+      const body = req.body.input?.input || req.body;
+      const login = (body.login || body.email || body.username || '').toLowerCase().trim();
+      const password = body.password;
 
-      const user = await Resolvers.findUserByEmail(email);
+      LoginHelper.validateInput(login, password);
+
+      const user = await Resolvers.findUserByEmailOrUsername(login);
       if (!user) {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
 
-      if (!user.is_active) {
-        return res.status(401).json({ message: 'Account is deactivated' });
-      }
-
-      const isValidPassword = await LoginHelper.verifyPassword(password, user.password);
+      const isValidPassword = await LoginHelper.verifyPassword(password, user.hashed_password);
       if (!isValidPassword) {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
 
-      // Get patient or doctor ID based on user role
-      const { patientId, doctorId } = await LoginHelper.getRoleSpecificIds(user);
-
       // Generate JWT
-      const tokenData = generateJWT(user, patientId, doctorId);
+      const tokenData = generateJWT(user);
 
       res.json({
         message: 'Login successful',
@@ -38,7 +35,9 @@ class LoginController {
         user: {
           id: user.id,
           name: user.name,
-          user_role: user.user_role
+          email: user.email,
+          username: user.username,
+          imageUrl: user.image_url
         }
       });
 
@@ -53,4 +52,3 @@ class LoginController {
 router.post('/', LoginController.login);
 
 module.exports = router;
-

@@ -57,7 +57,9 @@ function hasura_reload() {
             sleep 1
             attempt=$((attempt + 1))
         done
-        echo "🔄 Reloading Hasura metadata from $GRAPHQL_DIR/metadata..."
+        echo "🔄 Applying Hasura metadata from $GRAPHQL_DIR/metadata..."
+        hasura metadata apply --project "$GRAPHQL_DIR" --endpoint "$HASURA_ENDPOINT" --admin-secret "$HASURA_ADMIN_SECRET"
+        echo "🔄 Reloading Hasura metadata..."
         hasura metadata reload --project "$GRAPHQL_DIR" --endpoint "$HASURA_ENDPOINT" --admin-secret "$HASURA_ADMIN_SECRET"
     else
         echo "⚠️ Hasura CLI not found, skipping metadata reload."

@@ -6,7 +6,7 @@ import { z } from 'zod';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import authService from '../services/authService';
+import { useAuth } from '../context/AuthContext';
 import { AuthError } from '../services/interfaces';
 
 const registerSchema = z.object({
@@ -20,9 +20,10 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { register: authRegister } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const {
     register,
     handleSubmit,
@@ -35,18 +36,16 @@ export default function RegisterPage() {
   const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
-      const response = await authService.register({
+      const response = await authRegister({
         name: data.name,
         email: data.email,
         password: data.password,
         username: data.username,
-        userRole: 'patient', // Default role, can be made configurable later
       });
-      
+
       console.log('Registration successful:', response);
-      // Redirect to home page or dashboard after successful registration
       router.push('/home');
     } catch (err) {
       const authError = err as AuthError;
@@ -64,114 +63,136 @@ export default function RegisterPage() {
         backgroundImage: "url('/assets/login_background.png')",
       }}
     >
-      <div className="w-full max-w-[400px] m-4 mr-24 p-4 bg-white rounded-lg shadow-lg">
-        <div className="flex justify-center mb-4 text-[#333]">
-          <h2 className="text-2xl font-semibold">Register</h2>
-        </div>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          {error && (
-            <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-md text-sm">
-              {error}
-            </div>
-          )}
-          <div className="flex flex-col">
-            <label htmlFor="name" className="mb-2 text-sm font-medium text-[#333]">
-              Name
+      <div className="register-card bg-[#e5dfce]/95 backdrop-blur-sm p-10 rounded-3xl shadow-2xl w-full max-w-md mx-8 border border-white/20">
+        <h1 className="register-title text-4xl font-normal text-center mb-2 tracking-wide italiana text-stone-900">
+          Annapurna
+        </h1>
+        <p className="register-subtitle text-center text-sm mb-6 text-stone-600 font-serif italic">
+          Join the Culinary Community
+        </p>
+
+        {error && (
+          <div className="error-message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="form-field">
+            <label
+              htmlFor="name"
+              className="block text-xs font-semibold uppercase tracking-wider mb-1 text-stone-700"
+            >
+              Full Name
             </label>
             <input
               id="name"
               type="text"
               placeholder="Enter your full name"
-              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                errors.name
-                  ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-blue-500'
-              }`}
               {...register('name')}
+              className={`w-full px-4 py-2.5 rounded-xl border ${
+                errors.name ? 'border-red-500' : 'border-stone-300'
+              } focus:outline-none focus:ring-2 focus:ring-[#758e4f] bg-white text-stone-900 placeholder-stone-400 text-sm`}
             />
             {errors.name && (
-              <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>
+              <span className="error-text text-red-500 text-xs mt-1 block">
+                {errors.name.message}
+              </span>
             )}
           </div>
 
-          <div className="flex flex-col">
-            <label htmlFor="username" className="mb-2 text-sm font-medium text-[#333]">
+          <div className="form-field">
+            <label
+              htmlFor="username"
+              className="block text-xs font-semibold uppercase tracking-wider mb-1 text-stone-700"
+            >
               Username
             </label>
             <input
               id="username"
               type="text"
-              placeholder="Enter your username"
-              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                errors.username
-                  ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-blue-500'
-              }`}
+              placeholder="Choose a username"
               {...register('username')}
+              className={`w-full px-4 py-2.5 rounded-xl border ${
+                errors.username ? 'border-red-500' : 'border-stone-300'
+              } focus:outline-none focus:ring-2 focus:ring-[#758e4f] bg-white text-stone-900 placeholder-stone-400 text-sm`}
             />
             {errors.username && (
-              <p className="mt-1 text-sm text-red-500">{errors.username.message}</p>
+              <span className="error-text text-red-500 text-xs mt-1 block">
+                {errors.username.message}
+              </span>
             )}
           </div>
 
-          <div className="flex flex-col">
-            <label htmlFor="email" className="mb-2 text-sm font-medium text-[#333]">
-              Email
+          <div className="form-field">
+            <label
+              htmlFor="email"
+              className="block text-xs font-semibold uppercase tracking-wider mb-1 text-stone-700"
+            >
+              Email Address
             </label>
             <input
               id="email"
               type="email"
               placeholder="Enter your email"
-              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                errors.email
-                  ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-blue-500'
-              }`}
               {...register('email')}
+              className={`w-full px-4 py-2.5 rounded-xl border ${
+                errors.email ? 'border-red-500' : 'border-stone-300'
+              } focus:outline-none focus:ring-2 focus:ring-[#758e4f] bg-white text-stone-900 placeholder-stone-400 text-sm`}
             />
             {errors.email && (
-              <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
+              <span className="error-text text-red-500 text-xs mt-1 block">
+                {errors.email.message}
+              </span>
             )}
           </div>
 
-          <div className="flex flex-col">
-            <label htmlFor="password" className="mb-2 text-sm font-medium text-[#333]">
+          <div className="form-field">
+            <label
+              htmlFor="password"
+              className="block text-xs font-semibold uppercase tracking-wider mb-1 text-stone-700"
+            >
               Password
             </label>
             <input
               id="password"
               type="password"
-              placeholder="Enter your password"
-              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                errors.password
-                  ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-blue-500'
-              }`}
+              placeholder="Enter your password (min 6 characters)"
               {...register('password')}
+              className={`w-full px-4 py-2.5 rounded-xl border ${
+                errors.password ? 'border-red-500' : 'border-stone-300'
+              } focus:outline-none focus:ring-2 focus:ring-[#758e4f] bg-white text-stone-900 placeholder-stone-400 text-sm`}
             />
             {errors.password && (
-              <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
+              <span className="error-text text-red-500 text-xs mt-1 block">
+                {errors.password.message}
+              </span>
             )}
           </div>
 
           <button
             type="submit"
             disabled={!isValid || isLoading}
-            className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-md font-medium transition-colors hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className={`w-full py-3 rounded-xl font-semibold uppercase tracking-wider text-white text-sm transition-all duration-200 shadow-md ${
+              isValid && !isLoading
+                ? 'bg-[#758e4f] hover:bg-[#627741] cursor-pointer'
+                : 'bg-stone-400 cursor-not-allowed opacity-60'
+            }`}
           >
-            {isLoading ? 'Registering...' : 'Register'}
+            {isLoading ? 'Creating Account...' : 'Register'}
           </button>
         </form>
-        <div className="flex justify-center pt-4 mt-4">
+
+        <div className="login-link text-center mt-6 text-sm text-stone-600">
+          Already have an account?{' '}
           <Link
             href="/login"
-            className="text-blue-600 hover:text-blue-800 transition-colors"
+            className="text-[#758e4f] font-semibold hover:underline"
           >
-            Already have an account? Login
+            Log In
           </Link>
         </div>
       </div>
     </div>
   );
 }
-

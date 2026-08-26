@@ -1,31 +1,21 @@
-
-
 import { LoginCredentials, RegisterData, AuthResponse, AuthError } from './interfaces';
+import { User } from '../models/user';
+import { ApiClient } from './apiClient';
 
-const API_BASE_URL = 'http://localhost:3001/api/auth';
+const AUTH_API_URL = process.env.NEXT_PUBLIC_AUTH_URL || 'http://localhost:3001/api/auth';
 
 class AuthService {
-  /**
-   * Login with email and password
-   * @param credentials - Login credentials
-   * @returns Promise with auth response containing token and user data
-   * @throws AuthError if login fails
-   */
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      // The backend expects the GraphQL action format: { input: { input: { email, password } } }
-      const response = await fetch(`${API_BASE_URL}/login`, {
+      const response = await fetch(`${AUTH_API_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          input: {
-            input: {
-              email: credentials.email,
-              password: credentials.password,
-            },
-          },
+          login: credentials.email,
+          email: credentials.email,
+          password: credentials.password,
         }),
       });
 
@@ -38,12 +28,8 @@ class AuthService {
         } as AuthError;
       }
 
-      // Store token in localStorage
       if (data.token) {
-        localStorage.setItem('authToken', data.token);
-        if (data.user) {
-          localStorage.setItem('user', JSON.stringify(data.user));
-        }
+        this.saveAuth(data.token, data.user);
       }
 
       return data;
@@ -58,30 +44,18 @@ class AuthService {
     }
   }
 
-  /**
-   * Register a new user
-   * @param registerData - Registration data
-   * @returns Promise with auth response containing token and user data
-   * @throws AuthError if registration fails
-   */
   async register(registerData: RegisterData): Promise<AuthResponse> {
     try {
-      // The backend expects the GraphQL action format: { input: { input: { ... } } }
-      const response = await fetch(`${API_BASE_URL}/signup`, {
+      const response = await fetch(`${AUTH_API_URL}/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          input: {
-            input: {
-              name: registerData.name,
-              email: registerData.email,
-              password: registerData.password,
-              username: registerData.username,
-              userRole: registerData.userRole || 'patient', // Default to patient if not specified
-            },
-          },
+          name: registerData.name,
+          email: registerData.email,
+          password: registerData.password,
+          username: registerData.username,
         }),
       });
 
@@ -94,12 +68,8 @@ class AuthService {
         } as AuthError;
       }
 
-      // Store token in localStorage
       if (data.token) {
-        localStorage.setItem('authToken', data.token);
-        if (data.user) {
-          localStorage.setItem('user', JSON.stringify(data.user));
-        }
+        this.saveAuth(data.token, data.user);
       }
 
       return data;
@@ -114,28 +84,46 @@ class AuthService {
     }
   }
 
-  /**
-   * Logout the current user
-   */
-  logout(): void {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
+  async refreshCurrentUser(): Promise<User | null> {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      const user = await ApiClient.get<User>('/auth/me');
+      if (user && typeof window !== 'undefined') {
+        localStorage.setItem('user', JSON.stringify(user));
+      }
+      return user;
+    } catch (error) {
+      console.warn('Failed to refresh current user:', error);
+      return this.getUser() as User;
+    }
   }
 
-  /**
-   * Get the current auth token
-   * @returns The auth token or null if not logged in
-   */
+  saveAuth(token: string, user?: any): void {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem('token', token);
+    localStorage.setItem('authToken', token);
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    }
+  }
+
+  logout(): void {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
+    }
+    ApiClient.post('/auth/logout').catch(() => {});
+  }
+
   getToken(): string | null {
     if (typeof window === 'undefined') return null;
-    return localStorage.getItem('authToken');
+    return localStorage.getItem('token') || localStorage.getItem('authToken');
   }
 
-  /**
-   * Get the current user data
-   * @returns The user data or null if not logged in
-   */
-  getUser(): AuthResponse['user'] | null {
+  getUser(): User | null {
     if (typeof window === 'undefined') return null;
     const userStr = localStorage.getItem('user');
     if (!userStr) return null;
@@ -146,16 +134,10 @@ class AuthService {
     }
   }
 
-  /**
-   * Check if user is authenticated
-   * @returns True if user has a valid token
-   */
   isAuthenticated(): boolean {
     return this.getToken() !== null;
   }
 }
 
-// Export a singleton instance
 export const authService = new AuthService();
 export default authService;
-

@@ -1,6 +1,5 @@
 /**
- * Resolvers for Auth Module
- * Contains all resolver functions that execute GraphQL queries
+ * Resolvers for Database Operations
  */
 
 const { makeGraphQLRequest } = require('./shared/graphql');
@@ -11,8 +10,8 @@ class Resolvers {
 
   // ==================== User Resolvers ====================
 
-  static async checkUserExists(email) {
-    const { data, error } = await makeGraphQLRequest(queries.CHECK_USER_EXISTS, { email })
+  static async checkUserExists(email, username) {
+    const { data, error } = await makeGraphQLRequest(queries.CHECK_USER_EXISTS, { email, username })
       .then(response => ({ data: response.data, error: null }))
       .catch(error => ({ data: null, error }));
 
@@ -23,8 +22,8 @@ class Resolvers {
     return data.users.length > 0;
   }
 
-  static async findUserByEmail(email) {
-    const { data, error } = await makeGraphQLRequest(queries.FIND_USER_BY_EMAIL, { email })
+  static async findUserByEmailOrUsername(login) {
+    const { data, error } = await makeGraphQLRequest(queries.FIND_USER_BY_EMAIL_OR_USERNAME, { login })
       .then(response => ({ data: response.data, error: null }))
       .catch(error => ({ data: null, error }));
 
@@ -75,18 +74,6 @@ class Resolvers {
     return data.update_users_by_pk;
   }
 
-  static async updateUserPassword(userId, hashedPassword) {
-    const { data, error } = await makeGraphQLRequest(mutations.UPDATE_USER_PASSWORD, { userId, hashedPassword })
-      .then(response => ({ data: response.data, error: null }))
-      .catch(error => ({ data: null, error }));
-
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    return data.update_users_by_pk;
-  }
-
   // ==================== Recipe Resolvers ====================
 
   static async getAllRecipes(limit = 50, offset = 0) {
@@ -116,38 +103,6 @@ class Resolvers {
   static async searchRecipes(searchTerm, limit = 50, offset = 0) {
     const { data, error } = await makeGraphQLRequest(queries.SEARCH_RECIPES, {
       searchTerm: `%${searchTerm}%`,
-      limit,
-      offset
-    })
-      .then(response => ({ data: response.data, error: null }))
-      .catch(error => ({ data: null, error }));
-
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    return data.recipes;
-  }
-
-  static async filterRecipesByCuisine(cuisine, limit = 50, offset = 0) {
-    const { data, error } = await makeGraphQLRequest(queries.FILTER_RECIPES_BY_CUISINE, {
-      cuisine,
-      limit,
-      offset
-    })
-      .then(response => ({ data: response.data, error: null }))
-      .catch(error => ({ data: null, error }));
-
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    return data.recipes;
-  }
-
-  static async filterRecipesByDifficulty(difficulty, limit = 50, offset = 0) {
-    const { data, error } = await makeGraphQLRequest(queries.FILTER_RECIPES_BY_DIFFICULTY, {
-      difficulty,
       limit,
       offset
     })
@@ -212,7 +167,19 @@ class Resolvers {
       throw new Error(error.message);
     }
 
-    return data.saved_recipes;
+    return (data.saved_recipes || []).map(sr => sr.recipe).filter(Boolean);
+  }
+
+  static async getUserSavedRecipeIds(userId) {
+    const { data, error } = await makeGraphQLRequest(queries.GET_USER_SAVED_RECIPPE_IDS, { userId })
+      .then(response => ({ data: response.data, error: null }))
+      .catch(error => ({ data: null, error }));
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return (data.saved_recipes || []).map(sr => sr.recipe_id);
   }
 
   static async checkRecipeSaved(userId, recipeId) {
@@ -250,7 +217,114 @@ class Resolvers {
 
     return data.delete_saved_recipes;
   }
+
+  // ==================== Chat Resolvers ====================
+
+  static async getUserChatSessions(userId) {
+    const { data, error } = await makeGraphQLRequest(queries.GET_USER_CHAT_SESSIONS, { userId })
+      .then(response => ({ data: response.data, error: null }))
+      .catch(error => ({ data: null, error }));
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return (data.chat_sessions || []).map(s => ({
+      session_id: s.id,
+      recipe_id: s.recipe_id,
+      recipe_title: s.recipe ? s.recipe.title : 'Recipe Conversation',
+      last_message: s.messages && s.messages.length > 0 ? s.messages[0].text : '',
+      updated_at: s.updated_at
+    }));
+  }
+
+  static async getChatSessionById(sessionId) {
+    const { data, error } = await makeGraphQLRequest(queries.GET_CHAT_SESSION_BY_ID, { sessionId })
+      .then(response => ({ data: response.data, error: null }))
+      .catch(error => ({ data: null, error }));
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    const s = data.chat_sessions_by_pk;
+    if (!s) return null;
+
+    return {
+      session_id: s.id,
+      user_id: s.user_id,
+      recipe_id: s.recipe_id,
+      recipe_title: s.recipe ? s.recipe.title : 'Recipe Conversation',
+      recipe: s.recipe,
+      messages: s.messages || [],
+      created_at: s.created_at,
+      updated_at: s.updated_at
+    };
+  }
+
+  static async getChatSessionByRecipe(userId, recipeId) {
+    const { data, error } = await makeGraphQLRequest(queries.GET_CHAT_SESSION_BY_RECIPE, { userId, recipeId })
+      .then(response => ({ data: response.data, error: null }))
+      .catch(error => ({ data: null, error }));
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    if (!data.chat_sessions || data.chat_sessions.length === 0) {
+      return null;
+    }
+
+    const s = data.chat_sessions[0];
+    return {
+      session_id: s.id,
+      user_id: s.user_id,
+      recipe_id: s.recipe_id,
+      messages: s.messages || [],
+      created_at: s.created_at,
+      updated_at: s.updated_at
+    };
+  }
+
+  static async createChatSession(userId, recipeId) {
+    const { data, error } = await makeGraphQLRequest(mutations.CREATE_CHAT_SESSION, {
+      object: { user_id: userId, recipe_id: recipeId }
+    })
+      .then(response => ({ data: response.data, error: null }))
+      .catch(error => ({ data: null, error }));
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return data.insert_chat_sessions_one;
+  }
+
+  static async deleteChatSession(sessionId) {
+    const { data, error } = await makeGraphQLRequest(mutations.DELETE_CHAT_SESSION, { sessionId })
+      .then(response => ({ data: response.data, error: null }))
+      .catch(error => ({ data: null, error }));
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return data.delete_chat_sessions_by_pk;
+  }
+
+  static async addChatMessage(sessionId, sender, text) {
+    const { data, error } = await makeGraphQLRequest(mutations.ADD_CHAT_MESSAGE, {
+      object: { session_id: sessionId, sender, text }
+    })
+      .then(response => ({ data: response.data, error: null }))
+      .catch(error => ({ data: null, error }));
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return data.insert_chat_messages_one;
+  }
 }
 
 module.exports = Resolvers;
-

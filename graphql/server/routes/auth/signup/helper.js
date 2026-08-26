@@ -2,10 +2,10 @@ const bcrypt = require('bcryptjs');
 
 class SignupHelper {
   static validateInput(input) {
-    const { name, email, password, userRole } = input;
+    const { name, email, password } = input;
 
-    if (!name || !email || !password || !userRole) {
-      throw new Error('Missing required fields');
+    if (!name || !email || !password) {
+      throw new Error('Name, email, and password are required');
     }
   }
 
@@ -16,10 +16,10 @@ class SignupHelper {
   static buildUserData(input, hashedPassword) {
     return {
       name: input.name,
-      email: input.email,
-      password: hashedPassword,
-      username: input.username,
-
+      email: input.email.toLowerCase().trim(),
+      username: input.username ? input.username.trim() : input.email.split('@')[0],
+      hashed_password: hashedPassword,
+      image_url: input.imageUrl || null
     };
   }
 }

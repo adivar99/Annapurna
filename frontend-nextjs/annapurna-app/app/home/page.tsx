@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react';
 import { Recipe } from '../models/recipe';
 import recipeService from '../services/recipeService';
 import spoonacularService from '../services/spoonacularService';
-import authService from '../services/authService';
+import { useAuth } from '../context/AuthContext';
 import RecipeCard from '../components/RecipeCard';
 
 export default function HomePage() {
+  const { user } = useAuth();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [trendingRecipes, setTrendingRecipes] = useState<Recipe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -18,15 +19,24 @@ export default function HomePage() {
   useEffect(() => {
     loadRecipes();
     loadTrendingRecipes();
-  }, []);
+  }, [user]);
 
   const loadRecipes = async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const loadedRecipes = await recipeService.getLatestRecipes();
-      setRecipes(loadedRecipes);
-      checkFavorites(loadedRecipes);
+      const loadedRecipes = await recipeService.getLatestRecipes(8);
+      let favourites: string[] = [];
+      try {
+        favourites = await recipeService.getFavouriteIds();
+      } catch {}
+
+      const marked = loadedRecipes.map(r => ({
+        ...r,
+        isFavorite: favourites.includes(r.id)
+      }));
+
+      setRecipes(marked);
     } catch (err: any) {
       setError('Failed to load recipes. Please try again.');
       console.error('Error loading recipes:', err);
@@ -40,28 +50,26 @@ export default function HomePage() {
     setTrendingError(null);
     try {
       const response = await spoonacularService.getRandomRecipes(6);
-      const mappedRecipes: Recipe[] = response.recipes.map((recipe: any) => ({
-        id: '', // No ID for trending recipes until saved
-        title: recipe.title,
-        description: recipe.summary,
-        instructions: recipe.analyzedInstructions[0]?.steps.map((step: any) => step.step) || [],
-        ingredients: recipe.extendedIngredients.map((ing: any) => ({
-          name: ing.name,
-          quantity: ing.amount,
-          unit: ing.unit,
-          notes: ing.original,
-        })),
-        prep_time: recipe.preparationMinutes || 0,
-        cook_time: recipe.cookingMinutes || 0,
-        servings: recipe.servings,
-        difficulty: mapDifficulty(recipe.readyInMinutes),
-        cuisine: recipe.cuisines?.[0],
-        tags: recipe.dishTypes || [],
-        created_at: new Date(),
-        updated_at: new Date(),
-        imageUrl: recipe.image,
-        isFavorite: false,
-      }));
+      const mappedRecipes: Recipe[] = response.recipes.map((recipe: any) => {
+        const mapped = spoonacularService.mapSpoonacularToRecipe(recipe);
+        return {
+          id: '',
+          title: mapped.title || '',
+          description: mapped.description,
+          instructions: mapped.instructions || [],
+          ingredients: mapped.ingredients || [],
+          prep_time: mapped.prep_time || 0,
+          cook_time: mapped.cook_time || 0,
+          servings: mapped.servings || 2,
+          difficulty: mapped.difficulty || 'medium',
+          cuisine: mapped.cuisine,
+          tags: mapped.tags || [],
+          created_at: new Date(),
+          updated_at: new Date(),
+          imageUrl: mapped.imageUrl || '',
+          isFavorite: false,
+        };
+      });
       setTrendingRecipes(mappedRecipes);
     } catch (err: any) {
       setTrendingError('Failed to load trending recipes. Please try again.');
@@ -71,52 +79,30 @@ export default function HomePage() {
     }
   };
 
-  const mapDifficulty = (minutes: number): string => {
-    if (minutes <= 30) return 'easy';
-    if (minutes <= 60) return 'medium';
-    return 'hard';
-  };
-
-  const checkFavorites = async (recipesToCheck: Recipe[]) => {
-    const user = authService.getUser();
-    if (!user) {
-      return;
-    }
-
-    try {
-      const favourites = await recipeService.getFavouriteIds();
-      console.log('Marking favourites:', favourites);
-      const updatedRecipes = recipesToCheck.map((recipe) => {
-        if (favourites.includes(recipe.id)) {
-          return { ...recipe, isFavorite: true };
-        }
-        return recipe;
-      });
-      setRecipes(updatedRecipes);
-    } catch (err) {
-      console.log("Error fetching user's favourite recipes", err);
-    }
-  };
-
   return (
-    <div className="home-page-wrapper min-h-screen bg-gray-50 text-white">
-      <div className="main-content flex flex-col flex-1 p-8 gap-8">
+    <div className="home-page-wrapper min-h-screen bg-stone-50 text-stone-900 pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-10">
         {/* Recently Added Section */}
-        <div className="recipes-panel flex-1">
-          <h2 className="text-3xl font-semibold mb-6 text-gray-900">Recently Added</h2>
+        <section className="recipes-panel">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-stone-900 italiana">Recently Added</h2>
+              <p className="text-stone-600 text-xs sm:text-sm">Fresh recipes created by the community.</p>
+            </div>
+          </div>
 
           {isLoading && (
-            <div className="loading-container flex justify-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+            <div className="loading-container flex justify-center py-12">
+              <div className="animate-spin rounded-full h-10 w-10 border-4 border-[#ff9f1d] border-t-transparent"></div>
             </div>
           )}
 
           {error && (
-            <div className="error-container flex flex-col items-center py-8">
-              <p className="text-red-500 mb-4">{error}</p>
+            <div className="error-container flex flex-col items-center py-8 bg-red-50 rounded-2xl border border-red-200 p-6">
+              <p className="text-red-700 text-sm mb-4">{error}</p>
               <button
                 onClick={loadRecipes}
-                className="px-6 py-2 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 transition-colors"
+                className="px-5 py-2 bg-[#ff9f1d] text-white rounded-xl text-xs font-semibold hover:bg-[#e88d15] transition-colors"
               >
                 Try Again
               </button>
@@ -124,49 +110,43 @@ export default function HomePage() {
           )}
 
           {!isLoading && !error && (
-            <div className="recipes-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="recipes-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {recipes.length > 0 ? (
                 recipes.map((recipe) => (
                   <RecipeCard key={recipe.id} recipe={recipe} />
                 ))
               ) : (
-                <div className="no-recipes col-span-full text-center py-12 px-6 bg-gray-200 rounded-xl">
-                  <svg
-                    className="w-16 h-16 mx-auto mb-4 text-orange-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                    />
-                  </svg>
-                  <p className="text-gray-700 text-xl">No recipes found. Try refreshing the page.</p>
+                <div className="no-recipes col-span-full text-center py-12 px-6 bg-white border border-stone-200 rounded-2xl shadow-sm">
+                  <div className="text-4xl mb-2">🍲</div>
+                  <p className="text-stone-800 font-semibold text-base mb-1">No recipes in database yet.</p>
+                  <p className="text-stone-500 text-xs">Be the first to add one or choose from trending below!</p>
                 </div>
               )}
             </div>
           )}
-        </div>
+        </section>
 
         {/* Trending Recipes Section */}
-        <div className="recipes-panel flex-1">
-          <h2 className="text-3xl font-semibold mb-6 text-gray-900">Trending Recipes</h2>
+        <section className="recipes-panel border-t border-stone-200 pt-8">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-stone-900 italiana">Trending & Inspiring</h2>
+              <p className="text-stone-600 text-xs sm:text-sm">Discover international ideas from Spoonacular.</p>
+            </div>
+          </div>
 
           {isLoadingTrending && (
-            <div className="loading-container flex justify-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+            <div className="loading-container flex justify-center py-12">
+              <div className="animate-spin rounded-full h-10 w-10 border-4 border-[#ff9f1d] border-t-transparent"></div>
             </div>
           )}
 
           {trendingError && (
-            <div className="error-container flex flex-col items-center py-8">
-              <p className="text-red-500 mb-4">{trendingError}</p>
+            <div className="error-container flex flex-col items-center py-8 bg-red-50 rounded-2xl border border-red-200 p-6">
+              <p className="text-red-700 text-sm mb-4">{trendingError}</p>
               <button
                 onClick={loadTrendingRecipes}
-                className="px-6 py-2 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 transition-colors"
+                className="px-5 py-2 bg-[#ff9f1d] text-white rounded-xl text-xs font-semibold hover:bg-[#e88d15] transition-colors"
               >
                 Try Again
               </button>
@@ -174,34 +154,20 @@ export default function HomePage() {
           )}
 
           {!isLoadingTrending && !trendingError && (
-            <div className="recipes-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="recipes-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {trendingRecipes.length > 0 ? (
                 trendingRecipes.map((recipe, index) => (
                   <RecipeCard key={index} recipe={recipe} toCreate={true} />
                 ))
               ) : (
-                <div className="no-recipes col-span-full text-center py-12 px-6 bg-gray-200 rounded-xl">
-                  <svg
-                    className="w-16 h-16 mx-auto mb-4 text-orange-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                    />
-                  </svg>
-                  <p className="text-gray-700 text-xl">No trending recipes available at the moment.</p>
+                <div className="no-recipes col-span-full text-center py-12 px-6 bg-white border border-stone-200 rounded-2xl">
+                  <p className="text-stone-500 text-sm">No trending recipes available at the moment.</p>
                 </div>
               )}
             </div>
           )}
-        </div>
+        </section>
       </div>
     </div>
   );
 }
-

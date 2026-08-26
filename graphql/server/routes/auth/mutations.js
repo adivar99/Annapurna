@@ -1,7 +1,6 @@
 /**
- * GraphQL Mutation Strings for Auth Module
- * Contains all write operations (mutations)
- */
+2	 * GraphQL Mutation Strings for Database Operations
+3	 */
 
 function Mutations() {
   const CREATE_USER = `
@@ -11,7 +10,7 @@ function Mutations() {
         name
         email
         username
-        imageUrl
+        image_url
         created_at
         updated_at
       }
@@ -25,7 +24,7 @@ function Mutations() {
         name
         email
         username
-        imageUrl
+        image_url
         updated_at
       }
     }
@@ -47,14 +46,15 @@ function Mutations() {
         title
         description
         ingredients
-        steps
+        instructions
         prep_time
         cook_time
         servings
         difficulty
         cuisine
-        metadata
-        imageUrl
+        tags
+        image_url
+        author_id
         created_at
         updated_at
       }
@@ -68,14 +68,14 @@ function Mutations() {
         title
         description
         ingredients
-        steps
+        instructions
         prep_time
         cook_time
         servings
         difficulty
         cuisine
-        metadata
-        imageUrl
+        tags
+        image_url
         updated_at
       }
     }
@@ -108,6 +108,38 @@ function Mutations() {
     }
   `;
 
+  const CREATE_CHAT_SESSION = `
+    mutation CreateChatSession($object: chat_sessions_insert_input!) {
+      insert_chat_sessions_one(object: $object) {
+        id
+        user_id
+        recipe_id
+        created_at
+        updated_at
+      }
+    }
+  `;
+
+  const DELETE_CHAT_SESSION = `
+    mutation DeleteChatSession($sessionId: uuid!) {
+      delete_chat_sessions_by_pk(id: $sessionId) {
+        id
+      }
+    }
+  `;
+
+  const ADD_CHAT_MESSAGE = `
+    mutation AddChatMessage($object: chat_messages_insert_input!) {
+      insert_chat_messages_one(object: $object) {
+        id
+        session_id
+        sender
+        text
+        created_at
+      }
+    }
+  `;
+
   return {
     CREATE_USER,
     UPDATE_USER,
@@ -117,8 +149,10 @@ function Mutations() {
     DELETE_RECIPE,
     SAVE_RECIPE,
     UNSAVE_RECIPE,
+    CREATE_CHAT_SESSION,
+    DELETE_CHAT_SESSION,
+    ADD_CHAT_MESSAGE
   };
 }
 
 module.exports = Mutations();
-

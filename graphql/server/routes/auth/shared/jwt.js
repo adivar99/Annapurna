@@ -11,12 +11,15 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '24h';
 function generateJWT(user) {
   // Create Hasura claims object
   const hasura_claims = {
+    'x-hasura-default-role': 'user',
+    'x-hasura-allowed-roles': ['user', 'public'],
     'x-hasura-user-id': user.id.toString()
   };
 
   // Create the JWT payload with proper Hasura structure
   const tokenContents = {
     id: user.id.toString(),
+    email: user.email,
     'https://hasura.io/jwt/claims': hasura_claims
   };
 

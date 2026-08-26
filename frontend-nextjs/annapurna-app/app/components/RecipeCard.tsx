@@ -17,7 +17,7 @@ export default function RecipeCard({ recipe, toCreate = false }: RecipeCardProps
 
   const toggleFavorite = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    
+
     if (!recipe.id) {
       console.error('Cannot favorite recipe without an ID.');
       return;
@@ -28,11 +28,9 @@ export default function RecipeCard({ recipe, toCreate = false }: RecipeCardProps
       if (isFavorite) {
         await recipeService.removeFavorite(recipe.id);
         setIsFavorite(false);
-        console.log(`Recipe ${recipe.title} removed from favorites`);
       } else {
         await recipeService.addFavorite(recipe.id);
         setIsFavorite(true);
-        console.log(`Recipe ${recipe.title} added to favorites`);
       }
     } catch (error) {
       console.error(`Failed to toggle favorite for recipe ${recipe.title}:`, error);
@@ -45,7 +43,6 @@ export default function RecipeCard({ recipe, toCreate = false }: RecipeCardProps
     if (toCreate && recipe) {
       try {
         const savedRecipe = await recipeService.createRecipe(recipe);
-        // Redirect to chat or recipe detail page
         router.push(`/chat?recipeId=${savedRecipe.id}`);
       } catch (error) {
         console.error('Failed to save recipe. Please try again.', error);
@@ -55,27 +52,27 @@ export default function RecipeCard({ recipe, toCreate = false }: RecipeCardProps
     }
   };
 
-  const totalTime = recipe.prep_time + recipe.cook_time;
-  const difficultyCapitalized = recipe.difficulty 
+  const totalTime = (recipe.prep_time || 0) + (recipe.cook_time || 0);
+  const difficultyCapitalized = recipe.difficulty
     ? recipe.difficulty.charAt(0).toUpperCase() + recipe.difficulty.slice(1)
     : '';
 
   return (
-    <div 
-      className="recipe-card bg-white rounded-2xl shadow-md overflow-hidden cursor-pointer transition-transform hover:scale-105"
+    <div
+      className="relative recipe-card bg-white rounded-2xl shadow-md overflow-hidden cursor-pointer transition-transform duration-200 hover:scale-[1.02] border border-stone-200/60"
       onClick={handleCardClick}
     >
-      <div className="favorite-button-container absolute top-3 right-3 z-10">
+      <div className="absolute top-3 right-3 z-10">
         <button
-          className={`favorite-button p-2 rounded-full bg-white shadow-md transition-colors ${
-            isFavorite ? 'text-red-500' : 'text-gray-400'
+          className={`favorite-button p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md transition-colors ${
+            isFavorite ? 'text-red-500' : 'text-gray-400 hover:text-red-400'
           } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
           onClick={toggleFavorite}
           disabled={isSaving || !recipe.id}
           aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
         >
           <svg
-            className="w-6 h-6"
+            className="w-5 h-5"
             fill={isFavorite ? 'currentColor' : 'none'}
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -90,78 +87,79 @@ export default function RecipeCard({ recipe, toCreate = false }: RecipeCardProps
         </button>
       </div>
 
-      <div className="recipe-content">
-        {recipe.imageUrl ? (
-          <img
-            src={recipe.imageUrl}
-            alt={recipe.title}
-            className="w-full h-48 object-cover"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x200?text=Recipe';
-            }}
-          />
-        ) : (
-          <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-            <span className="text-gray-400">No Image</span>
-          </div>
-        )}
+      <div className="recipe-content flex flex-col h-full justify-between">
+        <div>
+          {recipe.imageUrl ? (
+            <img
+              src={recipe.imageUrl}
+              alt={recipe.title}
+              className="w-full h-48 object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x200?text=Annapurna+Recipe';
+              }}
+            />
+          ) : (
+            <div className="w-full h-48 bg-stone-200 flex items-center justify-center">
+              <span className="text-stone-400 font-medium">Annapurna Recipe</span>
+            </div>
+          )}
 
-        {recipe.tags && recipe.tags.length > 0 && (
-          <div className="chip-container flex gap-2 px-4 py-2 flex-wrap">
-            {recipe.tags.slice(0, 3).map((tag, index) => (
-              <span
-                key={index}
-                className="px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full"
-              >
-                {tag}
+          {recipe.tags && recipe.tags.length > 0 && (
+            <div className="chip-container flex gap-1.5 px-4 py-2.5 flex-wrap">
+              {recipe.tags.slice(0, 3).map((tag, index) => (
+                <span
+                  key={index}
+                  className="px-2.5 py-0.5 bg-stone-100 text-stone-700 text-xs font-medium rounded-full"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+
+          <div className="recipe-header px-4 pt-1">
+            <h3 className="recipe-title text-lg font-bold text-stone-900 mb-1.5 line-clamp-1">
+              {recipe.title}
+            </h3>
+            <div className="recipe-details flex items-center gap-3 text-xs text-stone-600 mb-2">
+              <span className="flex items-center gap-1">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {totalTime > 0 ? `${totalTime} min` : 'Quick'}
               </span>
-            ))}
+              <span className="flex items-center gap-1">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                {recipe.servings || 2} servings
+              </span>
+              {difficultyCapitalized && (
+                <span className="font-medium text-stone-700">• {difficultyCapitalized}</span>
+              )}
+            </div>
           </div>
-        )}
 
-        <div className="recipe-header px-4 pt-2">
-          <h3 className="recipe-title text-xl font-semibold text-gray-900 mb-2">
-            {recipe.title}
-          </h3>
-          <div className="recipe-details flex items-center gap-4 text-sm text-gray-600 mb-2">
-            <span className="flex items-center gap-1">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              {totalTime} min
-            </span>
-            <span className="flex items-center gap-1">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-              {recipe.servings}
-            </span>
-            {difficultyCapitalized && (
-              <span>Difficulty: {difficultyCapitalized}</span>
-            )}
-          </div>
+          {recipe.description && (
+            <p
+              className="recipe-description px-4 text-stone-600 text-xs line-clamp-2 mb-3"
+              dangerouslySetInnerHTML={{ __html: recipe.description }}
+            />
+          )}
         </div>
 
-        {recipe.description && (
-          <p
-            className="recipe-description px-4 py-2 text-gray-600 text-sm line-clamp-3"
-            dangerouslySetInnerHTML={{ __html: recipe.description }}
-          />
-        )}
-
-        <div className="px-4 pb-4">
+        <div className="px-4 pb-4 pt-2">
           <button
-            className="view-recipe-btn w-full bg-orange-500 hover:bg-red-500 text-white font-semibold py-2.5 rounded-lg transition-colors mt-2"
+            className="view-recipe-btn w-full bg-[#ff9f1d] hover:bg-[#e88d15] text-white font-semibold py-2 rounded-xl transition-colors text-sm shadow-sm"
             onClick={(e) => {
               e.stopPropagation();
               handleCardClick();
             }}
           >
-            View Recipe
+            View Recipe & Cook
           </button>
         </div>
       </div>
     </div>
   );
 }
-

@@ -1,27 +1,28 @@
 /**
- * GraphQL Query Strings for Auth Module
- * Contains all read operations (queries)
+ * GraphQL Query Strings for Database Operations
  */
 
 function Queries() {
   // User Queries
   const CHECK_USER_EXISTS = `
-    query CheckUser($email: String!) {
-      users(where: {email: {_eq: $email}}) {
+    query CheckUser($email: String!, $username: String) {
+      users(where: {_or: [{email: {_eq: $email}}, {username: {_eq: $username}}]}) {
         id
+        email
+        username
       }
     }
   `;
 
-  const FIND_USER_BY_EMAIL = `
-    query LoginUser($email: String!) {
-      users(where: {email: {_eq: $email}}) {
+  const FIND_USER_BY_EMAIL_OR_USERNAME = `
+    query LoginUser($login: String!) {
+      users(where: {_or: [{email: {_eq: $login}}, {username: {_eq: $login}}]}) {
         id
         name
         email
         username
         hashed_password
-        imageUrl
+        image_url
         created_at
         updated_at
       }
@@ -35,9 +36,12 @@ function Queries() {
         name
         email
         username
-        imageUrl
+        image_url
         created_at
         updated_at
+        saved_recipes {
+          recipe_id
+        }
       }
     }
   `;
@@ -50,14 +54,15 @@ function Queries() {
         title
         description
         ingredients
-        steps
+        instructions
         prep_time
         cook_time
         servings
         difficulty
         cuisine
-        metadata
-        imageUrl
+        tags
+        image_url
+        author_id
         created_at
         updated_at
       }
@@ -71,14 +76,15 @@ function Queries() {
         title
         description
         ingredients
-        steps
+        instructions
         prep_time
         cook_time
         servings
         difficulty
         cuisine
-        metadata
-        imageUrl
+        tags
+        image_url
+        author_id
         created_at
         updated_at
       }
@@ -102,66 +108,15 @@ function Queries() {
         title
         description
         ingredients
-        steps
+        instructions
         prep_time
         cook_time
         servings
         difficulty
         cuisine
-        metadata
-        imageUrl
-        created_at
-        updated_at
-      }
-    }
-  `;
-
-  const FILTER_RECIPES_BY_CUISINE = `
-    query FilterRecipesByCuisine($cuisine: cuisine_type!, $limit: Int, $offset: Int) {
-      recipes(
-        where: {cuisine: {_eq: $cuisine}},
-        limit: $limit,
-        offset: $offset,
-        order_by: {created_at: desc}
-      ) {
-        id
-        title
-        description
-        ingredients
-        steps
-        prep_time
-        cook_time
-        servings
-        difficulty
-        cuisine
-        metadata
-        imageUrl
-        created_at
-        updated_at
-      }
-    }
-  `;
-
-  const FILTER_RECIPES_BY_DIFFICULTY = `
-    query FilterRecipesByDifficulty($difficulty: recipe_difficulty!, $limit: Int, $offset: Int) {
-      recipes(
-        where: {difficulty: {_eq: $difficulty}},
-        limit: $limit,
-        offset: $offset,
-        order_by: {created_at: desc}
-      ) {
-        id
-        title
-        description
-        ingredients
-        steps
-        prep_time
-        cook_time
-        servings
-        difficulty
-        cuisine
-        metadata
-        imageUrl
+        tags
+        image_url
+        author_id
         created_at
         updated_at
       }
@@ -184,17 +139,26 @@ function Queries() {
           title
           description
           ingredients
-          steps
+          instructions
           prep_time
           cook_time
           servings
           difficulty
           cuisine
-          metadata
-          imageUrl
+          tags
+          image_url
+          author_id
           created_at
           updated_at
         }
+      }
+    }
+  `;
+
+  const GET_USER_SAVED_RECIPE_IDS = `
+    query GetUserSavedRecipeIds($userId: uuid!) {
+      saved_recipes(where: {user_id: {_eq: $userId}}) {
+        recipe_id
       }
     }
   `;
@@ -207,22 +171,100 @@ function Queries() {
     }
   `;
 
+  // Chat Queries
+  const GET_USER_CHAT_SESSIONS = `
+    query GetUserChatSessions($userId: uuid!) {
+      chat_sessions(
+        where: {user_id: {_eq: $userId}},
+        order_by: {updated_at: desc}
+      ) {
+        id
+        recipe_id
+        created_at
+        updated_at
+        recipe {
+          id
+          title
+          image_url
+        }
+        messages(order_by: {created_at: desc}, limit: 1) {
+          id
+          sender
+          text
+          created_at
+        }
+      }
+    }
+  `;
+
+  const GET_CHAT_SESSION_BY_ID = `
+    query GetChatSessionById($sessionId: uuid!) {
+      chat_sessions_by_pk(id: $sessionId) {
+        id
+        user_id
+        recipe_id
+        created_at
+        updated_at
+        recipe {
+          id
+          title
+          description
+          ingredients
+          instructions
+          prep_time
+          cook_time
+          servings
+          difficulty
+          cuisine
+          tags
+          image_url
+        }
+        messages(order_by: {created_at: asc}) {
+          id
+          sender
+          text
+          created_at
+        }
+      }
+    }
+  `;
+
+  const GET_CHAT_SESSION_BY_RECIPE = `
+    query GetChatSessionByRecipe($userId: uuid!, $recipeId: uuid!) {
+      chat_sessions(
+        where: {user_id: {_eq: $userId}, recipe_id: {_eq: $recipeId}},
+        order_by: {updated_at: desc},
+        limit: 1
+      ) {
+        id
+        user_id
+        recipe_id
+        created_at
+        updated_at
+        messages(order_by: {created_at: asc}) {
+          id
+          sender
+          text
+          created_at
+        }
+      }
+    }
+  `;
+
   return {
-    // User Queries
     CHECK_USER_EXISTS,
-    FIND_USER_BY_EMAIL,
+    FIND_USER_BY_EMAIL_OR_USERNAME,
     GET_USER_BY_ID,
-    // Recipe Queries
     GET_ALL_RECIPES,
     GET_RECIPE_BY_ID,
     SEARCH_RECIPES,
-    FILTER_RECIPES_BY_CUISINE,
-    FILTER_RECIPES_BY_DIFFICULTY,
-    // Saved Recipes Queries
     GET_USER_SAVED_RECIPES,
+    GET_USER_SAVED_RECIPPE_IDS: GET_USER_SAVED_RECIPE_IDS,
     CHECK_RECIPE_SAVED,
+    GET_USER_CHAT_SESSIONS,
+    GET_CHAT_SESSION_BY_ID,
+    GET_CHAT_SESSION_BY_RECIPE
   };
 }
 
 module.exports = Queries();
-

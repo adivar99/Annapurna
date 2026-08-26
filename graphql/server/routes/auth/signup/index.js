@@ -7,16 +7,15 @@ const router = express.Router();
 
 class SignupController {
   static async signup(req, res) {
-    console.log('Signup endpoint hit');
     try {
-      const input = req.body.input.input;
-      console.log('Signup request body:', input);
+      // Support both Hasura Action format ({ input: { input: {...} } }) and direct REST format ({ ... })
+      const input = req.body.input?.input || req.body;
 
       SignupHelper.validateInput(input);
 
-      const userExists = await Resolvers.checkUserExists(input.email);
+      const userExists = await Resolvers.checkUserExists(input.email, input.username);
       if (userExists) {
-        return res.status(400).json({ message: 'User already exists with this email' });
+        return res.status(400).json({ message: 'User already exists with this email or username' });
       }
 
       const hashedPassword = await SignupHelper.hashPassword(input.password);
@@ -24,17 +23,20 @@ class SignupController {
       const user = await Resolvers.createUser(userData);
       const userId = user.id;
 
-      const tokenData = generateJWT(
-        { id: userId, email: input.email },
-      );
+      const tokenData = generateJWT({
+        id: userId,
+        email: user.email
+      });
 
       res.status(200).json({
         token: tokenData.token,
         expires_in: tokenData.expires_in,
         user: {
           id: userId,
-          name: input.name,
-          email: input.email,
+          name: user.name,
+          email: user.email,
+          username: user.username,
+          imageUrl: user.image_url
         }
       });
 

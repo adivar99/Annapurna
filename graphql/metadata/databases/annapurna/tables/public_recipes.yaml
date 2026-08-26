@@ -1,0 +1,96 @@
+table:
+  name: recipes
+  schema: public
+object_relationships:
+  - name: author
+    using:
+      foreign_key_constraint_on: author_id
+array_relationships:
+  - name: saved_recipes
+    using:
+      foreign_key_constraint_on:
+        column: recipe_id
+        table:
+          name: saved_recipes
+          schema: public
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - id
+        - title
+        - description
+        - ingredients
+        - instructions
+        - prep_time
+        - cook_time
+        - servings
+        - difficulty
+        - cuisine
+        - tags
+        - image_url
+        - author_id
+        - created_at
+        - updated_at
+      filter: {}
+  - role: public
+    permission:
+      columns:
+        - id
+        - title
+        - description
+        - ingredients
+        - instructions
+        - prep_time
+        - cook_time
+        - servings
+        - difficulty
+        - cuisine
+        - tags
+        - image_url
+        - author_id
+        - created_at
+        - updated_at
+      filter: {}
+insert_permissions:
+  - role: user
+    permission:
+      check: {}
+      set:
+        author_id: x-hasura-User-Id
+      columns:
+        - title
+        - description
+        - ingredients
+        - instructions
+        - prep_time
+        - cook_time
+        - servings
+        - difficulty
+        - cuisine
+        - tags
+        - image_url
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - title
+        - description
+        - ingredients
+        - instructions
+        - prep_time
+        - cook_time
+        - servings
+        - difficulty
+        - cuisine
+        - tags
+        - image_url
+      filter:
+        author_id:
+          _eq: X-Hasura-User-Id
+delete_permissions:
+  - role: user
+    permission:
+      filter:
+        author_id:
+          _eq: X-Hasura-User-Id
