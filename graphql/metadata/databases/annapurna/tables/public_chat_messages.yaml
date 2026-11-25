@@ -5,6 +5,17 @@ object_relationships:
   - name: session
     using:
       foreign_key_constraint_on: session_id
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        session:
+          user_id:
+            _eq: X-Hasura-User-Id
+      columns:
+        - session_id
+        - sender
+        - text
 select_permissions:
   - role: user
     permission:
@@ -18,14 +29,3 @@ select_permissions:
         session:
           user_id:
             _eq: X-Hasura-User-Id
-insert_permissions:
-  - role: user
-    permission:
-      check:
-        session:
-          user_id:
-            _eq: X-Hasura-User-Id
-      columns:
-        - session_id
-        - sender
-        - text

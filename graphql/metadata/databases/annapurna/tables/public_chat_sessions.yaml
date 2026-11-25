@@ -2,12 +2,12 @@ table:
   name: chat_sessions
   schema: public
 object_relationships:
-  - name: user
-    using:
-      foreign_key_constraint_on: user_id
   - name: recipe
     using:
       foreign_key_constraint_on: recipe_id
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
 array_relationships:
   - name: messages
     using:
@@ -16,6 +16,15 @@ array_relationships:
         table:
           name: chat_messages
           schema: public
+insert_permissions:
+  - role: user
+    permission:
+      check: {}
+      set:
+        user_id: x-hasura-User-Id
+      columns:
+        - recipe_id
+        - expires_at
 select_permissions:
   - role: user
     permission:
@@ -29,15 +38,6 @@ select_permissions:
       filter:
         user_id:
           _eq: X-Hasura-User-Id
-insert_permissions:
-  - role: user
-    permission:
-      check: {}
-      set:
-        user_id: x-hasura-User-Id
-      columns:
-        - recipe_id
-        - expires_at
 delete_permissions:
   - role: user
     permission:
