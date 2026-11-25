@@ -1,7 +1,10 @@
 package httpapi
 
 import (
+	"bufio"
+	"fmt"
 	"log/slog"
+	"net"
 	"net/http"
 	"strings"
 )
@@ -61,6 +64,17 @@ type statusRecorder struct {
 func (rec *statusRecorder) WriteHeader(status int) {
 	rec.status = status
 	rec.ResponseWriter.WriteHeader(status)
+}
+
+// Hijack forwards the connection upgrade so WebSocket endpoints under the
+// logger keep working (gorilla's Upgrade requires http.Hijacker).
+func (rec *statusRecorder) Hijack() (net.Conn, *bufio.ReadWriter, error) {
+	hj, ok := rec.ResponseWriter.(http.Hijacker)
+	if !ok {
+		return nil, nil, fmt.Errorf("underlying ResponseWriter does not implement http.Hijacker")
+	}
+	rec.status = http.StatusSwitchingProtocols
+	return hj.Hijack()
 }
 
 // requestLogger emits one structured line per request for ./annapurna.sh logs.
