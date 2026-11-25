@@ -64,6 +64,8 @@ Loads from the process environment, with a `.env` file fallback for local runs (
 | `MINIO_ENDPOINT`, `MINIO_PORT`, `MINIO_USE_SSL`, `MINIO_ACCESS_KEY`, `MINIO_SECRET_KEY` | Internal MinIO data-plane connection |
 | `MINIO_PUBLIC_URL` | Browser-facing base URL used to sign presigned downloads |
 | `OPENAI_API_KEY` | Empty = offline mock fixtures for `/api/ai/*` |
+| `GEMINI_API_KEY` | Empty = `/api/ai/realtime/session` serves a mock fixture; set = mints ephemeral Gemini Live API tokens for browser voice |
+| `GEMINI_LIVE_MODEL` | Live API model tokens are locked to (default `gemini-3.8-live`) |
 
 ## Testing
 

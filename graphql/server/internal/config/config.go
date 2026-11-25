@@ -24,6 +24,10 @@ type Config struct {
 	MinIO     MinIO
 	AI        AI
 	OpenAIKey string
+	GeminiKey string
+	// LiveModel selects the Gemini Live API model for realtime voice
+	// (internal/ai.DefaultLiveModel when empty).
+	LiveModel string
 }
 
 // AI points the chat-completion client at any OpenAI-compatible endpoint
@@ -93,6 +97,8 @@ func Load() Config {
 			Title:     getenv("AI_APP_TITLE", "Annapurna"),
 		},
 		OpenAIKey: getenv("OPENAI_API_KEY", ""),
+		GeminiKey: getenv("GEMINI_API_KEY", ""),
+		LiveModel: getenv("GEMINI_LIVE_MODEL", ""),
 	}
 }
 

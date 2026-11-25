@@ -55,6 +55,7 @@ func main() {
 		Files:     objStore,
 		AIService: ai.NewCompatibleService(cfg.OpenAIKey, cfg.AI.BaseURL, cfg.AI.ChatModel, cfg.AI.Referer, cfg.AI.Title),
 		AIMock:    ai.IsMockKey(cfg.OpenAIKey),
+		Gemini:    ai.NewGeminiClient(cfg.GeminiKey, cfg.LiveModel),
 	}
 
 	srv := &http.Server{

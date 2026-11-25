@@ -18,10 +18,11 @@ func aiError(w http.ResponseWriter, message string, err error) {
 	})
 }
 
-// realtimeSession returns an ephemeral voice-session key. Without a usable
-// API key the Node server answered from a fixture; keep that behavior.
+// realtimeSession mints an ephemeral Live API token for the browser voice
+// session. Without a Gemini key (or under the mock sentinel) it answers from
+// a fixture, matching the offline behavior of the other AI routes.
 func (h *Handlers) realtimeSession(w http.ResponseWriter, r *http.Request) {
-	if h.AIMock {
+	if h.Gemini == nil {
 		WriteJSON(w, http.StatusOK, map[string]any{
 			"client_secret": ai.MockClientSecret,
 			"expires_at":    time.Now().Unix() + 3600,
@@ -29,12 +30,16 @@ func (h *Handlers) realtimeSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	clientSecret, err := h.AIService.RealtimeSession(r.Context())
+	token, expiresAt, err := h.Gemini.EphemeralToken(r.Context())
 	if err != nil {
 		aiError(w, "Failed to create realtime session", err)
 		return
 	}
-	WriteJSON(w, http.StatusOK, map[string]any{"client_secret": clientSecret})
+	WriteJSON(w, http.StatusOK, map[string]any{
+		"client_secret": token,
+		"expires_at":    expiresAt,
+		"model":         h.Gemini.Model(),
+	})
 }
 
 func (h *Handlers) parseRecipe(w http.ResponseWriter, r *http.Request) {

@@ -16,9 +16,8 @@ import (
 )
 
 const (
-	apiBaseURL    = "https://api.openai.com/v1"
-	realtimeModel = "gpt-4o-realtime-preview-2024-12-17"
-	chatModel     = "gpt-4o-mini"
+	apiBaseURL = "https://api.openai.com/v1"
+	chatModel  = "gpt-4o-mini"
 )
 
 // Service calls the OpenAI REST API — or any OpenAI-compatible endpoint such
@@ -60,37 +59,6 @@ func NewCompatibleService(apiKey, baseURL, model, referer, title string) *Servic
 type chatMessage struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
-}
-
-// RealtimeSession mints an ephemeral client secret for browser voice
-// sessions, unwrapping either response shape OpenAI has used. Realtime
-// sessions are OpenAI-specific and bypass the configurable base URL.
-func (s *Service) RealtimeSession(ctx context.Context) (string, error) {
-	body, _ := json.Marshal(map[string]any{"model": realtimeModel, "voice": "onyx"})
-	var out struct {
-		ClientSecret json.RawMessage `json:"client_secret"`
-	}
-	if err := s.post(ctx, "/realtime/sessions", body, &out); err != nil {
-		return "", err
-	}
-	return unwrapClientSecret(out.ClientSecret)
-}
-
-func unwrapClientSecret(raw json.RawMessage) (string, error) {
-	if len(raw) == 0 || string(raw) == "null" {
-		return "", fmt.Errorf("openai response missing client_secret")
-	}
-	var nested struct {
-		Value *string `json:"value"`
-	}
-	if json.Unmarshal(raw, &nested) == nil && nested.Value != nil {
-		return *nested.Value, nil
-	}
-	var plain string
-	if err := json.Unmarshal(raw, &plain); err != nil {
-		return "", fmt.Errorf("unrecognized client_secret format: %w", err)
-	}
-	return plain, nil
 }
 
 // ParseRecipe sends raw recipe text through a strict-schema completion and

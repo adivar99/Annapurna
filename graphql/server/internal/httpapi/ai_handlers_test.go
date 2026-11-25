@@ -1,7 +1,10 @@
 package httpapi
 
 import (
+	"encoding/json"
+	"io"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 	"time"
 
@@ -25,6 +28,48 @@ func TestRealtimeSession_MockFixture(t *testing.T) {
 	require.Equal(t, ai.MockClientSecret, out["client_secret"])
 	require.GreaterOrEqual(t, out["expires_at"].(float64), float64(before+3600))
 	require.LessOrEqual(t, out["expires_at"].(float64), float64(after+3600))
+}
+
+// TestRealtimeSession_GeminiToken checks that with a Gemini client wired in,
+// the handler mints a real ephemeral token through Google's auth_tokens
+// endpoint and returns it with the model name.
+func TestRealtimeSession_GeminiToken(t *testing.T) {
+	var gotHeader string
+	var gotBody map[string]any
+	geminiSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		require.Equal(t, "/v1beta/auth_tokens", r.URL.Path)
+		gotHeader = r.Header.Get("x-goog-api-key")
+		body, _ := io.ReadAll(r.Body)
+		if err := json.Unmarshal(body, &gotBody); err != nil {
+			t.Errorf("decode request body: %v", err)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		io.WriteString(w, `{"name":"ek-test-token","expireTime":"2026-01-01T00:30:00Z"}`)
+	}))
+	t.Cleanup(geminiSrv.Close)
+
+	gemini := ai.NewGeminiClient("test-gemini-key", "")
+	gemini.BaseURLForTest(geminiSrv.URL)
+
+	e := newTestEnv(t, func(op string, _ map[string]any) (int, any) {
+		t.Fatalf("unexpected op %q", op)
+		return unexpectedOp(op)
+	})
+	e.Handlers.Gemini = gemini
+
+	rec := e.doJSON(t, http.MethodPost, "/api/ai/realtime/session", e.token(t, testUID), nil)
+	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
+	require.Equal(t, "test-gemini-key", gotHeader)
+
+	var out map[string]any
+	decodeJSON(t, rec, &out)
+	require.Equal(t, "ek-test-token", out["client_secret"])
+	require.Equal(t, ai.DefaultLiveModel, out["model"])
+
+	// The token request carries just the lifetime fields; model/modality
+	// constraints are SDK-only and rejected by the raw endpoint.
+	require.Equal(t, float64(1), gotBody["uses"])
+	require.NotContains(t, gotBody, "liveConnectConstraints")
 }
 
 func TestParseRecipe_Mock(t *testing.T) {

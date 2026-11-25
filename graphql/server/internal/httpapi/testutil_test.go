@@ -148,10 +148,11 @@ func (f *fakeFiles) RemovePrivate(_ context.Context, objectName string) error {
 
 // env bundles a running test server with its collaborators.
 type env struct {
-	Server *httptest.Server
-	Fake   *fakeHasura
-	Files  *fakeFiles
-	Signer *auth.Signer
+	Server   *httptest.Server
+	Fake     *fakeHasura
+	Files    *fakeFiles
+	Signer   *auth.Signer
+	Handlers *Handlers
 }
 
 func (e *env) token(t *testing.T, userID string) string {
@@ -290,5 +291,5 @@ func newTestEnv(t *testing.T, respond func(op string, body map[string]any) (int,
 	ts := httptest.NewServer(router)
 	t.Cleanup(ts.Close)
 
-	return &env{Server: ts, Fake: fake, Files: files, Signer: signer}
+	return &env{Server: ts, Fake: fake, Files: files, Signer: signer, Handlers: handlers}
 }

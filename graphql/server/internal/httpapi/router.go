@@ -36,6 +36,9 @@ type Handlers struct {
 	Files     FileStore
 	AIService *ai.Service
 	AIMock    bool // true when no usable OPENAI_API_KEY is configured
+	// Gemini mints ephemeral Live API tokens for realtime voice. nil means
+	// voice is unconfigured and /ai/realtime/session serves the mock fixture.
+	Gemini *ai.GeminiClient
 }
 
 // NewRouter wires middleware and mounts every route group under BOTH /api and
@@ -101,6 +104,10 @@ func apiSubrouter(h *Handlers) http.Handler {
 
 	r.Route("/ai", func(r chi.Router) {
 		r.With(h.requireAuth).Post("/realtime/session", h.realtimeSession)
+		// WebSocket proxy for the Live API. Browsers cannot set custom
+		// headers on WebSocket, so the JWT arrives as ?authorization= and
+		// stripLiveJWTQuery moves it into the header for requireAuth.
+		r.With(stripLiveJWTQuery, h.requireAuth).Get("/realtime/ws", h.liveProxy)
 		r.With(h.requireAuth).Post("/parse", h.parseRecipe)
 		r.With(h.requireAuth).Post("/ask-recipe-question", h.askRecipeQuestion)
 		r.With(h.requireAuth).Post("/analyze-recipe", h.analyzeRecipe)
@@ -110,6 +117,22 @@ func apiSubrouter(h *Handlers) http.Handler {
 }
 
 type identityKey struct{}
+
+// stripLiveJWTQuery lifts the JWT from the ?authorization= query parameter
+// (WebSocket clients cannot send headers) into the Authorization header so
+// requireAuth runs unmodified. The query value is wiped from the RequestURI
+// copy so the token is not logged by requestLogger.
+func stripLiveJWTQuery(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if token := r.URL.Query().Get("authorization"); token != "" {
+			r.Header.Set("Authorization", "Bearer "+token)
+			q := r.URL.Query()
+			q.Del("authorization")
+			r.URL.RawQuery = q.Encode()
+		}
+		next.ServeHTTP(w, r)
+	})
+}
 
 // requireAuth verifies the Bearer token and stores the identity in context.
 // Error bodies are unified on {"message"} (frontend reads message||error).

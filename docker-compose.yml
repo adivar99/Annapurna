@@ -116,6 +116,8 @@ services:
       AI_CHAT_MODEL: ${AI_CHAT_MODEL:-}
       AI_APP_REFERER: ${AI_APP_REFERER:-}
       AI_APP_TITLE: ${AI_APP_TITLE:-Annapurna}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_LIVE_MODEL: ${GEMINI_LIVE_MODEL:-}
     healthcheck:
       test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:3001/health || exit 1"]
       interval: 10s
