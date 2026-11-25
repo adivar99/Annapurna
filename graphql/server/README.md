@@ -1,151 +1,82 @@
-# Capstone Server
+# Annapurna Server
 
-Express server with authentication for the capstone project.
+Go backend for the Annapurna recipe app. Serves authentication, recipe
+management, chat sessions, AI helper endpoints, and MinIO file management over
+REST. All database access goes through the Hasura GraphQL engine's admin API —
+this service never touches Postgres directly.
 
-## Setup
+## Stack
 
-1. Install dependencies:
+- **net/http + [chi](https://github.com/go-chi/chi)** router with middleware for logging (`log/slog`), security headers, permissive CORS, and a 10 MB body limit.
+- **golang-jwt/v5** issues HS256 tokens whose claims match what Hasura expects (`https://hasura.io/jwt/claims` block).
+- **golang.org/x/crypto/bcrypt** at cost 12; hashes remain compatible with the bcryptjs hashes already in the database.
+- **minio-go/v7** with two clients: a data-plane client pointed at the internal endpoint and a presign-only client signed against the browser-facing host (`MINIO_PUBLIC_URL`), because S3 signatures cover the Host header.
+
+## Layout
+
+```
+cmd/server/        entrypoint: config load, wiring, graceful shutdown
+internal/config/   env parsing (optionally seeded from .env)
+internal/auth/     JWT signer/parser, password hashing, TTL parsing
+internal/hasura/   GraphQL client + verbatim operation documents
+internal/store/    typed wrappers around each Hasura operation (users,
+                   recipes, saved_recipes, chat)
+internal/objectstore/  MinIO buckets, uploads, presigned URLs, deletes
+internal/ai/       OpenAI calls + offline mock fixtures
+internal/httpapi/  routing, middleware, handlers, request/response DTOs
+```
+
+## Running
 
 ```bash
-npm install
+run locally:               go run ./cmd/server        # reads graphql/server/.env
+build binary:              go build ./cmd/server
+run tests:                 go test ./...
+vet:                       go vet ./...
+
+# No Go toolchain installed? Everything works through Docker:
+docker run --rm -v "$PWD:/src" -v annapurna-gomodcache:/go/pkg/mod \
+  -w /src golang:1.25-alpine sh -c "go test ./..."
 ```
 
-2. Create a `.env` file in the server directory with the following variables:
-
-```env
-# Database Configuration
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgrespassword
-POSTGRES_DB=postgres
-
-# Hasura Configuration
-HASURA_GRAPHQL_ADMIN_SECRET=myadminsecretkey
-HASURA_GRAPHQL_METADATA_DATABASE_URL=postgres://postgres:postgrespassword@postgres:5432/postgres
-PG_DATABASE_URL=postgres://postgres:postgrespassword@postgres:5432/postgres
-
-# JWT Configuration
-JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-JWT_EXPIRES_IN=24h
-
-# Server Configuration
-PORT=3000
-HASURA_ENDPOINT=http://localhost:8080/v1/graphql
-```
-
-3. Start the server:
+In the full stack the server runs as the `express` compose service:
 
 ```bash
-# Development
-npm run dev
-
-# Production
-npm start
+./annapurna.sh build backend && ./annapurna.sh start dev
 ```
 
-## API Endpoints
+## Configuration
 
-### Authentication
+Reads environment variables (with `.env` fallback for local runs); copy
+`.env.example` to `.env` to get started. Notable entries:
 
-#### POST /api/auth/signup
+| Variable | Default | Purpose |
+| :-- | :-- | :-- |
+| `PORT` | `3001` | HTTP listen port |
+| `HASURA_ENDPOINT` | `http://annapurna_hasura:8080/v1/graphql` | Hasura admin GraphQL endpoint |
+| `HASURA_GRAPHQL_ADMIN_SECRET` | `myadminsecretkey` | Admin secret sent as `x-hasura-admin-secret` |
+| `JWT_SECRET` | dev placeholder | Must byte-match Hasura's `HASURA_GRAPHQL_JWT_SECRET.key` |
+| `JWT_EXPIRES_IN` | `24h` | Token lifetime (`24h`, `7d`, or seconds) |
+| `MINIO_ENDPOINT` / `MINIO_PORT` | `localhost` / `9000` | Internal MinIO data-plane endpoint |
+| `MINIO_USE_SSL` | `false` | TLS toward MinIO |
+| `MINIO_ACCESS_KEY` / `MINIO_SECRET_KEY` | dev placeholders | MinIO credentials |
+| `MINIO_PUBLIC_URL` | falls back to `MINIO_ENDPOINT:PORT` | Browser-facing base URL; presigned links are signed against this host |
+| `OPENAI_API_KEY` | _(empty)_ | Empty (or the historical placeholder value) switches the `/api/ai/*` routes to canned mock responses |
 
-Create a new user account.
+## API surface
 
-**Request Body:**
+Every route group is mounted under both `/api` and `/api/v1`:
 
-```json
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "password123",
-  "phone": "+1234567890",
-  "userRole": "patient", // or "doctor", "admin", "assistant"
-  "dateOfBirth": "1990-01-01", // required for patients
-  "speciality": "Cardiology", // required for doctors
-  "licenseNumber": "MD123456", // required for doctors
-  "licenseYear": 2015 // required for doctors
-}
-```
+- `POST /auth/signup` (`/register` alias), `POST /auth/login`, `POST /auth/logout`, `GET /auth/me`
+- `GET|PUT|DELETE /auth/me/save-recipe[...]` — saved-bookmark endpoints
+- `GET /recipes`, `GET /recipes/latest`, `GET /recipes/:id`, `POST|PUT|DELETE /recipes[...]` (owner-checked mutations)
+- `POST /files/upload` (private per-user objects), `POST /files/upload-image` (public bucket), `GET|DELETE /files/:fileId` (presigned downloads within the caller's own folder)
+- `GET|POST /chat/sessions`, `GET|DELETE /chat/sessions/:id`, `POST /chat/sessions/:id/messages`, `GET /chat/recipe?recipe_id=...`
+- `POST /ai/realtime/session`, `/ai/parse`, `/ai/ask-recipe-question`, `/ai/analyze-recipe` (mock fixtures without an API key)
+- `GET /health`
 
-**Response:**
-
-```json
-{
-  "message": "User created successfully",
-  "token": "jwt-token-here",
-  "user": {
-    "id": "uuid",
-    "name": "John Doe",
-    "user_role": "patient"
-  }
-}
-```
-
-#### POST /api/auth/login
-
-Login with email and password.
-
-**Request Body:**
-
-```json
-{
-  "email": "john@example.com",
-  "password": "password123"
-}
-```
-
-**Response:**
-
-```json
-{
-  "message": "Login successful",
-  "token": "jwt-token-here",
-  "user": {
-    "id": "uuid",
-    "name": "John Doe",
-    "user_role": "patient"
-  }
-}
-```
-
-### GraphQL
-
-#### POST /graphql
-
-GraphQL endpoint with schema definitions for Hasura actions.
-
-**Available Types:**
-
-- `Session` - Contains token and user information
-- `User` - User profile information
-- `LoginInput` - Input for login mutation
-- `SignupInput` - Input for signup mutation
-
-## JWT Token Structure
-
-The JWT token includes the following Hasura-compatible headers:
-
-```json
-{
-  "x-hasura-user-id": "user-uuid",
-  "x-hasura-user-role": "patient|doctor|admin|assistant",
-  "x-hasura-default-role": "patient|doctor|admin|assistant",
-  "x-hasura-allowed-roles": ["patient|doctor|admin|assistant"],
-  "x-hasura-patient-id": "patient-uuid", // only for patients
-  "x-hasura-doctor-id": "doctor-uuid" // only for doctors
-}
-```
-
-## Health Check
-
-#### GET /health
-
-Returns server status and timestamp.
-
-**Response:**
-
-```json
-{
-  "status": "OK",
-  "timestamp": "2024-01-01T00:00:00.000Z"
-}
-```
+Design notes on response fidelity (the port from Express preserved wire
+behavior deliberately, including a few quirks): JSON responses keep Hasura's
+field names, empty lists marshal as `[]` rather than `null`, timestamps pass
+through as raw strings, and error bodies use a unified `{"message": ...}`
+envelope that the frontend reads via `errorData.message || errorData.error`.
