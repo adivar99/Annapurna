@@ -38,6 +38,7 @@ function ChatContent() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const anuCanvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     if (!isAuthLoading && !isLoggedIn) {
@@ -182,12 +183,52 @@ function ChatContent() {
       setIsVoiceAgentActive(false);
       setVoiceStatus('');
     } else {
-      if (!canvasRef.current) return;
+      if (!canvasRef.current || !anuCanvasRef.current) return;
       try {
         setIsVoiceAgentActive(true);
-        await voiceAgentService.start(canvasRef.current, (status) => setVoiceStatus(status));
+        await voiceAgentService.start(
+          canvasRef.current,
+          anuCanvasRef.current,
+          (status) => setVoiceStatus(status),
+          (speaker, text, done) => {
+            // Live transcription: the user's mic speech and Anu's replies
+            // land as separate streaming messages. The service sends the
+            // accumulated transcript each time; on done we finalize the
+            // existing bubble in place instead of appending a duplicate.
+            if (!text.trim()) return;
+            setMessages((prev) => {
+              // Find this speaker's current streaming bubble (scan back —
+              // user and AI bubbles can interleave within a turn).
+              for (let i = prev.length - 1; i >= 0; i--) {
+                const m = prev[i];
+                if (m.sender === speaker && m.streamingVoice) {
+                  const updated = [...prev];
+                  updated[i] = { ...m, text, streamingVoice: !done };
+                  return updated;
+                }
+                // A committed message from the same speaker stops the scan —
+                // start a new bubble rather than resurrect an old one.
+                if (m.sender === speaker && !m.streamingVoice) break;
+              }
+              return [
+                ...prev,
+                {
+                  sender: speaker,
+                  text,
+                  created_at: new Date().toISOString(),
+                  streamingVoice: !done,
+                },
+              ];
+            });
+          },
+          recipe || undefined
+        );
       } catch (err: any) {
-        setErrorBanner('Could not start Realtime voice session. Please ensure microphone access is permitted.');
+        console.error('Live voice failed to start:', err);
+        setErrorBanner(
+          err?.message ||
+            'Could not start Realtime voice session. Please ensure microphone access is permitted.'
+        );
         setIsVoiceAgentActive(false);
         setTimeout(() => setErrorBanner(null), 5000);
       }
@@ -405,18 +446,35 @@ function ChatContent() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Voice Waveform Visualizer */}
-          {isVoiceAgentActive && (
-            <div className="px-4 py-2.5 bg-stone-900 border-t border-stone-800 flex flex-col items-center">
-              <canvas
-                ref={canvasRef}
-                width={600}
-                height={50}
-                className="w-full max-w-lg h-10 sm:h-12 rounded-lg bg-stone-950"
-              />
-              <span className="text-[11px] text-orange-400 mt-1 font-medium">{voiceStatus}</span>
+          {/* Voice Waveform Visualizer — always mounted so the canvas refs
+              exist when the Live Voice button is clicked; visibility is CSS-only. */}
+          <div
+            className={`px-4 py-2.5 bg-stone-900 border-t border-stone-800 flex-col items-center gap-1.5 ${
+              isVoiceAgentActive ? 'flex' : 'hidden'
+            }`}
+          >
+            <div className="w-full max-w-lg flex items-center gap-2">
+              <div className="flex flex-col items-center flex-1">
+                <canvas
+                  ref={canvasRef}
+                  width={300}
+                  height={50}
+                  className="w-full h-10 sm:h-12 rounded-lg bg-stone-950"
+                />
+                <span className="text-[10px] text-orange-400 mt-0.5 font-medium">You</span>
+              </div>
+              <div className="flex flex-col items-center flex-1">
+                <canvas
+                  ref={anuCanvasRef}
+                  width={300}
+                  height={50}
+                  className="w-full h-10 sm:h-12 rounded-lg bg-stone-950"
+                />
+                <span className="text-[10px] text-sky-400 mt-0.5 font-medium">Anu</span>
+              </div>
             </div>
-          )}
+            <span className="text-[11px] text-orange-400 font-medium">{voiceStatus}</span>
+          </div>
 
           {/* Chat Input Bar */}
           <div className="p-3 sm:p-4 border-t border-stone-200 bg-white">

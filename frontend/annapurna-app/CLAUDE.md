@@ -40,8 +40,8 @@ Shared components are in `app/components/` (NavBar, Footer, RecipeCard).
 
 All backend access goes through `app/services/` — pages do not call `fetch` directly against the API:
 
-- `apiClient.ts` — shared fetch wrapper. Base URL is `NEXT_PUBLIC_API_URL` (default `http://localhost:3001/api/v1`).
-- `authService.ts` — auth endpoints; base URL is `NEXT_PUBLIC_AUTH_URL` (default `http://localhost:3001/api/auth`).
+- `apiClient.ts` — shared fetch wrapper. Base URL is `NEXT_PUBLIC_API_URL` if set; otherwise derived at runtime from the serving hostname (`<protocol>//<hostname>:3001/api/v1`), so the app works on LAN IPs, not just localhost.
+- `authService.ts` — auth endpoints; base URL is `NEXT_PUBLIC_AUTH_URL` if set, otherwise the same hostname-derived origin + `/api/auth`.
 - `recipeService.ts`, `chatService.ts`, `voiceAgentService.ts`, `speechService.ts` — feature services.
 - `spoonacularService.ts` — calls the external Spoonacular API directly (`SPOONACULAR_API_URL`).
 
@@ -55,8 +55,8 @@ Tailwind CSS v4 via `@tailwindcss/postcss` — there is no `tailwind.config` fil
 
 Set in `.env` (not committed), read at build/runtime:
 
-- `NEXT_PUBLIC_API_URL` — REST API base (`http://localhost:3001/api/v1` by default).
-- `NEXT_PUBLIC_AUTH_URL` — auth base (`http://localhost:3001/api/auth` by default).
+- `NEXT_PUBLIC_API_URL` — REST API base. When unset, the origin is derived from the browser's hostname with port 3001 (works on localhost and LAN access alike).
+- `NEXT_PUBLIC_AUTH_URL` — auth base. Same fallback behavior as above.
 - `SPOONACULAR_API_URL` — external recipe API.
 
 ## Docker

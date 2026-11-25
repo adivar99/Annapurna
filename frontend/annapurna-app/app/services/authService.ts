@@ -1,8 +1,12 @@
 import { LoginCredentials, RegisterData, AuthResponse, AuthError } from './interfaces';
 import { User } from '../models/user';
-import { ApiClient } from './apiClient';
+import { ApiClient, apiOrigin } from './apiClient';
 
-const AUTH_API_URL = process.env.NEXT_PUBLIC_AUTH_URL || 'http://localhost:3001/api/auth';
+// NEXT_PUBLIC_AUTH_URL wins when set; otherwise derive the origin from the
+// serving host (same scheme/host as the site, API port) so logins work from
+// LAN addresses, not just localhost. Kept in sync with apiClient's resolver.
+const AUTH_API_URL =
+  process.env.NEXT_PUBLIC_AUTH_URL || `${apiOrigin()}/api/auth`;
 
 class AuthService {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {

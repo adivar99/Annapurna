@@ -5,6 +5,8 @@ export interface ChatMessage {
   text: string;
   created_at?: string;
   timestamp?: string;
+  /** Marks a message assembled from live voice transcription (not persisted). */
+  streamingVoice?: boolean;
 }
 
 export interface ChatSession {
