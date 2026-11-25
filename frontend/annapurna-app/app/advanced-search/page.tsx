@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Recipe } from '../models/recipe';
 import recipeService from '../services/recipeService';
@@ -11,7 +10,7 @@ import { useAuth } from '../context/AuthContext';
 
 export default function AdvancedSearchPage() {
   const router = useRouter();
-  const { isLoggedIn, isLoading: isAuthLoading, logout } = useAuth();
+  const { isLoggedIn, isLoading: isAuthLoading } = useAuth();
 
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
@@ -163,15 +162,11 @@ export default function AdvancedSearchPage() {
 
   return (
     <div className="min-h-screen bg-stone-50 pb-20 md:pb-8">
-      {/* Search Header Bar */}
-      <header className="bg-[#758e4f] text-white sticky top-0 z-40 shadow-md">
+      {/* Search Bar (sticks directly below the global NavBar) */}
+      <header className="bg-[#758e4f] text-white sticky top-16 z-40 shadow-md">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4">
-          <Link href="/home" className="text-xl sm:text-2xl font-bold italiana text-white drop-shadow flex-shrink-0">
-            Annapurna
-          </Link>
-
           {/* Autocomplete Search Container */}
-          <div ref={searchContainerRef} className="relative flex-1 max-w-xl min-w-0">
+          <div ref={searchContainerRef} className="relative flex-1 min-w-0">
             <div className="relative">
               <input
                 type="text"
@@ -218,13 +213,6 @@ export default function AdvancedSearchPage() {
                 </span>
               )}
             </button>
-
-            <button
-              onClick={logout}
-              className="text-xs font-semibold bg-white/10 hover:bg-white/20 px-2.5 sm:px-3 py-1.5 rounded-xl transition flex-shrink-0 hidden sm:inline"
-            >
-              Logout
-            </button>
           </div>
         </div>
       </header>
@@ -234,7 +222,7 @@ export default function AdvancedSearchPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
           {/* Filter Sidebar (Desktop static & Mobile responsive collapsible) */}
           <aside
-            className={`bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-stone-200 space-y-5 h-fit lg:sticky lg:top-24 ${
+            className={`bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-stone-200 space-y-5 h-fit lg:sticky lg:top-36 ${
               mobileFilterOpen ? 'block' : 'hidden lg:block'
             }`}
           >

@@ -1,9 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Italiana&display=swap');
+/* Fonts load browser-side via CSS @import (like any stylesheet) instead of
+   next/font/google, which downloads fonts at compile time and hard-fails
+   dev-server compiles when the build environment can't reach Google. */
+@import url('https://fonts.googleapis.com/css2?family=Italiana&family=Playfair+Display:ital,wght@0,400;1,400&family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap');
 @import "tailwindcss";
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-geist-sans: 'Geist', Arial, Helvetica, sans-serif;
+  --font-geist-mono: 'Geist Mono', ui-monospace, monospace;
+  --font-playfair-display: 'Playfair Display', Georgia, serif;
 }
 
 @theme inline {
@@ -13,11 +19,11 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* The UI is styled for light surfaces only (hardcoded stone/white classes,
+   no dark: variants). Keep body text dark even when the OS requests dark
+   mode, otherwise inputs like the chat box get white-on-white text. */
+html {
+  color-scheme: light;
 }
 
 html {

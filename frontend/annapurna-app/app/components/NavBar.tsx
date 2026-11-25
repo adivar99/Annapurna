@@ -10,8 +10,8 @@ export default function NavBar() {
   const { user, isLoggedIn, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Hide Navbar on landing, login, register, and advanced search
-  if (!isLoggedIn || pathname === '/' || pathname === '/login' || pathname === '/register' || pathname === '/advanced-search') {
+  // Hide Navbar on landing, login, and register (pre-auth screens)
+  if (!isLoggedIn || pathname === '/' || pathname === '/login' || pathname === '/register') {
     return null;
   }
 

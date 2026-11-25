@@ -2,6 +2,7 @@
 
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import ReactMarkdown from 'react-markdown';
 import { Recipe } from '../models/recipe';
 import { ChatMessage } from '../models/chat';
 import recipeService from '../services/recipeService';
@@ -389,7 +390,9 @@ function ChatContent() {
                         : 'bg-[#ff9f1d] text-white rounded-tr-sm'
                     }`}
                   >
-                    <p className="whitespace-pre-wrap">{msg.text}</p>
+                    <div className="whitespace-pre-wrap [&_p]:m-0 [&_ul]:list-disc [&_ul]:pl-4 [&_ul]:my-1 [&_ol]:list-decimal [&_ol]:pl-4 [&_ol]:my-1 [&_li]:my-0.5 [&_strong]:font-semibold [&_code]:bg-stone-200 [&_code]:px-1 [&_code]:rounded [&_h1,&_h2,&_h3]:font-bold [&_h1,&_h2,&_h3]:text-base">
+                      <ReactMarkdown>{msg.text}</ReactMarkdown>
+                    </div>
                   </div>
                 </div>
               );
@@ -444,7 +447,7 @@ function ChatContent() {
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
                 placeholder={isListening ? 'Listening for speech...' : 'Ask Anu a question...'}
-                className="flex-1 min-w-0 px-3 sm:px-4 py-2 sm:py-2.5 bg-stone-50 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff9f1d] text-xs sm:text-sm"
+                className="flex-1 min-w-0 px-3 sm:px-4 py-2 sm:py-2.5 bg-stone-50 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff9f1d] text-xs sm:text-sm text-stone-900 placeholder-stone-400"
                 disabled={isVoiceAgentActive || isSending}
               />
 
