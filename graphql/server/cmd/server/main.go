@@ -53,7 +53,7 @@ func main() {
 		Saved:     store.NewSaved(hasuraClient),
 		Chat:      store.NewChat(hasuraClient),
 		Files:     objStore,
-		AIService: ai.NewService(cfg.OpenAIKey),
+		AIService: ai.NewCompatibleService(cfg.OpenAIKey, cfg.AI.BaseURL, cfg.AI.ChatModel, cfg.AI.Referer, cfg.AI.Title),
 		AIMock:    ai.IsMockKey(cfg.OpenAIKey),
 	}
 

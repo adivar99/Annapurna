@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -20,15 +21,40 @@ const (
 	chatModel     = "gpt-4o-mini"
 )
 
-// Service calls the OpenAI REST API. Only net/http is used — the four calls
-// here don't justify an SDK dependency.
+// Service calls the OpenAI REST API — or any OpenAI-compatible endpoint such
+// as OpenRouter, which mirrors the chat-completions schema. Only net/http is
+// used — the four calls here don't justify an SDK dependency.
 type Service struct {
-	apiKey string
-	http   *http.Client
+	apiKey  string
+	baseURL string
+	model   string
+	referer string
+	title   string
+	// isOpenRouter reports whether requests target OpenRouter, whose
+	// provider-preference parameters must not be sent to other endpoints
+	// (the OpenAI API rejects unrecognized arguments).
+	isOpenRouter bool
+	http         *http.Client
 }
 
 func NewService(apiKey string) *Service {
-	return &Service{apiKey: apiKey, http: &http.Client{Timeout: 60 * time.Second}}
+	return NewCompatibleService(apiKey, apiBaseURL, chatModel, "", "")
+}
+
+// NewCompatibleService builds a client for an OpenAI-compatible endpoint.
+// baseURL carries no trailing slash; model is a vendor-qualified ID for
+// OpenRouter-style APIs. referer/title are optional attribution headers that
+// OpenRouter uses to identify apps and are ignored elsewhere.
+func NewCompatibleService(apiKey, baseURL, model, referer, title string) *Service {
+	return &Service{
+		apiKey:       apiKey,
+		baseURL:      baseURL,
+		model:        model,
+		referer:      referer,
+		title:        title,
+		isOpenRouter: strings.Contains(baseURL, "openrouter.ai"),
+		http:         &http.Client{Timeout: 60 * time.Second},
+	}
 }
 
 type chatMessage struct {
@@ -37,7 +63,8 @@ type chatMessage struct {
 }
 
 // RealtimeSession mints an ephemeral client secret for browser voice
-// sessions, unwrapping either response shape OpenAI has used.
+// sessions, unwrapping either response shape OpenAI has used. Realtime
+// sessions are OpenAI-specific and bypass the configurable base URL.
 func (s *Service) RealtimeSession(ctx context.Context) (string, error) {
 	body, _ := json.Marshal(map[string]any{"model": realtimeModel, "voice": "onyx"})
 	var out struct {
@@ -67,10 +94,11 @@ func unwrapClientSecret(raw json.RawMessage) (string, error) {
 }
 
 // ParseRecipe sends raw recipe text through a strict-schema completion and
-// returns the model's JSON payload untouched.
+// returns the model's JSON payload untouched. On OpenRouter-style APIs,
+// require_parameters keeps routing on endpoints that support json_schema.
 func (s *Service) ParseRecipe(ctx context.Context, recipeText string) (json.RawMessage, error) {
 	requestBody := map[string]any{
-		"model": chatModel,
+		"model": s.model,
 		"response_format": map[string]any{
 			"type":        "json_schema",
 			"json_schema": json.RawMessage(recipeParserSchema),
@@ -79,6 +107,11 @@ func (s *Service) ParseRecipe(ctx context.Context, recipeText string) (json.RawM
 			{Role: "system", Content: parserSystemPrompt},
 			{Role: "user", Content: recipeText},
 		},
+	}
+	if s.isOpenRouter {
+		// require_parameters keeps OpenRouter routing on endpoints that
+		// support json_schema; the plain OpenAI API has no such parameter.
+		requestBody["provider"] = map[string]any{"require_parameters": true}
 	}
 	content, err := s.chatCompletion(ctx, requestBody)
 	if err != nil {
@@ -90,7 +123,7 @@ func (s *Service) ParseRecipe(ctx context.Context, recipeText string) (json.RawM
 // AskQuestion answers a question about a recipe with the Anu persona prompt.
 func (s *Service) AskQuestion(ctx context.Context, systemPrompt, question string) (string, error) {
 	requestBody := map[string]any{
-		"model": chatModel,
+		"model": s.model,
 		"messages": []chatMessage{
 			{Role: "system", Content: systemPrompt},
 			{Role: "user", Content: question},
@@ -103,7 +136,7 @@ func (s *Service) AskQuestion(ctx context.Context, systemPrompt, question string
 // serialized recipe.
 func (s *Service) Analyze(ctx context.Context, recipeJSON string) (string, error) {
 	requestBody := map[string]any{
-		"model": chatModel,
+		"model": s.model,
 		"messages": []chatMessage{
 			{Role: "system", Content: analyzeSystemPrompt},
 			{Role: "user", Content: recipeJSON},
@@ -135,12 +168,18 @@ func (s *Service) chatCompletion(ctx context.Context, requestBody any) (string, 
 }
 
 func (s *Service) post(ctx context.Context, path string, body []byte, out any) error {
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, apiBaseURL+path, bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.baseURL+path, bytes.NewReader(body))
 	if err != nil {
 		return err
 	}
 	req.Header.Set("Authorization", "Bearer "+s.apiKey)
 	req.Header.Set("Content-Type", "application/json")
+	if s.referer != "" {
+		req.Header.Set("HTTP-Referer", s.referer)
+	}
+	if s.title != "" {
+		req.Header.Set("X-Title", s.title)
+	}
 
 	resp, err := s.http.Do(req)
 	if err != nil {

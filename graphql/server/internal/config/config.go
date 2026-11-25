@@ -22,7 +22,21 @@ type Config struct {
 	Hasura    Hasura
 	JWT       JWT
 	MinIO     MinIO
+	AI        AI
 	OpenAIKey string
+}
+
+// AI points the chat-completion client at any OpenAI-compatible endpoint
+// (api.openai.com by default, OpenRouter when AI_BASE_URL is set).
+type AI struct {
+	// BaseURL is the API root (no trailing path beyond the version segment).
+	BaseURL string
+	// ChatModel is a vendor-qualified model ID when talking to OpenRouter
+	// (e.g. "anthropic/claude-haiku-5.5").
+	ChatModel string
+	// Attribution headers OpenRouter asks for; empty values are skipped.
+	Referer string
+	Title   string
 }
 
 type Hasura struct {
@@ -71,6 +85,12 @@ func Load() Config {
 			AccessKey: getenv("MINIO_ACCESS_KEY", "minioadmin"),
 			SecretKey: getenv("MINIO_SECRET_KEY", "minioadmin123"),
 			PublicURL: getenv("MINIO_PUBLIC_URL", ""),
+		},
+		AI: AI{
+			BaseURL:   getenv("AI_BASE_URL", "https://api.openai.com/v1"),
+			ChatModel: getenv("AI_CHAT_MODEL", "gpt-4o-mini"),
+			Referer:   getenv("AI_APP_REFERER", ""),
+			Title:     getenv("AI_APP_TITLE", "Annapurna"),
 		},
 		OpenAIKey: getenv("OPENAI_API_KEY", ""),
 	}

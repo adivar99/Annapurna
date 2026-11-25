@@ -112,6 +112,10 @@ services:
       - "3001:3001"
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      AI_BASE_URL: ${AI_BASE_URL:-}
+      AI_CHAT_MODEL: ${AI_CHAT_MODEL:-}
+      AI_APP_REFERER: ${AI_APP_REFERER:-}
+      AI_APP_TITLE: ${AI_APP_TITLE:-Annapurna}
     healthcheck:
       test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:3001/health || exit 1"]
       interval: 10s
